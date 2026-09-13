@@ -17,6 +17,7 @@ from benchmarks.task_001 import (
     load_protocol,
     named_stream_seeds,
 )
+from benchmarks.run_task_001 import TemporalStateAdapter, clone_checkpoint_state
 
 
 ROOT = Path(__file__).parents[2]
@@ -70,3 +71,20 @@ def test_schema_validator_accepts_completed_record_and_rejects_missing_quality(t
     incomplete = dict(metrics); incomplete.pop("quality")
     with pytest.raises(Exception):
         validate_json("metrics", incomplete)
+
+
+def test_checkpoint_clone_round_trips_actual_temporal_state_extra_state() -> None:
+    """Regression: TemporalState serializes config as a non-tensor extra state."""
+    torch.manual_seed(23)
+    model = TemporalStateAdapter(hidden_size=3, gate_bias_init=0.25)
+    inputs = torch.tensor([[[1.0], [-1.0], [1.0]]])
+    expected = model(inputs).detach().clone()
+    checkpoint = clone_checkpoint_state(model.state_dict())
+
+    assert checkpoint["state._extra_state"] == model.state.get_extra_state()
+    assert checkpoint["state._extra_state"] is not model.state_dict()["state._extra_state"]
+    with torch.no_grad():
+        for parameter in model.parameters():
+            parameter.add_(1.0)
+    model.load_state_dict(checkpoint)
+    torch.testing.assert_close(model(inputs), expected)

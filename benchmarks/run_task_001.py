@@ -8,6 +8,7 @@ run time through its RFC-defined public API.
 from __future__ import annotations
 
 import argparse
+import copy
 import platform
 import resource
 import subprocess
@@ -60,6 +61,20 @@ class TemporalStateAdapter(nn.Module):
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         states, _ = self.state.forward_sequence(inputs)
         return self.head(states).squeeze(-1)
+
+
+def clone_checkpoint_state(state_dict: dict[str, Any]) -> dict[str, Any]:
+    """Detach tensor weights while retaining module ``extra_state`` metadata.
+
+    PyTorch includes non-tensor values (notably ``TemporalState._extra_state``)
+    in a state dictionary.  A checkpoint snapshot must therefore clone tensors
+    for isolation and deeply copy every other value, rather than assuming all
+    entries expose ``detach``.
+    """
+    copied: dict[str, Any] = {}
+    for name, value in state_dict.items():
+        copied[name] = value.detach().cpu().clone() if isinstance(value, torch.Tensor) else copy.deepcopy(value)
+    return copied
 
 
 def _peak_rss_bytes() -> int:
@@ -125,7 +140,7 @@ def run(*, config_path: Path, output: Path, seed: int, requested_device: str | N
         validation_metrics, _ = _evaluate(model, validation, batch_size=protocol["execution"]["batch_size"], device=device)
         if validation_metrics["binary_cross_entropy"] < best_loss:
             best_loss = float(validation_metrics["binary_cross_entropy"]); best_epoch = epoch
-            best_state = {name: value.detach().cpu().clone() for name, value in model.state_dict().items()}
+            best_state = clone_checkpoint_state(model.state_dict())
     training_seconds = time.perf_counter() - train_started
     assert best_state is not None
     model.load_state_dict(best_state)
