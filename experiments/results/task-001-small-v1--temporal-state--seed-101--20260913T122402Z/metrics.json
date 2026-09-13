@@ -1,0 +1,8 @@
+{
+  "benchmark_id": "task-001-small-v1",
+  "comparability": "not_applicable",
+  "reason": "AttributeError: 'dict' object has no attribute 'detach'",
+  "recorded_at": "2026-09-13T12:24:02Z",
+  "seed": 101,
+  "status": "failed"
+}

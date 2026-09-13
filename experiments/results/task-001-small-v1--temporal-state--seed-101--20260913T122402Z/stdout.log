@@ -1,0 +1,2 @@
+invocation: /Users/mymac/Desktop/continuum/benchmarks/run_task_001.py --config benchmarks/task-001-small.yaml --output experiments/results --seed 101
+failed: AttributeError: 'dict' object has no attribute 'detach'
