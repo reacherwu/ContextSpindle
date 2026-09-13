@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Continuum experiment metrics",
+  "type": "object",
+  "required": ["status", "comparability", "benchmark_id", "seed", "recorded_at"],
+  "properties": {
+    "status": {"enum": ["completed", "failed", "blocked", "not_run", "exploratory"]},
+    "comparability": {"enum": ["direct", "not_direct", "not_applicable"]},
+    "benchmark_id": {"const": "task-001-small-v1"},
+    "seed": {"type": "integer"},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "quality": {"type": "object", "required": ["accuracy", "balanced_accuracy", "binary_cross_entropy", "evaluated_tokens"]},
+    "model": {"type": "object", "required": ["trainable_parameters", "total_parameters", "recurrent_state_elements", "recurrent_state_bytes"]},
+    "training": {"type": "object", "required": ["training_wall_seconds", "training_peak_rss_bytes", "optimizer_steps", "epochs_completed"]},
+    "inference": {"type": "object", "required": ["warmup_sequences", "timed_sequences", "inference_wall_seconds", "throughput_events_per_second", "inference_peak_rss_bytes", "raw_timing_seconds"]},
+    "validation_selection": {"type": "object", "required": ["selected_epoch", "selected_validation_binary_cross_entropy"]},
+    "reference": {"type": "object", "required": ["name", "quality"]},
+    "reason": {"type": "string"}
+  },
+  "allOf": [{"if": {"properties": {"status": {"const": "completed"}}}, "then": {"required": ["quality", "model", "training", "inference", "validation_selection", "reference"]}}],
+  "additionalProperties": true
+}

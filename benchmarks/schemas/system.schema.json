@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Continuum experiment system record",
+  "type": "object",
+  "required": ["recorded_at", "os", "cpu", "ram_bytes", "accelerators", "python_version", "torch_version", "device_requested", "device_used", "precision", "deterministic_mode"],
+  "properties": {
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "os": {"type": "string"},
+    "cpu": {"type": "string"},
+    "ram_bytes": {"type": "integer", "minimum": 0},
+    "accelerators": {"type": "array"},
+    "python_version": {"type": "string"},
+    "torch_version": {"type": "string"},
+    "device_requested": {"type": "string"},
+    "device_used": {"type": "string"},
+    "precision": {"type": "string"},
+    "deterministic_mode": {"type": "boolean"},
+    "unavailable_hardware": {"type": "object"}
+  },
+  "additionalProperties": true
+}
