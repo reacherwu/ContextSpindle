@@ -1,0 +1,19 @@
+transformer:
+  status: not_yet_implemented
+  source: null
+  version: null
+  commit: null
+linear_attention:
+  status: not_yet_implemented
+  source: null
+  version: null
+  commit: null
+mamba_style:
+  status: not_yet_implemented
+  source: null
+  version: null
+  commit: null
+delta_rule:
+  status: not_yet_implemented
+  source: null
+  version: null
