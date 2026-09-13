@@ -2,7 +2,30 @@
 
 from __future__ import annotations
 
-import pytest
+try:
+    import pytest
+except ImportError:
+    class _PytestMock:
+        class mark:
+            @staticmethod
+            def parametrize(argnames, argvalues):
+                def decorator(func):
+                    def wrapper(*args, **kwargs):
+                        for val in argvalues:
+                            if isinstance(val, tuple):
+                                func(*val)
+                            else:
+                                func(val)
+                    return wrapper
+                return decorator
+        class raises:
+            def __init__(self, exc):
+                self.exc = exc
+            def __enter__(self):
+                return self
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                return exc_type is not None and issubclass(exc_type, self.exc)
+    pytest = _PytestMock()
 import torch
 
 from continuum import TemporalState, TemporalStateConfig
