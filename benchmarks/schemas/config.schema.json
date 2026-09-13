@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Continuum resolved benchmark configuration",
+  "type": "object",
+  "required": ["benchmark_id", "version", "config_sha256", "protocol", "seed", "streams", "generator_revision", "code_revision", "system_id", "created_at"],
+  "properties": {
+    "benchmark_id": {"const": "task-001-small-v1"},
+    "version": {"const": 1},
+    "config_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "protocol": {"type": "object"},
+    "seed": {"type": "integer"},
+    "streams": {"type": "object", "required": ["model_init", "train_data", "validation_data", "test_data", "dataloader"]},
+    "generator_revision": {"type": "string", "minLength": 1},
+    "code_revision": {"type": "string", "minLength": 1},
+    "system_id": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": true
+}

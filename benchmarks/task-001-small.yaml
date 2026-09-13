@@ -1,0 +1,31 @@
+benchmark_id: task-001-small-v1
+version: 1
+generator:
+  version: task-001-delayed-symbol-v1
+  symbols: [-1.0, 1.0]
+  input_size: 1
+  sequence_length: 64
+  delay: 8
+splits:
+  train_sequences: 2048
+  validation_sequences: 512
+  test_sequences: 512
+seeds:
+  canonical: [101, 202, 303]
+  derivation: "sha256('{root_seed}:{stream}')[:8] interpreted as an unsigned big-endian integer"
+  streams: [model_init, train_data, validation_data, test_data, dataloader]
+model:
+  hidden_size: 16
+  gate_bias_init: 0.0
+  classifier: linear
+training:
+  epochs_max: 20
+  optimizer: adam
+  learning_rate: 0.01
+  selection_metric: validation_binary_cross_entropy
+execution:
+  device_requested: cpu
+  precision: float32
+  batch_size: 64
+  deterministic_mode: true
+  warmup_sequences: 64
