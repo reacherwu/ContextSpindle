@@ -8,8 +8,8 @@
 [![Memory Bound](https://img.shields.io/badge/Memory-750%20Slots%20Flat%20O(K)-blue.svg)](#)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-purple.svg)](LICENSE)
 
-> **"Stop paying $150/mo for an AI coding assistant with a 5-minute goldfish memory."**  
-> Continuum is an ultra-fast, deterministic $O(K)$ bounded two-tier memory manifold for autonomous agents, Cursor, Claude Code, and AIOps systems. Built in **100% pure native Rust (zero external dependencies)**, it slashes cloud token bills by **96.8%**, retrieves causal root causes in **< 100 microseconds**, and permanently remembers critical engineering constraints across infinite turns.
+> **The High-Performance Native Rust Implementation of Continuum Memory Architectures (CMA, [arXiv:2601.09913](https://arxiv.org/abs/2601.09913)).**  
+> Continuum is an ultra-fast, deterministic $O(K)$ bounded two-tier memory manifold for autonomous coding agents (Claude Code, Cursor, OpenHands, Codex) and streaming AIOps systems. While early CMA frameworks (like ShyftLabs or FormulateAI) rely on heavy Python runtimes, external Redis servers, and cloud vector databases (Qdrant/Mem0), Continuum executes entirely in **100% pure native Rust standard library (0 external crate dependencies)** with strictly bounded physical slots (< 75 KB RAM) and **< 100 microsecond** retrospective recall.
 
 ---
 

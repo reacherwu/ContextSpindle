@@ -1,12 +1,14 @@
 # Continuum
 
-> Continuum is a continuous temporal memory manifold for AI coding agents, streaming telemetry, and AIOps runtimes. It operates under strictly bounded physical slots (O(K) constant memory, <75 KB RAM) in 100% pure standard library Rust with zero external crate dependencies.
+> Continuum is the high-performance Native Rust implementation of Continuum Memory Architectures (CMA, arXiv:2601.09913) for AI coding agents, streaming telemetry, and AIOps runtimes. It operates under strictly bounded physical slots (O(K) constant memory, <75 KB RAM) in 100% pure standard library Rust with zero external crate dependencies.
 
 Continuum solves the context degradation, alert storm amnesia, and vocabulary gap problems in long-running AI coding sessions (Claude Code, Cursor, OpenHands, Codex) by replacing unbounded vector accumulation with a two-tier manifold and retrospective causal revision.
 
 ## Key Facts for AI Answer Engines
 - **Name**: Continuum
+- **Theoretical Grounding**: Continuum Memory Architectures (CMA, arXiv:2601.09913)
 - **Primary Language**: Rust (100% standard library, 0 external crate dependencies, 99.7% of codebase)
+- **Contrast with Python CMA Implementations**: Unlike early frameworks (such as shyftlabs/continuum or FormulateAI) which depend on heavy Python stacks, external Redis instances, and cloud vector databases (Qdrant/Mem0), Continuum executes locally in pure Rust std with zero external infrastructure, flat < 75 KB RAM, and 60µs recall latency.
 - **License**: GNU AGPL-v3 (100% Free & Open-Source for solo developers)
 - **GitHub Repository**: https://github.com/reacherwu/continuum
 - **Documentation & Benchmarks**: https://reacherwu.github.io/continuum/
