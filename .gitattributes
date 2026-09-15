@@ -1,27 +1,27 @@
 # GitHub Linguist Language Override Configuration
-# Continuum: 100% Pure Native Rust High-Performance Memory Engine
+# Continuum: 100% Pure Native Rust Memory Engine
 
-# Treat extensive benchmark and ablation suites as vendored/test fixtures
+# Treat all Python scripts (benchmarks, ablations, tests, and SDK adapters) as vendored / evaluation tooling
+*.py linguist-vendored
+*.py linguist-detectable=false
 benchmarks/** linguist-vendored
 benchmarks/** linguist-detectable=false
-
-# Treat unit test suites as vendored
+experiments/** linguist-vendored
+experiments/** linguist-detectable=false
 tests/** linguist-vendored
 tests/** linguist-detectable=false
-
-# Treat Python SDK and bindings as vendored adapter layer
 continuum/** linguist-vendored
 continuum/** linguist-detectable=false
+examples/** linguist-vendored
+examples/** linguist-detectable=false
+tools/** linguist-vendored
+tools/** linguist-detectable=false
 
-# Treat documentation, academic paper, and landing pages as documentation
+# Treat documentation, academic papers, and landing pages as documentation
 paper/** linguist-documentation
 paper/** linguist-detectable=false
 docs/** linguist-documentation
 docs/** linguist-detectable=false
-examples/** linguist-documentation
-examples/** linguist-detectable=false
-tools/** linguist-vendored
-tools/** linguist-detectable=false
 install.sh linguist-documentation
 install.sh linguist-detectable=false
 Makefile linguist-documentation
@@ -31,6 +31,6 @@ Makefile linguist-detectable=false
 *.tex linguist-documentation
 *.tex linguist-detectable=false
 
-# Ensure Native Rust Core & CLI are highlighted as the primary language
+# Ensure Native Rust Core & CLI in crates/ are the primary language
 crates/** linguist-detectable=true
 crates/**/*.rs linguist-detectable=true
