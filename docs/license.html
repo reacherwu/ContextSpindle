@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Continuum — Licensing & AGPL-v3 Legal Boundaries Guide</title>
+  <meta name="description" content="Clear, developer-friendly guide explaining the boundaries of the GNU AGPL-v3 license and Commercial Exemption options for Continuum.">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-purple: #8b5cf6;
+      --accent-rose: #f43f5e;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+    .nav-bar {
+      border-bottom: 1px solid var(--card-border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .nav-bar a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+    }
+
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 768px) {
+      .matrix-grid { grid-template-columns: 1fr; }
+    }
+
+    .matrix-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 24px;
+      border: 1px solid var(--card-border);
+    }
+    .matrix-card.allowed {
+      border-top: 4px solid var(--accent-green);
+    }
+    .matrix-card.restricted {
+      border-top: 4px solid var(--accent-rose);
+    }
+    .matrix-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .matrix-list {
+      list-style: none;
+    }
+    .matrix-list li {
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+      color: #d1d5db;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .matrix-list li strong {
+      color: #fff;
+    }
+
+    .faq-section {
+      margin-bottom: 50px;
+    }
+    .faq-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .faq-item h3 {
+      font-size: 1.15rem;
+      color: #38bdf8;
+      margin-bottom: 8px;
+    }
+    .faq-item p {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+    }
+
+    .commercial-box {
+      background: linear-gradient(135deg, rgba(6,182,212,0.1) 0%, rgba(139,92,246,0.1) 100%);
+      border: 1px solid var(--accent-cyan);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 50px;
+    }
+    .commercial-box h2 {
+      font-size: 1.6rem;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .commercial-box p {
+      color: #cbd5e1;
+      margin-bottom: 16px;
+    }
+
+    pre.license-block {
+      background: #030712;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 20px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: #94a3b8;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      background: var(--accent-cyan);
+      color: #04101e;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: #22d3ee;
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="nav-bar">
+    <a href="index.html">← Back to Continuum Home</a>
+    <span style="font-size: 0.85rem; color: var(--text-muted);">GNU AGPL-v3 Boundary Specification</span>
+  </div>
+
+  <div class="container">
+    <h1>Continuum Licensing & AGPL-v3 Legal Boundaries</h1>
+    <p class="subtitle">
+      Continuum is released under the <strong>GNU Affero General Public License v3.0 (AGPL-v3)</strong>. Here is an honest, plain-English breakdown of what you can and cannot do.
+    </p>
+
+    <!-- Matrix: Green vs Red -->
+    <div class="matrix-grid">
+      <div class="matrix-card allowed">
+        <div class="matrix-title" style="color: var(--accent-green);">
+          <span>✅</span> What is 100% Free & Unrestricted
+        </div>
+        <ul class="matrix-list">
+          <li>
+            <span>✓</span>
+            <div><strong>Personal & Professional Use:</strong> You can install and run Continuum on your local Mac/Linux/Windows machines without paying a cent.</div>
+          </li>
+          <li>
+            <span>✓</span>
+            <div><strong>AI IDE Pairing (Cursor / Claude Code):</strong> Using Continuum memory with your AI editor does <em>not</em> infect or contaminate your proprietary codebase.</div>
+          </li>
+          <li>
+            <span>✓</span>
+            <div><strong>Internal Enterprise Development:</strong> Your company can use Continuum internally to accelerate engineering without any requirement to open-source private corporate code.</div>
+          </li>
+          <li>
+            <span>✓</span>
+            <div><strong>Academic Research & Benchmarking:</strong> Free to cite, benchmark, study, and reproduce under our CERN Zenodo DOI.</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="matrix-card restricted">
+        <div class="matrix-title" style="color: var(--accent-rose);">
+          <span>⚠️</span> What Triggers the AGPL-v3 Copyleft Clause
+        </div>
+        <ul class="matrix-list">
+          <li>
+            <span>✗</span>
+            <div><strong>Remote Network Service (SaaS):</strong> If you modify Continuum and provide its capabilities as an online API or cloud service to third parties, you must open-source your modifications under AGPL-v3.</div>
+          </li>
+          <li>
+            <span>✗</span>
+            <div><strong>Cloud White-Labeling:</strong> Cloud providers cannot package Continuum as a closed proprietary managed cloud offering without contributing modifications back.</div>
+          </li>
+          <li>
+            <span>✗</span>
+            <div><strong>Closed-Source Redistribution:</strong> You cannot take Continuum's Rust core, wrap it in a closed-source binary, and sell it without a Commercial License Waiver.</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Practical FAQ Section -->
+    <section class="faq-section">
+      <h2 style="font-size: 1.8rem; margin-bottom: 24px;">Frequently Asked Questions (FAQ)</h2>
+
+      <div class="faq-item">
+        <h3>Q: Does using Continuum with Cursor or Claude Code infect my company's proprietary code?</h3>
+        <p><strong>A: Absolutely NOT.</strong> Continuum is a developer tool and autonomous memory substrate (similar to how GCC, Git, or Linux are tools). Using Continuum to remember constraints while writing proprietary software does not subject your software to AGPL-v3. Your intellectual property remains 100% yours.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Q: Can our engineering team use Continuum in our internal CI/CD pipelines?</h3>
+        <p><strong>A: YES.</strong> Internal company operations that do not expose Continuum as a public network service to outside consumers are fully permitted under AGPL-v3 section 2.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Q: What if our company wants to build a commercial SaaS product powered by Continuum?</h3>
+        <p><strong>A: You have two options:</strong> Either release your service under the AGPL-v3, or purchase a <strong>Commercial Non-AGPL License</strong> from us, which legally waives all copyleft obligations.</p>
+      </div>
+    </section>
+
+    <!-- Commercial License Waiver -->
+    <section class="commercial-box">
+      <h2>Need Commercial Embedding or Closed-Source Exemption?</h2>
+      <p>
+        If your legal team has a blanket policy against AGPL-v3, or if you plan to embed Continuum directly into a proprietary on-premise appliance or SaaS platform, we offer flexible <strong>Commercial License Waivers</strong>.
+      </p>
+      <a href="mailto:beijingscwj@outlook.com?subject=Continuum%20Commercial%20License%20Inquiry" class="btn">Inquire for Commercial License</a>
+    </section>
+
+    <!-- Full Legal Text Accordion -->
+    <section>
+      <h3 style="margin-bottom: 12px; color: var(--text-muted);">Official GNU AGPL-v3 Legal Text:</h3>
+      <pre class="license-block">
+                    GNU AFFERO GENERAL PUBLIC LICENSE
+                       Version 3, 19 November 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+                            Preamble
+
+  The GNU Affero General Public License is a free, copyleft license for
+software and other kinds of works, specifically designed to ensure
+cooperation with the community in the case of network server software...
+(Full text included in repository root LICENSE)
+      </pre>
+    </section>
+
+  </div>
+
+</body>
+</html>

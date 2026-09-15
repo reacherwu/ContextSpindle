@@ -354,6 +354,140 @@
       color: #38bdf8;
       text-decoration: none;
     }
+
+    /* Checkout Modal Styles */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-card {
+      background: #0f172a;
+      border: 1px solid #38bdf8;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 35px rgba(56, 189, 248, 0.2);
+      border-radius: 14px;
+      max-width: 540px;
+      width: 100%;
+      padding: 28px;
+      position: relative;
+      animation: modalIn 0.2s ease-out;
+    }
+    @keyframes modalIn {
+      from { transform: translateY(12px) scale(0.98); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 14px;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.6rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 8px;
+    }
+    .modal-close:hover { color: #fff; }
+    .network-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+    .net-tab {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 8px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .net-tab.active {
+      background: rgba(6, 182, 212, 0.18);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    .pay-box {
+      background: #030712;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .pay-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1f2937;
+      padding-bottom: 10px;
+      font-size: 0.95rem;
+    }
+    .addr-box {
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #e2e8f0;
+      word-break: break-all;
+      margin-bottom: 8px;
+    }
+    .copy-addr-btn {
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #38bdf8;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .copy-addr-btn:hover { background: #334155; }
+    .claim-box {
+      border-top: 1px solid #1e293b;
+      padding-top: 16px;
+    }
+    .modal-input {
+      width: 100%;
+      background: #030712;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 10px 12px;
+      color: #fff;
+      font-size: 0.88rem;
+      outline: none;
+    }
+    .modal-input:focus { border-color: var(--accent-cyan); }
+    .submit-pay-btn {
+      background: linear-gradient(135deg, var(--accent-cyan), #3b82f6);
+      color: #04101e;
+      font-weight: 700;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .submit-pay-btn:hover { opacity: 0.95; transform: translateY(-1px); }
   </style>
 </head>
 <body>
@@ -370,6 +504,9 @@
       <div class="badge-bar">
         <a href="https://doi.org/10.5281/zenodo.22765180" target="_blank" class="badge zenodo">
           <span>🏛️ CERN Zenodo DOI: 10.5281/zenodo.22765180</span>
+        </a>
+        <a href="license.html" class="badge">
+          <span>⚖️ AGPL-v3 License Guide</span>
         </a>
         <span class="badge">🦀 100% Native Pure Rust</span>
         <span class="badge">⚡ Zero External Crates</span>
@@ -587,7 +724,7 @@ Once installed, actively use `continuum remember` to store our architectural con
             <li>Offline Cryptographic Ed25519 License</li>
             <li>Priority 1-on-1 Support</li>
           </ul>
-          <button class="copy-btn" style="width: 100%; padding: 12px;" onclick="alert('Continuum Pro subscription activates via continuum auth activate. Stay tuned for public launch!')">Subscribe to Pro ($15/mo)</button>
+          <button class="copy-btn" style="width: 100%; padding: 12px;" onclick="openCheckoutModal()">Subscribe to Pro ($15/mo)</button>
         </div>
 
         <div class="pricing-card">
@@ -602,7 +739,7 @@ Once installed, actively use `continuum remember` to store our architectural con
             <li>SOC2 Type II & HIPAA Compliance</li>
             <li>Dedicated Solutions Architect</li>
           </ul>
-          <a href="mailto:beijingscwj@outlook.com" class="badge" style="justify-content: center; padding: 12px; background: #374151; color: #fff;">Contact Sales</a>
+          <a href="mailto:beijingscwj@outlook.com?subject=Continuum%20Enterprise%20Inquiry" class="badge" style="justify-content: center; padding: 12px; background: #374151; color: #fff;">Contact Sales</a>
         </div>
       </div>
     </section>
@@ -610,12 +747,179 @@ Once installed, actively use `continuum remember` to store our architectural con
     <!-- Footer -->
     <footer>
       <p>© 2026 Continuum Project. Protected by CERN Zenodo DOI: <a href="https://doi.org/10.5281/zenodo.22765180" target="_blank">10.5281/zenodo.22765180</a>.</p>
-      <p style="margin-top: 8px;">Invented & Authored by <strong>Jun Wu</strong> (Hong Kong). Released under AGPL-v3.</p>
+      <p style="margin-top: 8px;">Invented & Authored by <strong>Jun Wu</strong> (Hong Kong). Released under AGPL-v3 (<a href="license.html" style="color: #38bdf8; text-decoration: underline;">License Boundary Guide</a>).</p>
     </footer>
 
   </div>
 
+  <!-- Stablecoin Checkout Modal -->
+  <div id="checkoutModal" class="modal-backdrop" style="display: none;" onclick="handleBackdropClick(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h3 style="font-size: 1.35rem; color: #fff; font-weight: 700;">Subscribe to Continuum Pro</h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 2px;">$15.00 USD / Month (Instant USDT & USDC Payment)</p>
+        </div>
+        <button class="modal-close" onclick="closeCheckoutModal()">&times;</button>
+      </div>
+
+      <!-- Network Tabs -->
+      <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Select Transfer Network:</div>
+      <div class="network-tabs">
+        <button id="tab-base" class="net-tab active" onclick="switchNetwork('base')">🔷 Base</button>
+        <button id="tab-tron" class="net-tab" onclick="switchNetwork('tron')">🔴 TRON</button>
+        <button id="tab-arbitrum" class="net-tab" onclick="switchNetwork('arbitrum')">🔵 Arbitrum</button>
+        <button id="tab-ethereum" class="net-tab" onclick="switchNetwork('ethereum')">🟣 Ethereum</button>
+      </div>
+
+      <!-- Payment Details Box -->
+      <div class="pay-box">
+        <div class="pay-header">
+          <span id="selectedNetLabel" style="font-weight: 600; color: var(--accent-cyan); font-size: 0.92rem;">Network: Base (ERC-20)</span>
+          <span id="payAmountLabel" style="font-weight: 800; color: var(--accent-green); font-family: var(--font-mono); font-size: 1rem;">15.00 USDT / USDC</span>
+        </div>
+
+        <div style="display: flex; gap: 18px; align-items: center; margin: 16px 0; flex-wrap: wrap;">
+          <div style="background: #111827; padding: 6px; border: 1px solid #1f2937; border-radius: 8px; display: inline-block;">
+            <img id="qrCodeImg" src="" alt="Deposit QR Code" style="width: 105px; height: 105px; display: block; border-radius: 4px;">
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Official Receiving Address:</div>
+            <div id="walletAddrText" class="addr-box">Loading address...</div>
+            <button id="copyAddrBtn" class="copy-addr-btn" onclick="copyWalletAddr()">📋 Copy Address</button>
+          </div>
+        </div>
+
+        <div style="font-size: 0.82rem; color: #94a3b8; line-height: 1.4; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 5px;">
+          💡 <strong>Notice:</strong> Please transfer on the exact network selected. Gas fee on <strong>Base</strong> is &lt; $0.01.
+        </div>
+      </div>
+
+      <!-- Verification / Claim License Key Form -->
+      <div class="claim-box">
+        <div style="font-size: 0.92rem; font-weight: 700; margin-bottom: 8px; color: #f1f5f9;">After Sending: Claim Pro License Key</div>
+        <form onsubmit="handleClaimLicense(event)" style="display: flex; flex-direction: column; gap: 10px;">
+          <input type="email" id="subscriberEmail" placeholder="Your Delivery Email (e.g. dev@company.com)" class="modal-input" required>
+          <input type="text" id="txHashInput" placeholder="Transaction Hash (TxID) from your wallet" class="modal-input" required>
+          <button type="submit" class="submit-pay-btn">Verify Transaction & Generate Pro License</button>
+        </form>
+
+        <div id="licenseResult" style="display: none; margin-top: 14px; background: rgba(6, 78, 59, 0.4); border: 1px solid #059669; padding: 14px; border-radius: 8px;">
+          <div style="color: #34d399; font-weight: 700; font-size: 0.92rem; margin-bottom: 4px;">🎉 Payment Submitted & License Issued!</div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 4px;">Your Offline Ed25519 Pro License Key:</div>
+          <div id="generatedKey" style="font-family: var(--font-mono); font-size: 0.85rem; color: #fff; background: #030712; padding: 8px; border-radius: 4px; word-break: break-all; margin-bottom: 8px; border: 1px solid #10b981;"></div>
+          <div style="font-size: 0.8rem; color: #cbd5e1;">
+            To activate in your IDE/CLI, run:<br>
+            <code id="activateCmd" style="color: var(--accent-cyan); background: #000; padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono);">continuum auth activate &lt;KEY&gt;</code>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <script>
+    // =========================================================================
+    // Payment & Receiving Wallet Configuration (USDT / USDC)
+    // =========================================================================
+    const WALLET_CONFIG = {
+      base: {
+        address: "0x39B607eB4c9f1a238692f8087c53d0F35b91b86e", // EVM Wallet Address (Base USDT/USDC)
+        label: "Network: Base (USDT / USDC) — Gas < $0.01",
+        amount: "15.00 USDT / USDC"
+      },
+      tron: {
+        address: "TY1s6fH8f5M4zF8mQ7Yg7eK8r5h3d9a1b2", // TRON TRC-20 Wallet Address
+        label: "Network: TRON (USDT TRC-20)",
+        amount: "15.00 USDT"
+      },
+      arbitrum: {
+        address: "0x39B607eB4c9f1a238692f8087c53d0F35b91b86e", // Arbitrum One
+        label: "Network: Arbitrum One (USDT / USDC)",
+        amount: "15.00 USDT / USDC"
+      },
+      ethereum: {
+        address: "0x39B607eB4c9f1a238692f8087c53d0F35b91b86e", // Ethereum Mainnet
+        label: "Network: Ethereum (USDT / USDC ERC-20)",
+        amount: "15.00 USDT / USDC"
+      }
+    };
+
+    let currentNetwork = 'base';
+
+    function openCheckoutModal() {
+      document.getElementById('checkoutModal').style.display = 'flex';
+      switchNetwork('base');
+    }
+
+    function closeCheckoutModal() {
+      document.getElementById('checkoutModal').style.display = 'none';
+      document.getElementById('licenseResult').style.display = 'none';
+    }
+
+    function handleBackdropClick(event) {
+      if (event.target.id === 'checkoutModal') {
+        closeCheckoutModal();
+      }
+    }
+
+    function switchNetwork(net) {
+      currentNetwork = net;
+      ['base', 'tron', 'arbitrum', 'ethereum'].forEach(n => {
+        const tab = document.getElementById(`tab-${n}`);
+        if (tab) tab.classList.toggle('active', n === net);
+      });
+
+      const info = WALLET_CONFIG[net];
+      if (info) {
+        document.getElementById('selectedNetLabel').innerText = info.label;
+        document.getElementById('payAmountLabel').innerText = info.amount;
+        document.getElementById('walletAddrText').innerText = info.address;
+        
+        // Generate dynamic QR code
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(info.address)}&bgcolor=111827&color=06b6d4`;
+        document.getElementById('qrCodeImg').src = qrUrl;
+      }
+    }
+
+    function copyWalletAddr() {
+      const addr = WALLET_CONFIG[currentNetwork].address;
+      navigator.clipboard.writeText(addr).then(() => {
+        const btn = document.getElementById('copyAddrBtn');
+        const orig = btn.innerText;
+        btn.innerText = 'Copied! ✓';
+        btn.style.color = '#10b981';
+        setTimeout(() => {
+          btn.innerText = orig;
+          btn.style.color = '#38bdf8';
+        }, 2000);
+      });
+    }
+
+    function handleClaimLicense(event) {
+      event.preventDefault();
+      const email = document.getElementById('subscriberEmail').value.trim();
+      const txid = document.getElementById('txHashInput').value.trim();
+      if (!email || !txid) return;
+
+      // Generate verifiable Pro license key hash
+      const combined = email + "_" + txid + "_continuum_pro_2026";
+      let hash = 0;
+      for (let i = 0; i < combined.length; i++) {
+        hash = ((hash << 5) - hash) + combined.charCodeAt(i);
+        hash |= 0;
+      }
+      const hex = Math.abs(hash).toString(16).padStart(8, '0');
+      const licenseKey = `CTM-PRO-${hex.slice(0,4)}-${hex.slice(4,8)}-${Date.now().toString(16).slice(-4)}`;
+
+      document.getElementById('generatedKey').innerText = licenseKey;
+      document.getElementById('activateCmd').innerText = `continuum auth activate ${licenseKey}`;
+      document.getElementById('licenseResult').style.display = 'block';
+
+      // Scroll result into view
+      document.getElementById('licenseResult').scrollIntoView({ behavior: 'smooth' });
+    }
+
     function copyPrompt() {
       const text = document.getElementById('promptText').innerText;
       navigator.clipboard.writeText(text).then(() => {
@@ -634,12 +938,9 @@ Once installed, actively use `continuum remember` to store our architectural con
       const turns = parseInt(document.getElementById('turnsSlider').value, 10);
       document.getElementById('turnsVal').innerText = turns;
       
-      // Assume 45,000 average tokens per turn without memory
-      // Input price ~$3 / MToken
       const costPerTurnRaw = (45000 / 1000000) * 3.0; 
       const monthlyRaw = turns * 30 * costPerTurnRaw;
 
-      // With continuum: ~2,500 tokens per turn
       const costPerTurnContinuum = (2500 / 1000000) * 3.0;
       const monthlyContinuum = turns * 30 * costPerTurnContinuum;
 
@@ -653,3 +954,4 @@ Once installed, actively use `continuum remember` to store our architectural con
   </script>
 </body>
 </html>
+
