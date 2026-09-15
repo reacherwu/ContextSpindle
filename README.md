@@ -1,7 +1,9 @@
 # Continuum — Continuous Temporal Intelligence Memory Engine
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22765180.svg)](https://doi.org/10.5281/zenodo.22765180)
-[![Rust](https://img.shields.io/badge/Rust-100%25%20native-orange.svg)](crates/continuum-core)
+[![Rust: 100% Native](https://img.shields.io/badge/Rust-100%25%20Pure%20Native-dea584.svg?logo=rust&logoColor=white)](crates/continuum-core)
+[![Zero External Crates](https://img.shields.io/badge/Dependencies-0%20(Pure%20std)-brightgreen.svg?logo=rust&logoColor=white)](#)
+[![Edition: 2021](https://img.shields.io/badge/Edition-2021-black.svg?logo=rust&logoColor=white)](Cargo.toml)
 [![Tests](https://img.shields.io/badge/tests-62%20passing-brightgreen)](#)
 [![Memory Bound](https://img.shields.io/badge/Memory-750%20Slots%20Flat%20O(K)-blue.svg)](#)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-purple.svg)](LICENSE)
