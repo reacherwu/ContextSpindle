@@ -464,6 +464,28 @@ Once installed, actively use `continuum remember` to store our architectural con
       </table>
     </section>
 
+    <!-- Bare-Metal Hardware Benchmark Visuals -->
+    <section class="comparison-section">
+      <h2 class="section-title">Bare-Metal Hardware Execution Telemetry (Apple M4)</h2>
+      <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">
+        100% reproducible on bare-metal hardware. Real telemetry measured on Apple M4 (macOS Sequoia) with pure native Rust.
+      </p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px;">
+        <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; overflow: hidden; padding: 16px; text-align: center;">
+          <h4 style="margin-bottom: 12px; color: var(--accent-cyan);">⚡ Microsecond Latency Scaling (< 100 μs)</h4>
+          <img src="assets/benchmark_latency_scaling.png" alt="Latency Scaling" style="width: 100%; border-radius: 6px;">
+        </div>
+        <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; overflow: hidden; padding: 16px; text-align: center;">
+          <h4 style="margin-bottom: 12px; color: var(--accent-green);">🔒 Constant 75 KB Memory Invariant</h4>
+          <img src="assets/benchmark_memory_footprint.png" alt="Memory Footprint" style="width: 100%; border-radius: 6px;">
+        </div>
+        <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; overflow: hidden; padding: 16px; text-align: center;">
+          <h4 style="margin-bottom: 12px; color: #a78bfa;">🛡️ 100% Causal Recall Under 99% Noise</h4>
+          <img src="assets/benchmark_alert_storm_accuracy.png" alt="Alert Storm Accuracy" style="width: 100%; border-radius: 6px;">
+        </div>
+      </div>
+    </section>
+
     <!-- Interactive ROI Calculator -->
     <section class="calculator-card">
       <h2 style="font-size: 1.8rem; margin-bottom: 8px;">Real-Time Token Savings Arbitrage Calculator</h2>

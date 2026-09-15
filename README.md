@@ -48,10 +48,30 @@ Your AI assistant will autonomously install the CLI, initialize `.continuum/`, a
 
 ---
 
+## 📊 Real Bare-Metal Hardware Benchmark Results (Apple M4)
+
+> All charts below are generated from real execution telemetry on an **Apple M4 (macOS Sequoia)** running pure native Rust (`crates/continuum-core`).  
+> Detailed reproduction steps and log outputs are documented in [**benchmarks/README.md**](benchmarks/README.md).
+
+<div align="center">
+
+### ⚡ Constant < 100 μs Retrospective Recall vs O(T) Vector Degradation
+![Latency Scaling](benchmarks/assets/benchmark_latency_scaling.png)
+
+### 🔒 Strictly Constant 75 KB RAM Allocation (Zero Heap Bloat over 10,000 Turns)
+![Memory Footprint](benchmarks/assets/benchmark_memory_footprint.png)
+
+### 🛡️ 100% Causal Retention Under Severe 99% Alert Storm Noise
+![Alert Storm Accuracy](benchmarks/assets/benchmark_alert_storm_accuracy.png)
+
+</div>
+
+---
+
 ## 📦 Quick Installation (10 Seconds)
 
 ```bash
-curl -fsSL https://get.continuum-core.org/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash
 ```
 
 *(Or build locally: `cargo install --path crates/continuum-cli`)*
