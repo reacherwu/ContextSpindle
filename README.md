@@ -16,7 +16,7 @@
 You don't need to manually configure anything. Simply **copy and paste this prompt directly into your AI assistant's chat**:
 
 ```text
-Please read the integration protocol from https://github.com/continuum-ai/continuum (specifically AGENTS.md) and autonomously equip yourself with the Continuum Bounded Memory Engine for this project.
+Please read the integration protocol from https://github.com/reacherwu/continuum (specifically AGENTS.md) and autonomously equip yourself with the Continuum Bounded Memory Engine for this project.
 
 Run:
 1. `curl -fsSL https://get.continuum-core.org/install.sh | bash 2>/dev/null || cargo install --path crates/continuum-cli`

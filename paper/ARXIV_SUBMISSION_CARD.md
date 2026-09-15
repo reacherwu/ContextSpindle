@@ -37,7 +37,7 @@ Autonomous software engineering agents, conversational assistants, and automated
 
 ### Comments (Optional)
 ```text
-8 pages, 2 tables, 2 algorithms. Open-source implementation in pure Rust: https://github.com/continuum-ai/continuum
+8 pages, 2 tables, 2 algorithms. Open-source implementation in pure Rust: https://github.com/reacherwu/continuum
 ```
 
 ### License

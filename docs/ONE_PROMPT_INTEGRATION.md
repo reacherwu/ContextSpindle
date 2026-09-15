@@ -8,9 +8,9 @@
 ## 📋 Copy & Paste Prompt for Any AI IDE
 
 ```text
-Please read the integration protocol from https://github.com/continuum-ai/continuum (specifically AGENTS.md) and autonomously equip yourself with the Continuum Bounded Memory Engine for this project:
+Please read the integration protocol from https://github.com/reacherwu/continuum (specifically AGENTS.md) and autonomously equip yourself with the Continuum Bounded Memory Engine for this project:
 
-1. `curl -fsSL https://raw.githubusercontent.com/continuum-ai/continuum/main/install.sh | bash 2>/dev/null || cargo install --path crates/continuum-cli`
+1. `curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash 2>/dev/null || cargo install --path crates/continuum-cli`
 2. `continuum-cli init .`
 
 Once installed, actively use `continuum remember` to store our architectural constraints and bug resolutions, and use `continuum recall` to retrieve past context in < 100 microseconds. Confirm when ready.
