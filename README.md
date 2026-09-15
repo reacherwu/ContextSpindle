@@ -161,4 +161,4 @@ Continuum's theoretical formulation and empirical evaluations are officially pub
 
 ## 📜 License & Commercial Open-Core
 
-Continuum is released under the **GNU Affero General Public License v3.0 (AGPL-v3)** for the community. Commercial enterprise licenses and cloud sync multi-device plans are available under the Pro Tier ([Continuum Pro](https://reacherwu.github.io/continuum/)).
+Continuum is released under the **GNU Affero General Public License v3.0 (AGPL-v3)**. It is **100% free and open-source for individual developers and researchers**. Multi-device encrypted cloud sync and team manifold collaboration are currently in development as part of our future roadmap ([Read our License Boundaries Guide](https://reacherwu.github.io/continuum/license.html)).

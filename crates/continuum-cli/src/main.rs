@@ -700,14 +700,13 @@ fn run_upgrade() {
     println!("  With Continuum Edge-Memory (96.8% cut):  ~$4.50 USD (¥32 RMB)");
     println!("  Monthly Net Savings for You:             +$145.50 USD (¥1,048 RMB) / month!");
     println!("----------------------------------------------------------------------------");
-    println!("Continuum Pro Tier ($15.00 USD / Month):");
-    println!("  [x] Cross-Device Cloud Sync (seamless context between Mac, Laptop & Cloud)");
-    println!("  [x] Unlimited Local Memory Streams & Multi-Repo Workspaces");
-    println!("  [x] Sub-millisecond Retrospective Causal Bridge for Cursor / Claude Code");
-    println!("  [x] Automated Git Commit & Test Failure Incident Ingestion");
-    println!("\nTo subscribe or activate your license key:");
-    println!("  Visit: https://reacherwu.github.io/continuum/");
-    println!("  CLI:   continuum auth activate <LICENSE_KEY>");
+    println!("Continuum is 100% FREE and Open-Source for Individual Developers!");
+    println!("  [x] Full Physical 750 Bounded Memory Manifold (< 75 KB)");
+    println!("  [x] Retrospective Causal Revision in < 100 μs native Rust");
+    println!("  [x] Built-in Model Context Protocol (MCP) Server for Cursor & Claude");
+    println!("  [x] Zero External Runtime Dependencies & 100% Local Privacy");
+    println!("\nRoadmap (Multi-Device Cloud Sync & Team Manifolds):");
+    println!("  Follow developments: https://reacherwu.github.io/continuum/");
     println!("============================================================================");
 }
 
