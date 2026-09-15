@@ -1,0 +1,22 @@
+# GitHub Linguist Language Override Configuration
+# Continuum: High-Performance Pure Native Rust Memory Engine
+
+# Treat extensive benchmark and ablation suites as vendored/test fixtures
+benchmarks/** linguist-vendored
+benchmarks/** linguist-detectable=false
+
+# Treat unit test suites as vendored
+tests/** linguist-vendored
+tests/** linguist-detectable=false
+
+# Treat documentation, academic paper, and landing pages as documentation
+paper/** linguist-documentation
+paper/** linguist-detectable=false
+docs/** linguist-documentation
+docs/** linguist-detectable=false
+examples/** linguist-documentation
+*.html linguist-documentation
+*.tex linguist-documentation
+
+# Ensure Rust Core & CLI are recognized as the primary language
+crates/** linguist-detectable=true
