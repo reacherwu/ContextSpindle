@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Continuum One-Line Instant Installer
-# Usage: curl -fsSL https://get.continuum-core.org/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash
 set -e
 
 BOLD="\033[1m"

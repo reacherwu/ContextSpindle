@@ -12,7 +12,7 @@
 Run the one-line installer in your terminal:
 
 ```bash
-curl -fsSL https://get.continuum-core.org/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash
 ```
 
 *(Or build locally from source: `cargo install --path crates/continuum-cli`)*
@@ -128,4 +128,4 @@ continuum-cli upgrade
 - **Automated Git Hook**: Auto-ingests git commits, pull requests, and failed test logs.
 - **Team Memory Sharing**: Share organizational architecture constraints across all team members' AI assistants.
 
-To subscribe: [https://continuum-core.org/pro](https://continuum-core.org/pro) or activate via `continuum-cli auth activate <LICENSE_KEY>`.
+To subscribe: [https://reacherwu.github.io/continuum/](https://reacherwu.github.io/continuum/) or activate via `continuum-cli auth activate <LICENSE_KEY>`.

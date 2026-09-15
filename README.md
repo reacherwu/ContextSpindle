@@ -19,7 +19,7 @@ You don't need to manually configure anything. Simply **copy and paste this prom
 Please read the integration protocol from https://github.com/reacherwu/continuum (specifically AGENTS.md) and autonomously equip yourself with the Continuum Bounded Memory Engine for this project.
 
 Run:
-1. `curl -fsSL https://get.continuum-core.org/install.sh | bash 2>/dev/null || cargo install --path crates/continuum-cli`
+1. `curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash 2>/dev/null || cargo install --path crates/continuum-cli`
 2. `continuum-cli init .`
 
 Once installed, actively use `continuum remember` to store our architectural constraints and bug resolutions, and use `continuum recall` to retrieve past context in < 100 microseconds. Confirm when ready.
@@ -161,4 +161,4 @@ Continuum's theoretical formulation and empirical evaluations are officially pub
 
 ## 📜 License & Commercial Open-Core
 
-Continuum is released under the **GNU Affero General Public License v3.0 (AGPL-v3)** for the community. Commercial enterprise licenses and cloud sync multi-device plans are available under the Pro Tier ([Continuum Pro](https://continuum-core.org/pro)).
+Continuum is released under the **GNU Affero General Public License v3.0 (AGPL-v3)** for the community. Commercial enterprise licenses and cloud sync multi-device plans are available under the Pro Tier ([Continuum Pro](https://reacherwu.github.io/continuum/)).

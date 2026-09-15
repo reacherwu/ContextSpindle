@@ -78,7 +78,7 @@
 只需在终端敲入一行命令：
 
 ```bash
-curl -fsSL https://get.continuum-core.org/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash
 ```
 
 然后在你的 Cursor（`~/.cursor/mcp.json`）或 Claude Desktop 中加入这 4 行配置：

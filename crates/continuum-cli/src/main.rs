@@ -706,7 +706,7 @@ fn run_upgrade() {
     println!("  [x] Sub-millisecond Retrospective Causal Bridge for Cursor / Claude Code");
     println!("  [x] Automated Git Commit & Test Failure Incident Ingestion");
     println!("\nTo subscribe or activate your license key:");
-    println!("  Visit: https://continuum-core.org/pro");
+    println!("  Visit: https://reacherwu.github.io/continuum/");
     println!("  CLI:   continuum auth activate <LICENSE_KEY>");
     println!("============================================================================");
 }
