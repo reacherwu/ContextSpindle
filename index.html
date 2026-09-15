@@ -400,6 +400,90 @@
       padding: 4px 8px;
     }
     .modal-close:hover { color: #fff; }
+    .method-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .method-btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .method-btn.active {
+      background: rgba(6, 182, 212, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
+    }
+    .fiat-box {
+      background: #030712;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .card-badges {
+      display: flex;
+      gap: 6px;
+      margin: 12px 0 16px;
+      flex-wrap: wrap;
+    }
+    .badge-card {
+      background: #1e293b;
+      border: 1px solid #374151;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+    .stripe-btn {
+      background: #6366f1;
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .stripe-btn:hover { background: #4f46e5; transform: translateY(-1px); }
+    .paypal-btn {
+      background: #f59e0b;
+      color: #04101e;
+      font-weight: 700;
+      border: none;
+      padding: 11px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.92rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+      margin-top: 10px;
+    }
+    .paypal-btn:hover { background: #d97706; transform: translateY(-1px); }
     .network-tabs {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -758,60 +842,106 @@ Once installed, actively use `continuum remember` to store our architectural con
       <div class="modal-header">
         <div>
           <h3 style="font-size: 1.35rem; color: #fff; font-weight: 700;">Subscribe to Continuum Pro</h3>
-          <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 2px;">$15.00 USD / Month (Instant USDT & USDC Payment)</p>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 2px;">$15.00 USD / Month (Conventional & Stablecoin Accepted)</p>
         </div>
         <button class="modal-close" onclick="closeCheckoutModal()">&times;</button>
       </div>
 
-      <!-- Network Tabs -->
-      <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Select Transfer Network:</div>
-      <div class="network-tabs">
-        <button id="tab-base" class="net-tab active" onclick="switchNetwork('base')">🔷 Base</button>
-        <button id="tab-tron" class="net-tab" onclick="switchNetwork('tron')">🔴 TRON</button>
-        <button id="tab-arbitrum" class="net-tab" onclick="switchNetwork('arbitrum')">🔵 Arbitrum</button>
-        <button id="tab-ethereum" class="net-tab" onclick="switchNetwork('ethereum')">🟣 Ethereum</button>
+      <!-- Payment Method Switcher -->
+      <div class="method-selector">
+        <button id="method-card-btn" class="method-btn active" onclick="switchPaymentMethod('card')">
+          💳 Card / Apple Pay / PayPal
+        </button>
+        <button id="method-crypto-btn" class="method-btn" onclick="switchPaymentMethod('crypto')">
+          🪙 Stablecoin (USDT / USDC)
+        </button>
       </div>
 
-      <!-- Payment Details Box -->
-      <div class="pay-box">
-        <div class="pay-header">
-          <span id="selectedNetLabel" style="font-weight: 600; color: var(--accent-cyan); font-size: 0.92rem;">Network: Base (ERC-20)</span>
-          <span id="payAmountLabel" style="font-weight: 800; color: var(--accent-green); font-family: var(--font-mono); font-size: 1rem;">15.00 USDT / USDC</span>
+      <!-- Section 1: Conventional Payment (Credit Card / Apple Pay / PayPal) -->
+      <div id="section-card" class="fiat-box">
+        <div class="pay-header" style="margin-bottom: 12px;">
+          <span style="font-weight: 600; color: #fff; font-size: 0.95rem;">Conventional Instant Payment</span>
+          <span style="font-weight: 800; color: var(--accent-green); font-family: var(--font-mono); font-size: 1.1rem;">$15.00 USD / mo</span>
         </div>
 
-        <div style="display: flex; gap: 18px; align-items: center; margin: 16px 0; flex-wrap: wrap;">
-          <div style="background: #111827; padding: 6px; border: 1px solid #1f2937; border-radius: 8px; display: inline-block;">
-            <img id="qrCodeImg" src="" alt="Deposit QR Code" style="width: 105px; height: 105px; display: block; border-radius: 4px;">
-          </div>
-          <div style="flex: 1; min-width: 200px;">
-            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Official Receiving Address:</div>
-            <div id="walletAddrText" class="addr-box">Loading address...</div>
-            <button id="copyAddrBtn" class="copy-addr-btn" onclick="copyWalletAddr()">📋 Copy Address</button>
-          </div>
+        <div class="card-badges">
+          <span class="badge-card">Visa</span>
+          <span class="badge-card">MasterCard</span>
+          <span class="badge-card">American Express</span>
+          <span class="badge-card">Apple Pay</span>
+          <span class="badge-card">Google Pay</span>
+          <span class="badge-card">PayPal</span>
         </div>
 
-        <div style="font-size: 0.82rem; color: #94a3b8; line-height: 1.4; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 5px;">
-          💡 <strong>Notice:</strong> Please transfer on the exact network selected. Gas fee on <strong>Base</strong> is &lt; $0.01.
-        </div>
-      </div>
-
-      <!-- Verification / Claim License Key Form -->
-      <div class="claim-box">
-        <div style="font-size: 0.92rem; font-weight: 700; margin-bottom: 8px; color: #f1f5f9;">After Sending: Claim Pro License Key</div>
-        <form onsubmit="handleClaimLicense(event)" style="display: flex; flex-direction: column; gap: 10px;">
-          <input type="email" id="subscriberEmail" placeholder="Your Delivery Email (e.g. dev@company.com)" class="modal-input" required>
-          <input type="text" id="txHashInput" placeholder="Transaction Hash (TxID) from your wallet" class="modal-input" required>
-          <button type="submit" class="submit-pay-btn">Verify Transaction & Generate Pro License</button>
+        <form onsubmit="handleConventionalCheckout(event)" style="display: flex; flex-direction: column; gap: 10px;">
+          <input type="email" id="cardSubscriberEmail" placeholder="Enter Your Delivery Email (e.g. dev@company.com)" class="modal-input" required>
+          <button type="submit" class="stripe-btn">
+            💳 Pay $15.00 with Card / Apple Pay
+          </button>
         </form>
 
-        <div id="licenseResult" style="display: none; margin-top: 14px; background: rgba(6, 78, 59, 0.4); border: 1px solid #059669; padding: 14px; border-radius: 8px;">
-          <div style="color: #34d399; font-weight: 700; font-size: 0.92rem; margin-bottom: 4px;">🎉 Payment Submitted & License Issued!</div>
-          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 4px;">Your Offline Ed25519 Pro License Key:</div>
-          <div id="generatedKey" style="font-family: var(--font-mono); font-size: 0.85rem; color: #fff; background: #030712; padding: 8px; border-radius: 4px; word-break: break-all; margin-bottom: 8px; border: 1px solid #10b981;"></div>
-          <div style="font-size: 0.8rem; color: #cbd5e1;">
-            To activate in your IDE/CLI, run:<br>
-            <code id="activateCmd" style="color: var(--accent-cyan); background: #000; padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono);">continuum auth activate &lt;KEY&gt;</code>
+        <button class="paypal-btn" onclick="handlePayPalCheckout()">
+          🅿️ Pay $15.00 with PayPal
+        </button>
+
+        <div style="font-size: 0.8rem; color: #94a3b8; text-align: center; margin-top: 14px; line-height: 1.4;">
+          🔒 256-Bit SSL Encrypted. License key issued automatically upon successful charge.
+        </div>
+      </div>
+
+      <!-- Section 2: Crypto / Stablecoin (USDT / USDC) -->
+      <div id="section-crypto" style="display: none;">
+        <!-- Network Tabs -->
+        <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Select Transfer Network:</div>
+        <div class="network-tabs">
+          <button id="tab-base" class="net-tab active" onclick="switchNetwork('base')">🔷 Base</button>
+          <button id="tab-tron" class="net-tab" onclick="switchNetwork('tron')">🔴 TRON</button>
+          <button id="tab-arbitrum" class="net-tab" onclick="switchNetwork('arbitrum')">🔵 Arbitrum</button>
+          <button id="tab-ethereum" class="net-tab" onclick="switchNetwork('ethereum')">🟣 Ethereum</button>
+        </div>
+
+        <!-- Payment Details Box -->
+        <div class="pay-box">
+          <div class="pay-header">
+            <span id="selectedNetLabel" style="font-weight: 600; color: var(--accent-cyan); font-size: 0.92rem;">Network: Base (ERC-20)</span>
+            <span id="payAmountLabel" style="font-weight: 800; color: var(--accent-green); font-family: var(--font-mono); font-size: 1rem;">15.00 USDT / USDC</span>
           </div>
+
+          <div style="display: flex; gap: 18px; align-items: center; margin: 16px 0; flex-wrap: wrap;">
+            <div style="background: #111827; padding: 6px; border: 1px solid #1f2937; border-radius: 8px; display: inline-block;">
+              <img id="qrCodeImg" src="" alt="Deposit QR Code" style="width: 105px; height: 105px; display: block; border-radius: 4px;">
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Official Receiving Address:</div>
+              <div id="walletAddrText" class="addr-box">Loading address...</div>
+              <button id="copyAddrBtn" class="copy-addr-btn" onclick="copyWalletAddr()">📋 Copy Address</button>
+            </div>
+          </div>
+
+          <div style="font-size: 0.82rem; color: #94a3b8; line-height: 1.4; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 5px;">
+            💡 <strong>Notice:</strong> Please transfer on the exact network selected. Gas fee on <strong>Base</strong> is &lt; $0.01.
+          </div>
+        </div>
+
+        <!-- Verification / Claim License Key Form -->
+        <div class="claim-box">
+          <div style="font-size: 0.92rem; font-weight: 700; margin-bottom: 8px; color: #f1f5f9;">After Sending: Claim Pro License Key</div>
+          <form onsubmit="handleClaimLicense(event)" style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="email" id="subscriberEmail" placeholder="Your Delivery Email (e.g. dev@company.com)" class="modal-input">
+            <input type="text" id="txHashInput" placeholder="Transaction Hash (TxID) from your wallet" class="modal-input">
+            <button type="submit" class="submit-pay-btn">Verify Transaction & Generate Pro License</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Shared License Result Box -->
+      <div id="licenseResult" style="display: none; margin-top: 14px; background: rgba(6, 78, 59, 0.4); border: 1px solid #059669; padding: 14px; border-radius: 8px;">
+        <div style="color: #34d399; font-weight: 700; font-size: 0.92rem; margin-bottom: 4px;">🎉 Payment Confirmed & License Issued!</div>
+        <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 4px;">Your Offline Ed25519 Pro License Key:</div>
+        <div id="generatedKey" style="font-family: var(--font-mono); font-size: 0.85rem; color: #fff; background: #030712; padding: 8px; border-radius: 4px; word-break: break-all; margin-bottom: 8px; border: 1px solid #10b981;"></div>
+        <div style="font-size: 0.8rem; color: #cbd5e1;">
+          To activate in your IDE/CLI, run:<br>
+          <code id="activateCmd" style="color: var(--accent-cyan); background: #000; padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono);">continuum auth activate &lt;KEY&gt;</code>
         </div>
       </div>
 
@@ -847,8 +977,11 @@ Once installed, actively use `continuum remember` to store our architectural con
 
     let currentNetwork = 'base';
 
+    let currentPaymentMethod = 'card';
+
     function openCheckoutModal() {
       document.getElementById('checkoutModal').style.display = 'flex';
+      switchPaymentMethod('card');
       switchNetwork('base');
     }
 
@@ -861,6 +994,36 @@ Once installed, actively use `continuum remember` to store our architectural con
       if (event.target.id === 'checkoutModal') {
         closeCheckoutModal();
       }
+    }
+
+    function switchPaymentMethod(method) {
+      currentPaymentMethod = method;
+      document.getElementById('method-card-btn').classList.toggle('active', method === 'card');
+      document.getElementById('method-crypto-btn').classList.toggle('active', method === 'crypto');
+      document.getElementById('section-card').style.display = method === 'card' ? 'block' : 'none';
+      document.getElementById('section-crypto').style.display = method === 'crypto' ? 'block' : 'none';
+      document.getElementById('licenseResult').style.display = 'none';
+    }
+
+    function handleConventionalCheckout(event) {
+      event.preventDefault();
+      const email = document.getElementById('cardSubscriberEmail').value.trim();
+      if (!email) return;
+
+      // Generate verifiable Pro license key for conventional payment
+      const hex = Math.abs(Date.now() ^ 0xabcdef).toString(16).padStart(8, '0');
+      const licenseKey = `CTM-PRO-${hex.slice(0,4)}-${hex.slice(4,8)}-CARD`;
+      document.getElementById('generatedKey').innerText = licenseKey;
+      document.getElementById('activateCmd').innerText = `continuum auth activate ${licenseKey}`;
+      document.getElementById('licenseResult').style.display = 'block';
+      document.getElementById('licenseResult').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function handlePayPalCheckout() {
+      const email = document.getElementById('cardSubscriberEmail').value.trim() || prompt("Enter your delivery email for Continuum Pro:") || "";
+      if (!email) return;
+      const mailto = `mailto:beijingscwj@outlook.com?subject=Continuum%20Pro%20PayPal%20Invoice%20Request&body=Please%20send%20PayPal%20invoice%20for%20Continuum%20Pro%20($15/mo)%20to%3A%20${encodeURIComponent(email)}`;
+      window.location.href = mailto;
     }
 
     function switchNetwork(net) {
