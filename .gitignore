@@ -21,3 +21,6 @@ Cargo.lock
 # Archives (paper submission archives can be generated)
 *.tar.gz
 *.zip
+
+# Internal agent development notes
+.agent/
