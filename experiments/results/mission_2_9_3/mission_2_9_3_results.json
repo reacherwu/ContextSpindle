@@ -1,0 +1,395 @@
+{
+  "metadata": {
+    "mission": "2.9.3",
+    "title": "Removing the Oracle \u2014 Online Observable Causal Identification",
+    "canonical_seeds": [
+      101,
+      202,
+      303
+    ],
+    "elapsed_seconds": 4.76,
+    "date": "2026-09-14"
+  },
+  "results": {
+    "C0_current_fifo": [
+      {
+        "condition": "C0_current_fifo",
+        "seed": 101,
+        "root_in_cold": false,
+        "root_eviction_time": 2463,
+        "root_search_rank": -1,
+        "root_revision_score": 0.0,
+        "cold_occupancy_total": 499,
+        "distractor_occupancy": 1,
+        "background_occupancy": 498,
+        "restoration_recall": 0.0,
+        "restoration_count": 1,
+        "true_revision_count": 0,
+        "false_revision_count": 1,
+        "revision_precision": 0.0,
+        "false_revision_rate": 1.0,
+        "restored_ids": [
+          2250
+        ],
+        "latency_ms": 319.7732090484351
+      },
+      {
+        "condition": "C0_current_fifo",
+        "seed": 202,
+        "root_in_cold": false,
+        "root_eviction_time": 2557,
+        "root_search_rank": -1,
+        "root_revision_score": 0.0,
+        "cold_occupancy_total": 500,
+        "distractor_occupancy": 3,
+        "background_occupancy": 497,
+        "restoration_recall": 0.0,
+        "restoration_count": 0,
+        "true_revision_count": 0,
+        "false_revision_count": 0,
+        "revision_precision": 0.0,
+        "false_revision_rate": 0.0,
+        "restored_ids": [],
+        "latency_ms": 296.0315409582108
+      },
+      {
+        "condition": "C0_current_fifo",
+        "seed": 303,
+        "root_in_cold": false,
+        "root_eviction_time": 2815,
+        "root_search_rank": -1,
+        "root_revision_score": 0.0,
+        "cold_occupancy_total": 499,
+        "distractor_occupancy": 6,
+        "background_occupancy": 493,
+        "restoration_recall": 0.0,
+        "restoration_count": 1,
+        "true_revision_count": 0,
+        "false_revision_count": 1,
+        "revision_precision": 0.0,
+        "false_revision_rate": 1.0,
+        "restored_ids": [
+          2684
+        ],
+        "latency_ms": 289.49462505988777
+      }
+    ],
+    "C1_oracle_protected": [
+      {
+        "condition": "C1_oracle_protected",
+        "seed": 101,
+        "root_in_cold": true,
+        "root_eviction_time": null,
+        "root_search_rank": 1,
+        "root_revision_score": 0.0,
+        "cold_occupancy_total": 499,
+        "distractor_occupancy": 1,
+        "background_occupancy": 497,
+        "restoration_recall": 1.0,
+        "restoration_count": 1,
+        "true_revision_count": 1,
+        "false_revision_count": 0,
+        "revision_precision": 1.0,
+        "false_revision_rate": 0.0,
+        "restored_ids": [
+          100
+        ],
+        "latency_ms": 310.33170805312693
+      },
+      {
+        "condition": "C1_oracle_protected",
+        "seed": 202,
+        "root_in_cold": true,
+        "root_eviction_time": null,
+        "root_search_rank": 1,
+        "root_revision_score": 0.0,
+        "cold_occupancy_total": 499,
+        "distractor_occupancy": 3,
+        "background_occupancy": 495,
+        "restoration_recall": 1.0,
+        "restoration_count": 1,
+        "true_revision_count": 1,
+        "false_revision_count": 0,
+        "revision_precision": 1.0,
+        "false_revision_rate": 0.0,
+        "restored_ids": [
+          100
+        ],
+        "latency_ms": 300.05550011992455
+      },
+      {
+        "condition": "C1_oracle_protected",
+        "seed": 303,
+        "root_in_cold": true,
+        "root_eviction_time": null,
+        "root_search_rank": 1,
+        "root_revision_score": 0.0,
+        "cold_occupancy_total": 499,
+        "distractor_occupancy": 6,
+        "background_occupancy": 492,
+        "restoration_recall": 1.0,
+        "restoration_count": 1,
+        "true_revision_count": 1,
+        "false_revision_count": 0,
+        "revision_precision": 1.0,
+        "false_revision_rate": 0.0,
+        "restored_ids": [
+          100
+        ],
+        "latency_ms": 291.18674993515015
+      }
+    ],
+    "C2_online_redundancy_fifo": [
+      {
+        "condition": "C2_online_redundancy_fifo",
+        "seed": 101,
+        "root_in_cold": true,
+        "root_eviction_time": null,
+        "root_search_rank": 1,
+        "root_revision_score": 0.27937454817178103,
+        "cold_occupancy_total": 499,
+        "distractor_occupancy": 15,
+        "background_occupancy": 483,
+        "restoration_recall": 0.0,
+        "restoration_count": 1,
+        "true_revision_count": 0,
+        "false_revision_count": 1,
+        "revision_precision": 0.0,
+        "false_revision_rate": 1.0,
+        "restored_ids": [
+          252
+        ],
+        "latency_ms": 301.7086668405682
+      },
+      {
+        "condition": "C2_online_redundancy_fifo",
+        "seed": 202,
+        "root_in_cold": true,
+        "root_eviction_time": null,
+        "root_search_rank": 1,
+        "root_revision_score": 0.26959455547215794,
+        "cold_occupancy_total": 499,
+        "distractor_occupancy": 13,
+        "background_occupancy": 485,
+        "restoration_recall": 0.0,
+        "restoration_count": 1,
+        "true_revision_count": 0,
+        "false_revision_count": 1,
+        "revision_precision": 0.0,
+        "false_revision_rate": 1.0,
+        "restored_ids": [
+          225
+        ],
+        "latency_ms": 306.3209159299731
+      },
+      {
+        "condition": "C2_online_redundancy_fifo",
+        "seed": 303,
+        "root_in_cold": true,
+        "root_eviction_time": null,
+        "root_search_rank": 1,
+        "root_revision_score": 0.37494563100221007,
+        "cold_occupancy_total": 499,
+        "distractor_occupancy": 13,
+        "background_occupancy": 485,
+        "restoration_recall": 0.0,
+        "restoration_count": 1,
+        "true_revision_count": 0,
+        "false_revision_count": 1,
+        "revision_precision": 0.0,
+        "false_revision_rate": 1.0,
+        "restored_ids": [
+          217
+        ],
+        "latency_ms": 288.9429999049753
+      }
+    ],
+    "C3_online_dedup_merge": [
+      {
+        "condition": "C3_online_dedup_merge",
+        "seed": 101,
+        "root_in_cold": true,
+        "root_eviction_time": null,
+        "root_search_rank": 1,
+        "root_revision_score": 0.27937454817178103,
+        "cold_occupancy_total": 19,
+        "distractor_occupancy": 15,
+        "background_occupancy": 3,
+        "restoration_recall": 0.0,
+        "restoration_count": 1,
+        "true_revision_count": 0,
+        "false_revision_count": 1,
+        "revision_precision": 0.0,
+        "false_revision_rate": 1.0,
+        "restored_ids": [
+          252
+        ],
+        "latency_ms": 300.3071250859648
+      },
+      {
+        "condition": "C3_online_dedup_merge",
+        "seed": 202,
+        "root_in_cold": true,
+        "root_eviction_time": null,
+        "root_search_rank": 1,
+        "root_revision_score": 0.26959455547215794,
+        "cold_occupancy_total": 17,
+        "distractor_occupancy": 13,
+        "background_occupancy": 3,
+        "restoration_recall": 0.0,
+        "restoration_count": 1,
+        "true_revision_count": 0,
+        "false_revision_count": 1,
+        "revision_precision": 0.0,
+        "false_revision_rate": 1.0,
+        "restored_ids": [
+          225
+        ],
+        "latency_ms": 285.6464998330921
+      },
+      {
+        "condition": "C3_online_dedup_merge",
+        "seed": 303,
+        "root_in_cold": true,
+        "root_eviction_time": null,
+        "root_search_rank": 1,
+        "root_revision_score": 0.37494563100221007,
+        "cold_occupancy_total": 17,
+        "distractor_occupancy": 13,
+        "background_occupancy": 3,
+        "restoration_recall": 0.0,
+        "restoration_count": 1,
+        "true_revision_count": 0,
+        "false_revision_count": 1,
+        "revision_precision": 0.0,
+        "false_revision_rate": 1.0,
+        "restored_ids": [
+          217
+        ],
+        "latency_ms": 301.3502911198884
+      }
+    ],
+    "C4_dynamic_value": [
+      {
+        "condition": "C4_dynamic_value",
+        "seed": 101,
+        "root_in_cold": true,
+        "root_eviction_time": null,
+        "root_search_rank": 1,
+        "root_revision_score": 0.27937454817178103,
+        "cold_occupancy_total": 499,
+        "distractor_occupancy": 15,
+        "background_occupancy": 483,
+        "restoration_recall": 0.0,
+        "restoration_count": 1,
+        "true_revision_count": 0,
+        "false_revision_count": 1,
+        "revision_precision": 0.0,
+        "false_revision_rate": 1.0,
+        "restored_ids": [
+          252
+        ],
+        "latency_ms": 364.06375002115965
+      },
+      {
+        "condition": "C4_dynamic_value",
+        "seed": 202,
+        "root_in_cold": true,
+        "root_eviction_time": null,
+        "root_search_rank": 1,
+        "root_revision_score": 0.26959455547215794,
+        "cold_occupancy_total": 499,
+        "distractor_occupancy": 13,
+        "background_occupancy": 485,
+        "restoration_recall": 0.0,
+        "restoration_count": 1,
+        "true_revision_count": 0,
+        "false_revision_count": 1,
+        "revision_precision": 0.0,
+        "false_revision_rate": 1.0,
+        "restored_ids": [
+          225
+        ],
+        "latency_ms": 340.3614170383662
+      },
+      {
+        "condition": "C4_dynamic_value",
+        "seed": 303,
+        "root_in_cold": true,
+        "root_eviction_time": null,
+        "root_search_rank": 1,
+        "root_revision_score": 0.37494563100221007,
+        "cold_occupancy_total": 499,
+        "distractor_occupancy": 13,
+        "background_occupancy": 485,
+        "restoration_recall": 0.0,
+        "restoration_count": 1,
+        "true_revision_count": 0,
+        "false_revision_count": 1,
+        "revision_precision": 0.0,
+        "false_revision_rate": 1.0,
+        "restored_ids": [
+          217
+        ],
+        "latency_ms": 300.8491250220686
+      }
+    ]
+  },
+  "aggregates": {
+    "C0_current_fifo": {
+      "mean_recall": 0.0,
+      "mean_precision": 0.0,
+      "mean_false_rate": 0.6666666666666666,
+      "mean_root_in_cold": 0.0,
+      "mean_cold_total": 499.3333333333333,
+      "mean_distractors": 3.3333333333333335,
+      "mean_background": 496.0,
+      "mean_root_score": 0.0,
+      "mean_search_rank": -1.0
+    },
+    "C1_oracle_protected": {
+      "mean_recall": 1.0,
+      "mean_precision": 1.0,
+      "mean_false_rate": 0.0,
+      "mean_root_in_cold": 1.0,
+      "mean_cold_total": 499.0,
+      "mean_distractors": 3.3333333333333335,
+      "mean_background": 494.6666666666667,
+      "mean_root_score": 0.0,
+      "mean_search_rank": 1.0
+    },
+    "C2_online_redundancy_fifo": {
+      "mean_recall": 0.0,
+      "mean_precision": 0.0,
+      "mean_false_rate": 1.0,
+      "mean_root_in_cold": 1.0,
+      "mean_cold_total": 499.0,
+      "mean_distractors": 13.666666666666666,
+      "mean_background": 484.3333333333333,
+      "mean_root_score": 0.307971578215383,
+      "mean_search_rank": 1.0
+    },
+    "C3_online_dedup_merge": {
+      "mean_recall": 0.0,
+      "mean_precision": 0.0,
+      "mean_false_rate": 1.0,
+      "mean_root_in_cold": 1.0,
+      "mean_cold_total": 17.666666666666668,
+      "mean_distractors": 13.666666666666666,
+      "mean_background": 3.0,
+      "mean_root_score": 0.307971578215383,
+      "mean_search_rank": 1.0
+    },
+    "C4_dynamic_value": {
+      "mean_recall": 0.0,
+      "mean_precision": 0.0,
+      "mean_false_rate": 1.0,
+      "mean_root_in_cold": 1.0,
+      "mean_cold_total": 499.0,
+      "mean_distractors": 13.666666666666666,
+      "mean_background": 484.3333333333333,
+      "mean_root_score": 0.307971578215383,
+      "mean_search_rank": 1.0
+    }
+  }
+}

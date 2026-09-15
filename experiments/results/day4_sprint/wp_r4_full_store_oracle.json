@@ -1,0 +1,124 @@
+{
+  "seeds": {
+    "101": {
+      "b4_revision": {
+        "top5_ids": [
+          2929,
+          2997,
+          2996,
+          2991,
+          2915
+        ],
+        "rank_a_long": 997,
+        "rank_a_mid": 883,
+        "rank_recent_decoy": 1,
+        "score_a_long": 0.44774287280919406,
+        "score_a_mid": 0.46129470880618784,
+        "score_top1": 0.7538973731993832,
+        "gap_to_top1_long": 0.30615450039018915,
+        "any_hit_top5": false,
+        "both_hit_top5": false,
+        "frr_top5": 1.0
+      },
+      "b4_sim_only": {
+        "top5_ids": [
+          100,
+          2929,
+          1895,
+          2435,
+          2885
+        ],
+        "rank_a_long": 1,
+        "rank_a_mid": 11,
+        "rank_recent_decoy": 2,
+        "any_hit_top5": true,
+        "both_hit_top5": false,
+        "frr_top5": 0.8
+      }
+    },
+    "202": {
+      "b4_revision": {
+        "top5_ids": [
+          2929,
+          2998,
+          2922,
+          2992,
+          2999
+        ],
+        "rank_a_long": 1211,
+        "rank_a_mid": 218,
+        "rank_recent_decoy": 1,
+        "score_a_long": 0.42818500337483734,
+        "score_a_mid": 0.5629412036716055,
+        "score_top1": 0.8160633904933132,
+        "gap_to_top1_long": 0.3878783871184759,
+        "any_hit_top5": false,
+        "both_hit_top5": false,
+        "frr_top5": 1.0
+      },
+      "b4_sim_only": {
+        "top5_ids": [
+          2929,
+          2000,
+          1940,
+          100,
+          50
+        ],
+        "rank_a_long": 4,
+        "rank_a_mid": 2,
+        "rank_recent_decoy": 1,
+        "any_hit_top5": true,
+        "both_hit_top5": true,
+        "frr_top5": 0.6
+      }
+    },
+    "303": {
+      "b4_revision": {
+        "top5_ids": [
+          2929,
+          2994,
+          2992,
+          2993,
+          2998
+        ],
+        "rank_a_long": 1361,
+        "rank_a_mid": 645,
+        "rank_recent_decoy": 1,
+        "score_a_long": 0.4520184451091513,
+        "score_a_mid": 0.5325626891433308,
+        "score_top1": 0.7727704448699155,
+        "gap_to_top1_long": 0.32075199976076424,
+        "any_hit_top5": false,
+        "both_hit_top5": false,
+        "frr_top5": 1.0
+      },
+      "b4_sim_only": {
+        "top5_ids": [
+          2929,
+          2705,
+          100,
+          2000,
+          2773
+        ],
+        "rank_a_long": 3,
+        "rank_a_mid": 4,
+        "rank_recent_decoy": 1,
+        "any_hit_top5": true,
+        "both_hit_top5": true,
+        "frr_top5": 0.6
+      }
+    }
+  },
+  "summary": {
+    "b4_revision_any_recall_top5": 0.0,
+    "b4_revision_both_recall_top5": 0.0,
+    "b4_revision_mean_frr": 1.0,
+    "b4_revision_a_long_mean_rank": 1189.6666666666667,
+    "b4_revision_a_mid_mean_rank": 582.0,
+    "b4_sim_only_any_recall_top5": 1.0,
+    "b4_sim_only_both_recall_top5": 0.6666666666666666,
+    "b4_sim_only_mean_frr": 0.6666666666666666,
+    "b4_sim_only_a_long_mean_rank": 2.6666666666666665,
+    "b4_sim_only_a_mid_mean_rank": 5.666666666666666
+  }
+}

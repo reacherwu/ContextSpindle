@@ -4,3 +4,20 @@ __pycache__/
 .mypy_cache/
 .DS_Store
 experiments/results/*/artifacts/
+
+# Rust build artifacts
+target/
+Cargo.lock
+
+# Continuum local runtime states
+.continuum/
+*.state
+
+# Shared libraries compiled
+*.dylib
+*.so
+*.dll
+
+# Archives (paper submission archives can be generated)
+*.tar.gz
+*.zip

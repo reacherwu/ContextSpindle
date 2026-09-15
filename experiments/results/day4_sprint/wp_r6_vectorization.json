@@ -1,0 +1,10 @@
+{
+  "n_candidates": 500,
+  "emb_dim": 32,
+  "max_numerical_difference": 2.9802322387695312e-08,
+  "numerical_parity_passed": true,
+  "loop_query_latency_us": 5965.776250232011,
+  "vectorized_query_latency_us": 18.478959100320935,
+  "speedup_factor": 322.84157445472135,
+  "sub_100us_target_met": true
+}

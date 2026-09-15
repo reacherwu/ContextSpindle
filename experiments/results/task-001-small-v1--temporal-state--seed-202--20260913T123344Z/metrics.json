@@ -1,0 +1,57 @@
+{
+  "benchmark_id": "task-001-small-v1",
+  "comparability": "direct",
+  "inference": {
+    "inference_peak_rss_bytes": 300040192,
+    "inference_wall_seconds": 0.02506187534891069,
+    "raw_timing_seconds": [
+      0.00313925021328032,
+      0.0031189590226858854,
+      0.003132499987259507,
+      0.003146582981571555,
+      0.0031750828493386507,
+      0.003118750173598528,
+      0.0031059589236974716,
+      0.003124791197478771
+    ],
+    "throughput_events_per_second": 1307483.9589537843,
+    "timed_sequences": 512,
+    "warmup_sequences": 64
+  },
+  "model": {
+    "recurrent_state_bytes": 64,
+    "recurrent_state_elements": 16,
+    "total_parameters": 593,
+    "trainable_parameters": 593
+  },
+  "quality": {
+    "accuracy": 1.0,
+    "balanced_accuracy": 1.0,
+    "binary_cross_entropy": 0.00045526004396378994,
+    "evaluated_tokens": 28672,
+    "probability_clipping": "[1e-7, 1-1e-7] after sigmoid"
+  },
+  "recorded_at": "2026-09-13T12:33:44Z",
+  "reference": {
+    "name": "last-event-reference-v1",
+    "quality": {
+      "accuracy": 0.5041155219078064,
+      "balanced_accuracy": 0.5041134142989123,
+      "binary_cross_entropy": 0.8091463446617126,
+      "evaluated_tokens": 28672,
+      "probability_clipping": "[1e-7, 1-1e-7] after sigmoid"
+    }
+  },
+  "seed": 202,
+  "status": "completed",
+  "training": {
+    "epochs_completed": 20,
+    "optimizer_steps": 640,
+    "training_peak_rss_bytes": 300040192,
+    "training_wall_seconds": 5.1682009170763195
+  },
+  "validation_selection": {
+    "selected_epoch": 20,
+    "selected_validation_binary_cross_entropy": 0.0004591762844938785
+  }
+}

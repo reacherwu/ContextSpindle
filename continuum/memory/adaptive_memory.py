@@ -138,6 +138,7 @@ class AdaptiveMemory(nn.Module):
         self._history_causal: list[float] = []
         self._history_retrieval: list[float] = []
         self._history_uncertainty: list[float] = []
+        self._record_states: dict[int, Tensor] = {}
 
     def observe(
         self,
@@ -146,6 +147,7 @@ class AdaptiveMemory(nn.Module):
         embedding: Tensor,
         temporal_state: Tensor | None = None,
         payload_ref: str | None = None,
+        cold_memory: 'ColdCandidateMemory | None' = None,
     ) -> EventRecord:
         """
         Processes an incoming streaming event at time t strictly conditioned on x_{<=t}.
@@ -262,7 +264,7 @@ class AdaptiveMemory(nn.Module):
                 decision = RetentionDecision.KEEP
             else:
                 # Capacity is reached, decide eviction based on policy
-                decision = self._evaluate_fixed_budget_retention(importance)
+                decision = self._evaluate_fixed_budget_retention(importance, cold_memory)
 
         # Formulate record
         record = EventRecord(
@@ -284,23 +286,25 @@ class AdaptiveMemory(nn.Module):
         )
 
         if decision == RetentionDecision.KEEP:
+            if temporal_state is not None:
+                self._record_states[record.event_id] = temporal_state.detach().float().clone()
             self._insert_record(record, x_norm, timestamp)
             self.total_retained += 1
 
         return record
 
-    def _evaluate_fixed_budget_retention(self, incoming_importance: float) -> RetentionDecision:
+    def _evaluate_fixed_budget_retention(self, incoming_importance: float, cold_memory: 'ColdCandidateMemory | None' = None) -> RetentionDecision:
         """Determines if an incoming event should evict an existing event."""
         if self.config.eviction_policy == "fifo":
-            self._evict_index(0)
+            self._evict_index(0, cold_memory)
             return RetentionDecision.KEEP
         elif self.config.eviction_policy == "random":
             evict_idx = self.rng.randrange(len(self.records))
-            self._evict_index(evict_idx)
+            self._evict_index(evict_idx, cold_memory)
             return RetentionDecision.KEEP
         elif self.config.eviction_policy == "lru":
             oldest_idx = int(torch.tensor(self.last_access_time).argmin().item())
-            self._evict_index(oldest_idx)
+            self._evict_index(oldest_idx, cold_memory)
             return RetentionDecision.KEEP
         elif self.config.eviction_policy == "min_importance":
             # Find record with minimal importance
@@ -312,15 +316,29 @@ class AdaptiveMemory(nn.Module):
                     min_idx = idx
 
             if incoming_importance > min_imp:
-                self._evict_index(min_idx)
+                self._evict_index(min_idx, cold_memory)
                 return RetentionDecision.KEEP
             else:
                 return RetentionDecision.DISCARD
         else:
             return RetentionDecision.DISCARD
 
-    def _evict_index(self, index: int) -> None:
+    def _evict_index(self, index: int, cold_memory: 'ColdCandidateMemory | None' = None) -> None:
         """Evicts a record at the specified index."""
+        if cold_memory is not None:
+            rec = self.records[index]
+            saved_state = self._record_states.pop(rec.event_id, self.last_state if self.last_state is not None else torch.zeros(self.config.state_dim))
+            cold_memory.archive(
+                event_id=rec.event_id,
+                timestamp=rec.timestamp,
+                embedding=rec.embedding,
+                temporal_state=saved_state,
+                importance=rec.importance,
+                provenance=f"evicted_at_step_{self.total_observed}",
+            )
+        else:
+            rec = self.records[index]
+            self._record_states.pop(rec.event_id, None)
         self.records.pop(index)
         self.last_access_time.pop(index)
         if self.embeddings_tensor is not None:
@@ -403,12 +421,74 @@ class AdaptiveMemory(nn.Module):
             "sample_size": float(n),
         }
 
+    def observe_with_revision(
+        self, event_id: int, timestamp: float, embedding: Tensor,
+        temporal_state: Tensor | None = None, payload_ref: str | None = None,
+        cold_memory: 'ColdCandidateMemory | None' = None,
+        revision_engine: 'RevisionEngine | None' = None,
+    ) -> tuple[EventRecord, list['RevisionResult']]:
+        record = self.observe(event_id, timestamp, embedding, temporal_state, payload_ref, cold_memory=cold_memory)
+        revisions = []
+        if revision_engine and cold_memory and temporal_state is not None:
+            if record.importance > revision_engine.config.theta_trigger:
+                revisions = revision_engine.try_revision(
+                    trigger_event_id=event_id,
+                    trigger_embedding=embedding,
+                    trigger_state=temporal_state,
+                    trigger_timestamp=timestamp,
+                    trigger_importance=record.importance,
+                    cold_memory=cold_memory,
+                )
+                # Perform restorations
+                for rev in revisions:
+                    if rev.decision == 'restore':
+                        self._restore_from_cold(rev.candidate, cold_memory, timestamp, rev.revision_score)
+        return record, revisions
+
+    def _restore_from_cold(
+        self,
+        candidate: 'ColdCandidateRecord',
+        cold_memory: 'ColdCandidateMemory',
+        current_timestamp: float,
+        revision_score: float = 0.90
+    ) -> None:
+        # Reweight importance to reflect retrospective causal validation
+        reweighted_importance = float(min(1.0, max(0.85, candidate.importance_at_eviction, revision_score)))
+        record = EventRecord(
+            event_id=candidate.event_id,
+            timestamp=candidate.timestamp,
+            embedding=candidate.compressed_embedding,
+            surprise=0.0,
+            novelty=0.0,
+            uncertainty=0.0,
+            importance=reweighted_importance,
+            decision=RetentionDecision.KEEP,
+            provenance={
+                "restored_at": current_timestamp,
+                "original_provenance": candidate.provenance_summary,
+                "reweighted_importance": reweighted_importance,
+                "revision_score": revision_score,
+            }
+        )
+
+        # If hot memory is at capacity, explicitly evict the minimal importance record to cold memory
+        if len(self.records) >= self.config.capacity:
+            min_idx = min(range(len(self.records)), key=lambda i: self.records[i].importance)
+            self._evict_index(min_idx, cold_memory)
+
+        # Insert the restored record into hot memory
+        self._insert_record(record, candidate.compressed_embedding, current_timestamp)
+
+        # Remove restored candidate from cold memory
+        cold_memory.remove(candidate.event_id)
+
     def clear(self) -> None:
         """Resets active memory bank to empty state."""
         self.records.clear()
         self.embeddings_tensor = None
         self.last_access_time.clear()
         self.last_state = None
+        self._record_states.clear()
 
     def get_stats(self) -> dict[str, Any]:
         """Returns runtime diagnostic metrics."""
@@ -425,3 +505,4 @@ class AdaptiveMemory(nn.Module):
             "policy_mode": self.config.policy_mode,
             "eviction_policy": self.config.eviction_policy,
         }
+

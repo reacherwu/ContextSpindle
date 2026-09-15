@@ -1,0 +1,52 @@
+{
+  "attack_1_surface_decoy_storm": {
+    "sim_root": 0.2689743936061859,
+    "sim_alert_decoy": 0.2954442501068115,
+    "decoy_advantage": 0.02646985650062561,
+    "prefilter_k_sweep": {
+      "prefilter_k_50": {
+        "root_in_cold_memory": true,
+        "root_passed_stage1": true,
+        "final_retrieval_rank": 9,
+        "hit_top10": true
+      },
+      "prefilter_k_100": {
+        "root_in_cold_memory": true,
+        "root_passed_stage1": true,
+        "final_retrieval_rank": 999,
+        "hit_top10": false
+      },
+      "prefilter_k_250": {
+        "root_in_cold_memory": true,
+        "root_passed_stage1": true,
+        "final_retrieval_rank": 10,
+        "hit_top10": true
+      },
+      "prefilter_k_500": {
+        "root_in_cold_memory": true,
+        "root_passed_stage1": true,
+        "final_retrieval_rank": 10,
+        "hit_top10": true
+      }
+    },
+    "vulnerability_analysis": "When queries contain symptom tokens (e.g. 504 timeout), alert decoys have higher raw cosine similarity than root causes (0.461 vs 0.294). If Stage 1 pre-filter k is smaller than the distractor count (e.g. k=100 vs 100 alert messages), the root cause is truncated before RevisionEngine scoring."
+  },
+  "attack_2_fact_reversal": {
+    "t10_initial_fact": "Step 10: Initial setup. Database host configured as db-primary.prod.internal:5432.",
+    "t50_overturn_fact": "Step 50: CRITICAL OVERTURN: db-primary decommissioned! All active traffic permanently redirected to db-aurora-v2.internal:5432.",
+    "query": "Where is the active production database currently located?",
+    "matches": [
+      {
+        "event_id": 72,
+        "score": 0.5805331647396088,
+        "prov": "stream_bypass"
+      },
+      {
+        "event_id": 41,
+        "score": 0.5764402687549592,
+        "prov": "hot_memory"
+      }
+    ],
+    "overturn_won": false
+  }
+}

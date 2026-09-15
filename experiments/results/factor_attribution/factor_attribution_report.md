@@ -10,17 +10,16 @@
 
 ### Q: Adaptive Memory 到底为什么有效？五个因素到底谁真正贡献了效果？
 
-1. **Surprise ($S$) 是核心基石动力：**
-   - 在单因素消融中，**$S$-only (Surprise-only)** 取得了最强且最鲁棒的留存表现，超越了 $N, C, R, U$ 各单因素。
-   - Surprise 直接反映了前向时序预测器与真实事件的动力学分歧，能够精准锚定打破常规的突变关键事件。
+1. **Surprise contributes complementary information, while the evaluated clean factor attribution was dominated by Novelty and Causal compatibility ($N > C \gg R > U > S$).** 在当前 clean-stream 评估分布下，单因素消融排序为 $N(100\%) > C(93.3\%) \gg R(40\%) > U(23.3\%) > S(16.7\%)$。
 
 2. **Novelty ($N$) 是双刃剑（增益与中毒并存）：**
    - 在干净的流中，$N$ 提供了极佳的空间覆盖扩展；
-   - 但在包含孤立噪点的流中，**$N$-only 表现出严重的病态中毒倾向**，疯狂囤积与任务无关的高新颖性离群陷阱（Outlier Traps），吞噬高达 49% 的容量，导致关键目标被彻底挤出！
+   - Observed under adversarial conditions: 在包含孤立噪点的流中，**$N$-only 表现出严重的病态中毒倾向**，疯狂囤积与任务无关的高新颖性离群陷阱（Outlier Traps），吞噬高达 49% 的容量，导致关键目标被彻底挤出！
 
-3. **复合模型（Primary Equal-Weight 0.2）的平衡作用与稀释代价：**
-   - 预注册的 0.2 等权主配置成功化解了纯新颖性模型的致命中毒，但等权重分配（尤其是 $R$ 与 $C$）对纯粹的强 $S$ 突变信号产生了轻微的稀释效应。
-   - **最优双因素组合为 $S + N$**，在捕捉突变与抑制重复之间形成了最强互补。
+3. **复合模型与对抗鲁棒性（正式否决 $S+N$ 替换主配置）：**
+   - 预注册的 0.2 等权主配置成功化解了纯新颖性模型的致命中毒。
+   - 对抗鲁棒性验证（Phase B）表明：虽然 $S+N$ 在干净流中达到 100%，但在对抗新颖性陷阱（Benchmark C）下**彻底崩溃至 0.0% 召回率，并产生 50.0% 的严重内存污染（囤积 100/100 个噪点陷阱）**。
+   - 相比之下，Primary 等权配置（0.2）保持 0.0% 污染。因此正式否决以 $S+N$ 取代主配置的路线，锁定五因素等权 baseline。
 
 ---
 
@@ -92,9 +91,10 @@ Contamination (%)
   100 ┤  Novelty-Only: ═════════════════════════════════ (Severe Poisoning: ~50-80%)
    80 ┤
    60 ┤
-   40 ┤  Continuum Primary: ──────────────────────────── (Controlled Resistance: ~20-40%)
+   40 ┤
    20 ┤
-    0 ┤  Surprise-Only: ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄ (Immune to Outlier Traps: < 2%)
+    0 ┤  Continuum Primary: ──────────────────────────── (Immune to Outlier Traps: 0.0%)
+      │  Surprise-Only: ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄ (Immune to Outlier Traps: < 2%)
       └───────┬────────┬────────┬────────┬────────┬────────
              25       50       100      200      500     1000   Capacity K
 ```
@@ -104,10 +104,8 @@ Contamination (%)
 在 **最大化关键召回率（Max Recall）** 与 **最小化恶意陷阱污染率（Min Contamination）** 的权衡中：
 
 1. **Novelty-Only 是绝对被支配的劣解（Strictly Sub-Optimal）：**
-   - 在高污染流中，纯新颖性策略几乎将一半容量拱手让给无用噪点，召回率归零，位于 Pareto 下劣边界。
+   - Observed under the evaluated benchmark distribution: 在高污染流中，纯新颖性策略几乎将一半容量拱手让给无用噪点，召回率归零，位于 Pareto 下劣边界。
 2. **Surprise-Only 占据了极低污染端的 Pareto 最优顶点：**
-   - 污染率极低（$< 2\%$），几乎对孤立离群噪点免疫，且在小容量下依然能保住时序突变针尖。
-3. **Continuum Primary (0.2 等权复合) 占据了综合鲁棒端的 Pareto 边界：**
-   - 当 $K \ge 200$ 时，兼顾了时序连续性与空间正交性，在多类复杂流下表现最稳定。
-4. **推荐优化路线（进入 Memory Revision 之前的指导）：**
-   - 考虑在后续 RFC 中将基准权重调整为以 $S$ 和 $N$ 为主导（例如 $S: 0.4, N: 0.3, C: 0.1, R: 0.1, U: 0.1$ 或纯 $S+N$ 混合），彻底剔除低价值冗余开销。
+   - Observed under the evaluated benchmark distribution: 污染率极低（$< 2\\%$），几乎对孤立离群噪点免疫，且在小容量下依然能保住时序突变针尖。
+3. **Continuum Primary (0.2 等权复合)：**
+   - 在当前测试配置下，Continuum Primary 在所有 K 点上同时达到了最高 Recall 和最低 Contamination (0.0%)。形式化 Pareto dominance 分析需要更多模型 × K 组合的数据支持。

@@ -1,0 +1,14 @@
+# Cursor Rules for Continuum Memory Integration
+
+You are an AI assistant operating with Continuum's continuous temporal intelligence memory engine.
+
+## Memory Directives
+1. **Always Check Past Constraints**: Before suggesting major refactors or modifying configurations, run `continuum-cli recall "<topic>"` to retrieve pre-existing architectural rules.
+2. **Commit Architecture Decisions**: When you establish a new design pattern, environment requirement, or database rule, record it via `continuum-cli remember "<rule>"`.
+3. **Record Bug Fixes**: When resolving non-trivial errors, preserve the diagnostic resolution: `continuum-cli remember "FIX: <symptom> -> <solution>"`.
+4. **Token Efficiency**: Rely on Continuum's 750-slot bounded manifold to maintain context across long-running coding sessions without bloating the conversation context window.
+
+## Native CLI Quick Reference
+- Ingest constraint: `continuum-cli remember "<text>"`
+- Recall causal memory: `continuum-cli recall "<query>" [top_k]`
+- Memory telemetry: `continuum-cli stats`

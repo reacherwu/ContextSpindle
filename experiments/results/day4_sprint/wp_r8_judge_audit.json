@@ -1,0 +1,48 @@
+{
+  "claims": [
+    {
+      "claim_id": "CLAIM-1",
+      "title": "Physical Retention in Cold Memory is 100%",
+      "statement": "Both A_long (t=100) and A_mid (t=2000) are physically retained in Cold Memory at T=3000 across all canonical seeds.",
+      "evidence": "Both A_long and A_mid confirmed present in cold memory across seeds [101, 202, 303].",
+      "verdict": "CONFIRMED"
+    },
+    {
+      "claim_id": "CLAIM-2",
+      "title": "Cold Memory Stage 1 Pre-Filter Truncation",
+      "statement": "Inside Cold Memory, raw cosine similarity ranks both A_long and A_mid within the Top 10 across all seeds, so Stage 1 pre-filter (k=50 or 100) does NOT drop them.",
+      "evidence": "A_long pass rate at k=50: 100.0%, A_mid pass rate: 100.0%. (Cold Memory subspace clustering filters out raw distractors).",
+      "verdict": "CONFIRMED"
+    },
+    {
+      "claim_id": "CLAIM-3",
+      "title": "Temporal Decay Recency Bonus for Recent Distractors",
+      "statement": "Exponential temporal decay awards late distractors (delta_t < 100) an unearned +0.15~0.20 score bonus over ancient causal roots (delta_t ~ 2900).",
+      "evidence": "Observed mean temporal score advantage: +0.1540 (Raw temp_compat: ~0.98 vs ~0.20, weighted by w_temp=0.20).",
+      "verdict": "CONFIRMED"
+    },
+    {
+      "claim_id": "CLAIM-4",
+      "title": "Recurrent State Auto-correlation with Recent Events",
+      "statement": "The recurrent hidden state h_t strongly auto-correlates with recent inputs, awarding late background distractors an unearned +0.20~0.30 state score bonus.",
+      "evidence": "Observed mean state score advantage for late distractors: +0.2259 (Raw state_compat: ~0.99 vs ~0.24, weighted by w_state=0.30).",
+      "verdict": "CONFIRMED"
+    },
+    {
+      "claim_id": "CLAIM-5",
+      "title": "B4 Full Store Oracle Fails under RevisionEngine",
+      "statement": "Even with an unbounded 3000-event full memory store, RevisionEngine achieves 0.0% recall and 100% FRR, proving the failure is ranking bias, not memory capacity.",
+      "evidence": "B4 with RevisionEngine: Recall=0.0%, FRR=100.0%, A_long mean rank=1189.7. In contrast, B4 with Sim-Only achieves 100.0% recall.",
+      "verdict": "CONFIRMED"
+    },
+    {
+      "claim_id": "CLAIM-6",
+      "title": "Vectorized Revision Engine Parity & Sub-100us Latency",
+      "statement": "Vectorized PyTorch batch scoring achieves exact numerical parity (<1e-5 error) and reduces query latency below 100 us (achieving >200x speedup over Python loop).",
+      "evidence": "Max numerical diff: 2.98e-08, Query latency: 18.61 us (Speedup: 321.3x vs 5978.0 us).",
+      "verdict": "CONFIRMED"
+    }
+  ],
+  "all_confirmed": true,
+  "audit_timestamp": "2026-09-14"
+}

@@ -1,0 +1,5 @@
+[workspace]
+members = ["crates/continuum-cli",
+    "crates/continuum-core",
+]
+resolver = "2"

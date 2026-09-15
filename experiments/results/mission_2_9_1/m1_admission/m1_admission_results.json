@@ -1,0 +1,346 @@
+{
+  "M1-A_current": [
+    {
+      "variant": "M1-A_current",
+      "seed": 101,
+      "root_restored": false,
+      "intermediate_restored": false,
+      "chain_restored": false,
+      "root_recall": 0.0,
+      "intermediate_recall": 0.0,
+      "chain_recall": 0.0,
+      "root_in_hot": false,
+      "intermediate_in_hot": false,
+      "revision_precision": 0.0,
+      "false_revision_rate": 1.0,
+      "restored_ids": [
+        750
+      ],
+      "event_tracker": {
+        "100": {
+          "event_id": 100,
+          "role": "Root (A)",
+          "timestamp": 100.0,
+          "admission_score": 0.4308572668769775,
+          "admission_decision": "keep",
+          "hot_presence": false,
+          "cold_presence": true,
+          "cold_eviction_time": null,
+          "candidate_rank": 61,
+          "candidate_score": 0.254042636727117,
+          "restored": false
+        },
+        "1550": {
+          "event_id": 1550,
+          "role": "Intermediate (B)",
+          "timestamp": 1550.0,
+          "admission_score": 0.4275599583474726,
+          "admission_decision": "discard",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": null,
+          "candidate_rank": null,
+          "candidate_score": null,
+          "restored": false
+        },
+        "3000": {
+          "event_id": 3000,
+          "role": "Terminal (D)",
+          "timestamp": 3000.0,
+          "admission_score": 0.47984491892495806,
+          "admission_decision": "discard",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": null
+        }
+      },
+      "cold_slots_used": 451,
+      "latency_ms": 309.8955829627812
+    },
+    {
+      "variant": "M1-A_current",
+      "seed": 202,
+      "root_restored": false,
+      "intermediate_restored": false,
+      "chain_restored": false,
+      "root_recall": 0.0,
+      "intermediate_recall": 0.0,
+      "chain_recall": 0.0,
+      "root_in_hot": false,
+      "intermediate_in_hot": false,
+      "revision_precision": 0.0,
+      "false_revision_rate": 1.0,
+      "restored_ids": [
+        2295
+      ],
+      "event_tracker": {
+        "100": {
+          "event_id": 100,
+          "role": "Root (A)",
+          "timestamp": 100.0,
+          "admission_score": 0.4585054028217025,
+          "admission_decision": "keep",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": 2757,
+          "candidate_rank": null,
+          "candidate_score": null,
+          "restored": false
+        },
+        "1550": {
+          "event_id": 1550,
+          "role": "Intermediate (B)",
+          "timestamp": 1550.0,
+          "admission_score": 0.4744553840379531,
+          "admission_decision": "discard",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": null,
+          "candidate_rank": null,
+          "candidate_score": null,
+          "restored": false
+        },
+        "3000": {
+          "event_id": 3000,
+          "role": "Terminal (D)",
+          "timestamp": 3000.0,
+          "admission_score": 0.4785747036614692,
+          "admission_decision": "discard",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": null
+        }
+      },
+      "cold_slots_used": 499,
+      "latency_ms": 289.6178341470659
+    },
+    {
+      "variant": "M1-A_current",
+      "seed": 303,
+      "root_restored": false,
+      "intermediate_restored": false,
+      "chain_restored": false,
+      "root_recall": 0.0,
+      "intermediate_recall": 0.0,
+      "chain_recall": 0.0,
+      "root_in_hot": false,
+      "intermediate_in_hot": false,
+      "revision_precision": 0.0,
+      "false_revision_rate": 0.0,
+      "restored_ids": [],
+      "event_tracker": {
+        "100": {
+          "event_id": 100,
+          "role": "Root (A)",
+          "timestamp": 100.0,
+          "admission_score": 0.4943001707053638,
+          "admission_decision": "keep",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": 1976,
+          "candidate_rank": null,
+          "candidate_score": null,
+          "restored": false
+        },
+        "1550": {
+          "event_id": 1550,
+          "role": "Intermediate (B)",
+          "timestamp": 1550.0,
+          "admission_score": 0.5000424799948346,
+          "admission_decision": "discard",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": null,
+          "candidate_rank": null,
+          "candidate_score": null,
+          "restored": false
+        },
+        "3000": {
+          "event_id": 3000,
+          "role": "Terminal (D)",
+          "timestamp": 3000.0,
+          "admission_score": 0.5417222342124255,
+          "admission_decision": "discard",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": null
+        }
+      },
+      "cold_slots_used": 500,
+      "latency_ms": 289.0503751114011
+    }
+  ],
+  "M1-B_discard_to_cold": [
+    {
+      "variant": "M1-B_discard_to_cold",
+      "seed": 101,
+      "root_restored": false,
+      "intermediate_restored": false,
+      "chain_restored": false,
+      "root_recall": 0.0,
+      "intermediate_recall": 0.0,
+      "chain_recall": 0.0,
+      "root_in_hot": false,
+      "intermediate_in_hot": false,
+      "revision_precision": 0.0,
+      "false_revision_rate": 1.0,
+      "restored_ids": [
+        2925
+      ],
+      "event_tracker": {
+        "100": {
+          "event_id": 100,
+          "role": "Root (A)",
+          "timestamp": 100.0,
+          "admission_score": 0.4308572668769775,
+          "admission_decision": "keep",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": 767,
+          "candidate_rank": null,
+          "candidate_score": null,
+          "restored": false
+        },
+        "1550": {
+          "event_id": 1550,
+          "role": "Intermediate (B)",
+          "timestamp": 1550.0,
+          "admission_score": 0.4275599583474726,
+          "admission_decision": "discard",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": 2050,
+          "candidate_rank": null,
+          "candidate_score": null,
+          "restored": false
+        },
+        "3000": {
+          "event_id": 3000,
+          "role": "Terminal (D)",
+          "timestamp": 3000.0,
+          "admission_score": 0.47984491892495806,
+          "admission_decision": "discard",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": null
+        }
+      },
+      "cold_slots_used": 499,
+      "latency_ms": 308.3728749770671
+    },
+    {
+      "variant": "M1-B_discard_to_cold",
+      "seed": 202,
+      "root_restored": false,
+      "intermediate_restored": false,
+      "chain_restored": false,
+      "root_recall": 0.0,
+      "intermediate_recall": 0.0,
+      "chain_recall": 0.0,
+      "root_in_hot": false,
+      "intermediate_in_hot": false,
+      "revision_precision": 0.0,
+      "false_revision_rate": 1.0,
+      "restored_ids": [
+        2967
+      ],
+      "event_tracker": {
+        "100": {
+          "event_id": 100,
+          "role": "Root (A)",
+          "timestamp": 100.0,
+          "admission_score": 0.4585054028217025,
+          "admission_decision": "keep",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": 780,
+          "candidate_rank": null,
+          "candidate_score": null,
+          "restored": false
+        },
+        "1550": {
+          "event_id": 1550,
+          "role": "Intermediate (B)",
+          "timestamp": 1550.0,
+          "admission_score": 0.4744553840379531,
+          "admission_decision": "discard",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": 2050,
+          "candidate_rank": null,
+          "candidate_score": null,
+          "restored": false
+        },
+        "3000": {
+          "event_id": 3000,
+          "role": "Terminal (D)",
+          "timestamp": 3000.0,
+          "admission_score": 0.4785747036614692,
+          "admission_decision": "discard",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": null
+        }
+      },
+      "cold_slots_used": 499,
+      "latency_ms": 309.5150829758495
+    },
+    {
+      "variant": "M1-B_discard_to_cold",
+      "seed": 303,
+      "root_restored": false,
+      "intermediate_restored": false,
+      "chain_restored": false,
+      "root_recall": 0.0,
+      "intermediate_recall": 0.0,
+      "chain_recall": 0.0,
+      "root_in_hot": false,
+      "intermediate_in_hot": false,
+      "revision_precision": 0.0,
+      "false_revision_rate": 1.0,
+      "restored_ids": [
+        2961
+      ],
+      "event_tracker": {
+        "100": {
+          "event_id": 100,
+          "role": "Root (A)",
+          "timestamp": 100.0,
+          "admission_score": 0.4943001707053638,
+          "admission_decision": "keep",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": 761,
+          "candidate_rank": null,
+          "candidate_score": null,
+          "restored": false
+        },
+        "1550": {
+          "event_id": 1550,
+          "role": "Intermediate (B)",
+          "timestamp": 1550.0,
+          "admission_score": 0.5000424799948346,
+          "admission_decision": "discard",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": 2050,
+          "candidate_rank": null,
+          "candidate_score": null,
+          "restored": false
+        },
+        "3000": {
+          "event_id": 3000,
+          "role": "Terminal (D)",
+          "timestamp": 3000.0,
+          "admission_score": 0.5417222342124255,
+          "admission_decision": "discard",
+          "hot_presence": false,
+          "cold_presence": false,
+          "cold_eviction_time": null
+        }
+      },
+      "cold_slots_used": 499,
+      "latency_ms": 309.67970890924335
+    }
+  ]
+}

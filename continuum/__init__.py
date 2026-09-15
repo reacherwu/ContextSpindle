@@ -1,5 +1,17 @@
-"""Continuum's public Python package."""
+"""Continuum: Continuous Temporal Intelligence Engine."""
 
-from .state import TemporalState, TemporalStateConfig, TemporalStateStep
+from continuum.api import CausalMatch, ContinuumConfig, ContinuumEngine, StreamStepResult
+from continuum.state import TemporalState, TemporalStateConfig, TemporalStateStep
 
-__all__ = ("TemporalState", "TemporalStateConfig", "TemporalStateStep")
+__version__ = "0.1.0-alpha"
+
+__all__ = (
+    "ContinuumEngine",
+    "ContinuumConfig",
+    "StreamStepResult",
+    "CausalMatch",
+    "TemporalState",
+    "TemporalStateConfig",
+    "TemporalStateStep",
+    "__version__",
+)

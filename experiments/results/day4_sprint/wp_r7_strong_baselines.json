@@ -1,0 +1,90 @@
+{
+  "B1_Recurrent_Only": {
+    "memory_slots": 0,
+    "memory_bounded": true,
+    "mean_step_time_us": 36.11006944750746,
+    "mean_query_time_us": 1.055654138326645,
+    "top5_any_recall": 0.0,
+    "top5_both_recall": 0.0,
+    "mean_frr": 1.0,
+    "a_long_mean_rank": 999.0,
+    "a_mid_mean_rank": 999.0
+  },
+  "B2_Fixed_LRU_750": {
+    "memory_slots": 750,
+    "memory_bounded": true,
+    "mean_step_time_us": 41.553620326643184,
+    "mean_query_time_us": 45.09735542039076,
+    "top5_any_recall": 0.0,
+    "top5_both_recall": 0.0,
+    "mean_frr": 1.0,
+    "a_long_mean_rank": 999.0,
+    "a_mid_mean_rank": 999.0
+  },
+  "B3_Sliding_FIFO_750": {
+    "memory_slots": 750,
+    "memory_bounded": true,
+    "mean_step_time_us": 6.768087985821895,
+    "mean_query_time_us": 19.833600769440334,
+    "top5_any_recall": 0.0,
+    "top5_both_recall": 0.0,
+    "mean_frr": 1.0,
+    "a_long_mean_rank": 999.0,
+    "a_mid_mean_rank": 999.0
+  },
+  "DeltaNet_Linear_Attn": {
+    "memory_slots": 0,
+    "memory_bounded": true,
+    "mean_step_time_us": 19.764787207047146,
+    "mean_query_time_us": 0.7222406566143036,
+    "top5_any_recall": 0.0,
+    "top5_both_recall": 0.0,
+    "mean_frr": 1.0,
+    "a_long_mean_rank": 999.0,
+    "a_mid_mean_rank": 999.0
+  },
+  "Gated_SSM_Mamba": {
+    "memory_slots": 0,
+    "memory_bounded": true,
+    "mean_step_time_us": 14.177370350807905,
+    "mean_query_time_us": 0.36135315895080566,
+    "top5_any_recall": 0.0,
+    "top5_both_recall": 0.0,
+    "mean_frr": 1.0,
+    "a_long_mean_rank": 999.0,
+    "a_mid_mean_rank": 999.0
+  },
+  "ACM_Current_Revision": {
+    "memory_slots": 750,
+    "memory_bounded": true,
+    "mean_step_time_us": 198.69157387357617,
+    "mean_query_time_us": 1357.6110359281301,
+    "top5_any_recall": 0.0,
+    "top5_both_recall": 0.0,
+    "mean_frr": 1.0,
+    "a_long_mean_rank": 999.0,
+    "a_mid_mean_rank": 999.0
+  },
+  "ACM_Sim_Only_Retrieval": {
+    "memory_slots": 750,
+    "memory_bounded": true,
+    "mean_step_time_us": 198.69157387357617,
+    "mean_query_time_us": 516.5279532472292,
+    "top5_any_recall": 1.0,
+    "top5_both_recall": 0.6666666666666666,
+    "mean_frr": 0.6666666666666666,
+    "a_long_mean_rank": 2.6666666666666665,
+    "a_mid_mean_rank": 5.666666666666666
+  },
+  "B4_Full_Store_Oracle": {
+    "memory_slots": 3000,
+    "memory_bounded": false,
+    "mean_step_time_us": 15.288439786268604,
+    "mean_query_time_us": 24.013609314958252,
+    "top5_any_recall": 1.0,
+    "top5_both_recall": 0.6666666666666666,
+    "mean_frr": 0.6666666666666666,
+    "a_long_mean_rank": 999.0,
+    "a_mid_mean_rank": 999.0
+  }
+}

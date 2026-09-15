@@ -1,0 +1,212 @@
+{
+  "AIOps_Log_Incident": {
+    "Continuum_Engine": {
+      "slots": 750,
+      "bounded": true,
+      "ingest_us": 306.1318333105495,
+      "query_us": 10507.208993658423,
+      "root_rank": 10,
+      "recall_at_1": false,
+      "recall_at_5": false,
+      "recall_at_10": true,
+      "top5_retrieved": [
+        2995,
+        2965,
+        2997,
+        2998,
+        2999
+      ]
+    },
+    "Vector_RAG_FullStore": {
+      "slots": 3000,
+      "bounded": false,
+      "ingest_us": 15.0,
+      "query_us": 348.49997609853745,
+      "root_rank": 999,
+      "recall_at_1": false,
+      "recall_at_5": false,
+      "recall_at_10": false,
+      "top5_retrieved": [
+        2908,
+        2946,
+        2995,
+        2949,
+        2990
+      ]
+    },
+    "Sliding_FIFO": {
+      "slots": 750,
+      "bounded": true,
+      "ingest_us": 12.0,
+      "query_us": 56.08284845948219,
+      "root_rank": 999,
+      "recall_at_1": false,
+      "recall_at_5": false,
+      "recall_at_10": false,
+      "top5_retrieved": [
+        2908,
+        2946,
+        2995,
+        2949,
+        2990
+      ]
+    },
+    "Fixed_LRU": {
+      "slots": 750,
+      "bounded": true,
+      "ingest_us": 18.0,
+      "query_us": 61.542028561234474,
+      "root_rank": 999,
+      "recall_at_1": false,
+      "recall_at_5": false,
+      "recall_at_10": false,
+      "top5_retrieved": [
+        2908,
+        2946,
+        2995,
+        2949,
+        2990
+      ]
+    }
+  },
+  "GitHub_Agent_Trajectory": {
+    "Continuum_Engine": {
+      "slots": 49,
+      "bounded": true,
+      "ingest_us": 216.81457990780473,
+      "query_us": 706.5420504659414,
+      "root_rank": 999,
+      "recall_at_1": false,
+      "recall_at_5": false,
+      "recall_at_10": false,
+      "top5_retrieved": [
+        98,
+        99,
+        76,
+        65,
+        87
+      ]
+    },
+    "Vector_RAG_FullStore": {
+      "slots": 100,
+      "bounded": false,
+      "ingest_us": 15.0,
+      "query_us": 19.249971956014633,
+      "root_rank": 999,
+      "recall_at_1": false,
+      "recall_at_5": false,
+      "recall_at_10": false,
+      "top5_retrieved": [
+        88,
+        94,
+        89,
+        90,
+        93
+      ]
+    },
+    "Sliding_FIFO": {
+      "slots": 50,
+      "bounded": true,
+      "ingest_us": 12.0,
+      "query_us": 8.5409265011549,
+      "root_rank": 999,
+      "recall_at_1": false,
+      "recall_at_5": false,
+      "recall_at_10": false,
+      "top5_retrieved": [
+        88,
+        94,
+        89,
+        90,
+        93
+      ]
+    },
+    "Fixed_LRU": {
+      "slots": 50,
+      "bounded": true,
+      "ingest_us": 18.0,
+      "query_us": 6.166053935885429,
+      "root_rank": 999,
+      "recall_at_1": false,
+      "recall_at_5": false,
+      "recall_at_10": false,
+      "top5_retrieved": [
+        88,
+        94,
+        89,
+        90,
+        93
+      ]
+    }
+  },
+  "Persona_Lifelong_Dialogue": {
+    "Continuum_Engine": {
+      "slots": 499,
+      "bounded": true,
+      "ingest_us": 272.3971250234172,
+      "query_us": 6737.207993865013,
+      "root_rank": 1,
+      "recall_at_1": true,
+      "recall_at_5": true,
+      "recall_at_10": true,
+      "top5_retrieved": [
+        20,
+        1997,
+        1983,
+        1999,
+        1974
+      ]
+    },
+    "Vector_RAG_FullStore": {
+      "slots": 2000,
+      "bounded": false,
+      "ingest_us": 15.0,
+      "query_us": 205.08398301899433,
+      "root_rank": 1,
+      "recall_at_1": true,
+      "recall_at_5": true,
+      "recall_at_10": true,
+      "top5_retrieved": [
+        20,
+        884,
+        1307,
+        1790,
+        214
+      ]
+    },
+    "Sliding_FIFO": {
+      "slots": 500,
+      "bounded": true,
+      "ingest_us": 12.0,
+      "query_us": 42.83292219042778,
+      "root_rank": 999,
+      "recall_at_1": false,
+      "recall_at_5": false,
+      "recall_at_10": false,
+      "top5_retrieved": [
+        1790,
+        1869,
+        1520,
+        1916,
+        1545
+      ]
+    },
+    "Fixed_LRU": {
+      "slots": 500,
+      "bounded": true,
+      "ingest_us": 18.0,
+      "query_us": 46.50000482797623,
+      "root_rank": 999,
+      "recall_at_1": false,
+      "recall_at_5": false,
+      "recall_at_10": false,
+      "top5_retrieved": [
+        1790,
+        1869,
+        1520,
+        1916,
+        1545
+      ]
+    }
+  }
+}

@@ -1,0 +1,410 @@
+{
+  "1_Sim_only": {
+    "top5_any_recall": 1.0,
+    "top5_both_recall": 0.6666666666666666,
+    "mean_frr": 0.6666666666666666,
+    "a_long_mean_rank": 2.6666666666666665,
+    "a_mid_mean_rank": 5.333333333333333,
+    "seeds": {
+      "101": {
+        "rank_a_long": 1,
+        "rank_a_mid": 10,
+        "top5_ids": [
+          100,
+          2929,
+          1895,
+          2435,
+          2885
+        ],
+        "any_hit": true,
+        "both_hit": false,
+        "frr": 0.8
+      },
+      "202": {
+        "rank_a_long": 4,
+        "rank_a_mid": 2,
+        "top5_ids": [
+          2929,
+          2000,
+          1940,
+          100,
+          50
+        ],
+        "any_hit": true,
+        "both_hit": true,
+        "frr": 0.6
+      },
+      "303": {
+        "rank_a_long": 3,
+        "rank_a_mid": 4,
+        "top5_ids": [
+          2929,
+          2705,
+          100,
+          2000,
+          2773
+        ],
+        "any_hit": true,
+        "both_hit": true,
+        "frr": 0.6
+      }
+    }
+  },
+  "2_Temporal_only": {
+    "top5_any_recall": 0.0,
+    "top5_both_recall": 0.0,
+    "mean_frr": 1.0,
+    "a_long_mean_rank": 462.0,
+    "a_mid_mean_rank": 385.0,
+    "seeds": {
+      "101": {
+        "rank_a_long": 464,
+        "rank_a_mid": 398,
+        "top5_ids": [
+          2999,
+          2998,
+          2997,
+          2996,
+          2995
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "202": {
+        "rank_a_long": 477,
+        "rank_a_mid": 370,
+        "top5_ids": [
+          2999,
+          2998,
+          2997,
+          2996,
+          2995
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "303": {
+        "rank_a_long": 445,
+        "rank_a_mid": 387,
+        "top5_ids": [
+          2999,
+          2998,
+          2997,
+          2996,
+          2995
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      }
+    }
+  },
+  "3_State_only": {
+    "top5_any_recall": 0.0,
+    "top5_both_recall": 0.0,
+    "mean_frr": 1.0,
+    "a_long_mean_rank": 294.0,
+    "a_mid_mean_rank": 371.6666666666667,
+    "seeds": {
+      "101": {
+        "rank_a_long": 349,
+        "rank_a_mid": 385,
+        "top5_ids": [
+          2999,
+          2771,
+          2992,
+          2772,
+          2998
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "202": {
+        "rank_a_long": 372,
+        "rank_a_mid": 349,
+        "top5_ids": [
+          2999,
+          2614,
+          2768,
+          2994,
+          2993
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "303": {
+        "rank_a_long": 161,
+        "rank_a_mid": 381,
+        "top5_ids": [
+          2999,
+          2996,
+          2998,
+          2997,
+          2697
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      }
+    }
+  },
+  "4_Sim_plus_Temporal": {
+    "top5_any_recall": 0.0,
+    "top5_both_recall": 0.0,
+    "mean_frr": 1.0,
+    "a_long_mean_rank": 300.66666666666663,
+    "a_mid_mean_rank": 175.0,
+    "seeds": {
+      "101": {
+        "rank_a_long": 322,
+        "rank_a_mid": 313,
+        "top5_ids": [
+          2929,
+          2885,
+          2915,
+          2997,
+          2996
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "202": {
+        "rank_a_long": 310,
+        "rank_a_mid": 11,
+        "top5_ids": [
+          2929,
+          2998,
+          2922,
+          2992,
+          2993
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "303": {
+        "rank_a_long": 270,
+        "rank_a_mid": 201,
+        "top5_ids": [
+          2929,
+          2705,
+          2994,
+          2992,
+          2993
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      }
+    }
+  },
+  "5_Sim_plus_State": {
+    "top5_any_recall": 0.0,
+    "top5_both_recall": 0.0,
+    "mean_frr": 1.0,
+    "a_long_mean_rank": 150.0,
+    "a_mid_mean_rank": 215.33333333333331,
+    "seeds": {
+      "101": {
+        "rank_a_long": 176,
+        "rank_a_mid": 208,
+        "top5_ids": [
+          2915,
+          2684,
+          2847,
+          2619,
+          2997
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "202": {
+        "rank_a_long": 167,
+        "rank_a_mid": 154,
+        "top5_ids": [
+          1940,
+          2922,
+          2685,
+          2611,
+          2998
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "303": {
+        "rank_a_long": 107,
+        "rank_a_mid": 284,
+        "top5_ids": [
+          2773,
+          2847,
+          2994,
+          2624,
+          2919
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      }
+    }
+  },
+  "6_Temporal_plus_State": {
+    "top5_any_recall": 0.0,
+    "top5_both_recall": 0.0,
+    "mean_frr": 1.0,
+    "a_long_mean_rank": 444.66666666666674,
+    "a_mid_mean_rank": 430.66666666666663,
+    "seeds": {
+      "101": {
+        "rank_a_long": 472,
+        "rank_a_mid": 436,
+        "top5_ids": [
+          2999,
+          2998,
+          2997,
+          2996,
+          2992
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "202": {
+        "rank_a_long": 477,
+        "rank_a_mid": 410,
+        "top5_ids": [
+          2999,
+          2998,
+          2994,
+          2993,
+          2997
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "303": {
+        "rank_a_long": 385,
+        "rank_a_mid": 446,
+        "top5_ids": [
+          2999,
+          2998,
+          2997,
+          2996,
+          2995
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      }
+    }
+  },
+  "7_Sim_plus_Temporal_plus_State": {
+    "top5_any_recall": 0.0,
+    "top5_both_recall": 0.0,
+    "mean_frr": 1.0,
+    "a_long_mean_rank": 269.0,
+    "a_mid_mean_rank": 254.0,
+    "seeds": {
+      "101": {
+        "rank_a_long": 304,
+        "rank_a_mid": 323,
+        "top5_ids": [
+          2915,
+          2997,
+          2996,
+          2991,
+          2990
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "202": {
+        "rank_a_long": 323,
+        "rank_a_mid": 154,
+        "top5_ids": [
+          2998,
+          2922,
+          2992,
+          2993,
+          2986
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "303": {
+        "rank_a_long": 180,
+        "rank_a_mid": 285,
+        "top5_ids": [
+          2994,
+          2992,
+          2993,
+          2998,
+          2847
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      }
+    }
+  },
+  "8_Full_Standard": {
+    "top5_any_recall": 0.0,
+    "top5_both_recall": 0.0,
+    "mean_frr": 1.0,
+    "a_long_mean_rank": 243.33333333333334,
+    "a_mid_mean_rank": 253.0,
+    "seeds": {
+      "101": {
+        "rank_a_long": 293,
+        "rank_a_mid": 312,
+        "top5_ids": [
+          2915,
+          2997,
+          2996,
+          2991,
+          2847
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "202": {
+        "rank_a_long": 297,
+        "rank_a_mid": 158,
+        "top5_ids": [
+          2998,
+          2922,
+          2992,
+          2993,
+          2999
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      },
+      "303": {
+        "rank_a_long": 140,
+        "rank_a_mid": 289,
+        "top5_ids": [
+          2994,
+          2992,
+          2993,
+          2847,
+          2998
+        ],
+        "any_hit": false,
+        "both_hit": false,
+        "frr": 1.0
+      }
+    }
+  }
+}

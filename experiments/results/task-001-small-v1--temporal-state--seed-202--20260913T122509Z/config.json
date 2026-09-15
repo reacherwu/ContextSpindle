@@ -1,0 +1,74 @@
+{
+  "benchmark_id": "task-001-small-v1",
+  "code_revision": "7103f46baa9000ff26d88acada9f0149f22e2e08",
+  "config_sha256": "b785a53f692e6cbc0701ee55f5fdbe56c8e8df1ef8768cc01141556f688c5c02",
+  "created_at": "2026-09-13T12:25:09Z",
+  "generator_revision": "task-001-delayed-symbol-v1",
+  "protocol": {
+    "benchmark_id": "task-001-small-v1",
+    "execution": {
+      "batch_size": 64,
+      "deterministic_mode": true,
+      "device_requested": "cpu",
+      "precision": "float32",
+      "warmup_sequences": 64
+    },
+    "generator": {
+      "delay": 8,
+      "input_size": 1,
+      "sequence_length": 64,
+      "symbols": [
+        -1.0,
+        1.0
+      ],
+      "version": "task-001-delayed-symbol-v1"
+    },
+    "model": {
+      "classifier": "linear",
+      "gate_bias_init": 0.0,
+      "hidden_size": 16
+    },
+    "seeds": {
+      "canonical": [
+        101,
+        202,
+        303
+      ],
+      "derivation": "sha256('{root_seed}:{stream}')[:8] interpreted as an unsigned big-endian integer",
+      "streams": [
+        "model_init",
+        "train_data",
+        "validation_data",
+        "test_data",
+        "dataloader"
+      ]
+    },
+    "splits": {
+      "test_sequences": 512,
+      "train_sequences": 2048,
+      "validation_sequences": 512
+    },
+    "training": {
+      "epochs_max": 20,
+      "learning_rate": 0.01,
+      "optimizer": "adam",
+      "selection_metric": "validation_binary_cross_entropy"
+    },
+    "version": 1
+  },
+  "seed": 202,
+  "split_sha256": {
+    "test": "c80e77aa1431f6302f4ac34bd9d7b5dd6e786a9bba7690f499b75b6cdaf3fedc",
+    "train": "912bb81a6ec7d77257b0d6f33b04705fcbdcc0b1a2d8d014e8050724d993e97d",
+    "validation": "6a145457c3d5f9f642cad6d08f5fae5b91d67954941104a544ff0c89a47f22fc"
+  },
+  "streams": {
+    "dataloader": 11989195710268432749,
+    "model_init": 4974734226792759892,
+    "test_data": 13630628628841475023,
+    "train_data": 10427244454090643047,
+    "validation_data": 7235947737938800474
+  },
+  "system_id": "mymacdeMac-mini.local",
+  "version": 1
+}

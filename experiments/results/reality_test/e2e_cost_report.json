@@ -1,0 +1,44 @@
+{
+  "scale_results": {
+    "T_1000": {
+      "stream_length": 1000,
+      "slots_used": 750,
+      "rss_mb": 224.36,
+      "step_latency_us": 277.22,
+      "query_latency_us": 5397.71,
+      "memory_bounded": true
+    },
+    "T_5000": {
+      "stream_length": 5000,
+      "slots_used": 750,
+      "rss_mb": 308.59,
+      "step_latency_us": 773.39,
+      "query_latency_us": 5092.29,
+      "memory_bounded": true
+    },
+    "T_10000": {
+      "stream_length": 10000,
+      "slots_used": 750,
+      "rss_mb": 412.31,
+      "step_latency_us": 767.28,
+      "query_latency_us": 5188.79,
+      "memory_bounded": true
+    },
+    "T_25000": {
+      "stream_length": 25000,
+      "slots_used": 750,
+      "rss_mb": 724.56,
+      "step_latency_us": 772.6,
+      "query_latency_us": 5084.17,
+      "memory_bounded": true
+    }
+  },
+  "cost_comparison": {
+    "scenario": "10,000 events history (~500k tokens)",
+    "full_context_token_input_per_query": 500000,
+    "continuum_retrieved_token_input_per_query": 500,
+    "full_context_cost_per_1k_queries_usd": 2500.0,
+    "continuum_retrieved_cost_per_1k_queries_usd": 0.0025,
+    "projected_token_savings_factor": 1000.0
+  }
+}

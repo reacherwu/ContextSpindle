@@ -1,0 +1,162 @@
+{
+  "R0_current": {
+    "100": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    },
+    "500": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    },
+    "1000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.333333333333333,
+      "decoy_mean_rank": 1.0
+    },
+    "2000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.6666666666666665,
+      "decoy_mean_rank": 1.0
+    },
+    "3000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 3.0,
+      "decoy_mean_rank": 1.0
+    }
+  },
+  "R1_no_decay": {
+    "100": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.3333333333333333,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    },
+    "500": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.3333333333333333,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    },
+    "1000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.3333333333333333,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    },
+    "2000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.3333333333333333,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    },
+    "3000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.3333333333333333,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    }
+  },
+  "R2_weak_decay": {
+    "100": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    },
+    "500": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    },
+    "1000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    },
+    "2000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.333333333333333,
+      "decoy_mean_rank": 1.0
+    },
+    "3000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.6666666666666665,
+      "decoy_mean_rank": 1.0
+    }
+  },
+  "R3_csm_gated": {
+    "100": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    },
+    "500": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    },
+    "1000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.333333333333333,
+      "decoy_mean_rank": 1.0
+    },
+    "2000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.333333333333333,
+      "decoy_mean_rank": 1.0
+    },
+    "3000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 3.0,
+      "decoy_mean_rank": 1.0
+    }
+  },
+  "R4_causal_conditioned": {
+    "100": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    },
+    "500": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.0,
+      "decoy_mean_rank": 1.0
+    },
+    "1000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.333333333333333,
+      "decoy_mean_rank": 1.0
+    },
+    "2000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 2.333333333333333,
+      "decoy_mean_rank": 1.0
+    },
+    "3000": {
+      "true_recall": 1.0,
+      "false_recovery_rate": 0.0,
+      "true_mean_rank": 3.0,
+      "decoy_mean_rank": 1.0
+    }
+  }
+}

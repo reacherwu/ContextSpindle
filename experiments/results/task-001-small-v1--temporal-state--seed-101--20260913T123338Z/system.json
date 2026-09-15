@@ -1,0 +1,16 @@
+{
+  "accelerators": [
+    "mps"
+  ],
+  "cpu": "arm",
+  "deterministic_mode": true,
+  "device_requested": "cpu",
+  "device_used": "cpu",
+  "os": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "precision": "float32",
+  "python_version": "3.13.7 (main, Aug 14 2025, 11:12:11) [Clang 17.0.0 (clang-1700.0.13.3)]",
+  "ram_bytes": 17179869184,
+  "recorded_at": "2026-09-13T12:33:38Z",
+  "rss_profiler": "max(psutil.Process().memory_info().rss, resource.getrusage(RUSAGE_SELF).ru_maxrss) normalized to bytes",
+  "torch_version": "2.11.0"
+}

@@ -1,0 +1,373 @@
+{
+  "metadata": {
+    "mission": "2.9.5",
+    "title": "Mechanism Isolation: Separating Persistent State Change from Causal Value",
+    "canonical_seeds": [
+      101,
+      202,
+      303
+    ],
+    "elapsed_seconds": 4.09,
+    "date": "2026-09-14"
+  },
+  "results": {
+    "P0_naive_delta": [
+      {
+        "condition": "P0_naive_delta",
+        "seed": 101,
+        "causal_in_cold": true,
+        "causal_in_hot": false,
+        "causal_retained": true,
+        "regimes_in_cold": 0,
+        "transients_in_cold": 0,
+        "distractors_in_cold": 4,
+        "total_cold": 392,
+        "transient_suppression_rate": 1.0,
+        "distractor_suppression_rate": 0.92,
+        "restored_ids": [
+          100
+        ],
+        "causal_restored": true,
+        "regime_restored": false,
+        "transient_restored": false,
+        "distractor_restored": false,
+        "causal_score": 0.32978804347398133,
+        "max_regime_score": 0.0,
+        "csm": 0.32978804347398133,
+        "latency_ms": 315.1148329488933
+      },
+      {
+        "condition": "P0_naive_delta",
+        "seed": 202,
+        "causal_in_cold": false,
+        "causal_in_hot": false,
+        "causal_retained": false,
+        "regimes_in_cold": 0,
+        "transients_in_cold": 3,
+        "distractors_in_cold": 0,
+        "total_cold": 500,
+        "transient_suppression_rate": 0.94,
+        "distractor_suppression_rate": 1.0,
+        "restored_ids": [
+          1951
+        ],
+        "causal_restored": false,
+        "regime_restored": false,
+        "transient_restored": false,
+        "distractor_restored": false,
+        "causal_score": 0.0,
+        "max_regime_score": 0.0,
+        "csm": 0.0,
+        "latency_ms": 439.5708329975605
+      },
+      {
+        "condition": "P0_naive_delta",
+        "seed": 303,
+        "causal_in_cold": true,
+        "causal_in_hot": false,
+        "causal_retained": true,
+        "regimes_in_cold": 0,
+        "transients_in_cold": 6,
+        "distractors_in_cold": 2,
+        "total_cold": 500,
+        "transient_suppression_rate": 0.88,
+        "distractor_suppression_rate": 0.96,
+        "restored_ids": [
+          100
+        ],
+        "causal_restored": true,
+        "regime_restored": false,
+        "transient_restored": false,
+        "distractor_restored": false,
+        "causal_score": 0.3001246982562766,
+        "max_regime_score": 0.0,
+        "csm": 0.3001246982562766,
+        "latency_ms": 307.6320830732584
+      }
+    ],
+    "P1_persistent_drift": [
+      {
+        "condition": "P1_persistent_drift",
+        "seed": 101,
+        "causal_in_cold": true,
+        "causal_in_hot": false,
+        "causal_retained": true,
+        "regimes_in_cold": 0,
+        "transients_in_cold": 0,
+        "distractors_in_cold": 4,
+        "total_cold": 392,
+        "transient_suppression_rate": 1.0,
+        "distractor_suppression_rate": 0.92,
+        "restored_ids": [
+          100
+        ],
+        "causal_restored": true,
+        "regime_restored": false,
+        "transient_restored": false,
+        "distractor_restored": false,
+        "causal_score": 0.32978804347398133,
+        "max_regime_score": 0.0,
+        "csm": 0.32978804347398133,
+        "latency_ms": 290.853040991351
+      },
+      {
+        "condition": "P1_persistent_drift",
+        "seed": 202,
+        "causal_in_cold": false,
+        "causal_in_hot": false,
+        "causal_retained": false,
+        "regimes_in_cold": 0,
+        "transients_in_cold": 3,
+        "distractors_in_cold": 0,
+        "total_cold": 500,
+        "transient_suppression_rate": 0.94,
+        "distractor_suppression_rate": 1.0,
+        "restored_ids": [
+          1951
+        ],
+        "causal_restored": false,
+        "regime_restored": false,
+        "transient_restored": false,
+        "distractor_restored": false,
+        "causal_score": 0.0,
+        "max_regime_score": 0.0,
+        "csm": 0.0,
+        "latency_ms": 440.8942919690162
+      },
+      {
+        "condition": "P1_persistent_drift",
+        "seed": 303,
+        "causal_in_cold": true,
+        "causal_in_hot": false,
+        "causal_retained": true,
+        "regimes_in_cold": 0,
+        "transients_in_cold": 6,
+        "distractors_in_cold": 2,
+        "total_cold": 500,
+        "transient_suppression_rate": 0.88,
+        "distractor_suppression_rate": 0.96,
+        "restored_ids": [
+          100
+        ],
+        "causal_restored": true,
+        "regime_restored": false,
+        "transient_restored": false,
+        "distractor_restored": false,
+        "causal_score": 0.3001246982562766,
+        "max_regime_score": 0.0,
+        "csm": 0.3001246982562766,
+        "latency_ms": 309.3094581272453
+      }
+    ],
+    "P2_diversified_dynamics": [
+      {
+        "condition": "P2_diversified_dynamics",
+        "seed": 101,
+        "causal_in_cold": true,
+        "causal_in_hot": false,
+        "causal_retained": true,
+        "regimes_in_cold": 0,
+        "transients_in_cold": 0,
+        "distractors_in_cold": 4,
+        "total_cold": 392,
+        "transient_suppression_rate": 1.0,
+        "distractor_suppression_rate": 0.92,
+        "restored_ids": [
+          100
+        ],
+        "causal_restored": true,
+        "regime_restored": false,
+        "transient_restored": false,
+        "distractor_restored": false,
+        "causal_score": 0.32978804347398133,
+        "max_regime_score": 0.0,
+        "csm": 0.32978804347398133,
+        "latency_ms": 289.2223750241101
+      },
+      {
+        "condition": "P2_diversified_dynamics",
+        "seed": 202,
+        "causal_in_cold": true,
+        "causal_in_hot": false,
+        "causal_retained": true,
+        "regimes_in_cold": 0,
+        "transients_in_cold": 4,
+        "distractors_in_cold": 1,
+        "total_cold": 500,
+        "transient_suppression_rate": 0.92,
+        "distractor_suppression_rate": 0.98,
+        "restored_ids": [
+          2929
+        ],
+        "causal_restored": false,
+        "regime_restored": false,
+        "transient_restored": false,
+        "distractor_restored": false,
+        "causal_score": 0.4923482650268301,
+        "max_regime_score": 0.0,
+        "csm": 0.4923482650268301,
+        "latency_ms": 327.193875098601
+      },
+      {
+        "condition": "P2_diversified_dynamics",
+        "seed": 303,
+        "causal_in_cold": true,
+        "causal_in_hot": false,
+        "causal_retained": true,
+        "regimes_in_cold": 1,
+        "transients_in_cold": 6,
+        "distractors_in_cold": 3,
+        "total_cold": 500,
+        "transient_suppression_rate": 0.88,
+        "distractor_suppression_rate": 0.94,
+        "restored_ids": [
+          100
+        ],
+        "causal_restored": true,
+        "regime_restored": false,
+        "transient_restored": false,
+        "distractor_restored": false,
+        "causal_score": 0.3001246982562766,
+        "max_regime_score": 0.12324313756721478,
+        "csm": 0.1768815606890618,
+        "latency_ms": 296.1565831210464
+      }
+    ],
+    "P3_two_stage_continuum": [
+      {
+        "condition": "P3_two_stage_continuum",
+        "seed": 101,
+        "causal_in_cold": true,
+        "causal_in_hot": false,
+        "causal_retained": true,
+        "regimes_in_cold": 0,
+        "transients_in_cold": 0,
+        "distractors_in_cold": 4,
+        "total_cold": 392,
+        "transient_suppression_rate": 1.0,
+        "distractor_suppression_rate": 0.92,
+        "restored_ids": [
+          100
+        ],
+        "causal_restored": true,
+        "regime_restored": false,
+        "transient_restored": false,
+        "distractor_restored": false,
+        "causal_score": 0.32978804347398133,
+        "max_regime_score": 0.0,
+        "csm": 0.32978804347398133,
+        "latency_ms": 288.024292094633
+      },
+      {
+        "condition": "P3_two_stage_continuum",
+        "seed": 202,
+        "causal_in_cold": true,
+        "causal_in_hot": false,
+        "causal_retained": true,
+        "regimes_in_cold": 0,
+        "transients_in_cold": 4,
+        "distractors_in_cold": 1,
+        "total_cold": 500,
+        "transient_suppression_rate": 0.92,
+        "distractor_suppression_rate": 0.98,
+        "restored_ids": [
+          2929
+        ],
+        "causal_restored": false,
+        "regime_restored": false,
+        "transient_restored": false,
+        "distractor_restored": false,
+        "causal_score": 0.4923482650268301,
+        "max_regime_score": 0.0,
+        "csm": 0.4923482650268301,
+        "latency_ms": 326.20841613970697
+      },
+      {
+        "condition": "P3_two_stage_continuum",
+        "seed": 303,
+        "causal_in_cold": true,
+        "causal_in_hot": false,
+        "causal_retained": true,
+        "regimes_in_cold": 1,
+        "transients_in_cold": 6,
+        "distractors_in_cold": 3,
+        "total_cold": 500,
+        "transient_suppression_rate": 0.88,
+        "distractor_suppression_rate": 0.94,
+        "restored_ids": [
+          100
+        ],
+        "causal_restored": true,
+        "regime_restored": false,
+        "transient_restored": false,
+        "distractor_restored": false,
+        "causal_score": 0.3001246982562766,
+        "max_regime_score": 0.12324313756721478,
+        "csm": 0.1768815606890618,
+        "latency_ms": 310.62783394008875
+      }
+    ]
+  },
+  "aggregates": {
+    "P0_naive_delta": {
+      "causal_retention_rate": 0.6666666666666666,
+      "mean_regimes_retained": 0.0,
+      "mean_transients_retained": 3.0,
+      "mean_transient_suppression_rate": 0.94,
+      "mean_distractors_retained": 2.0,
+      "mean_distractor_suppression_rate": 0.96,
+      "causal_restoration_rate": 0.6666666666666666,
+      "regime_false_restoration_rate": 0.0,
+      "transient_false_restoration_rate": 0.0,
+      "distractor_false_restoration_rate": 0.0,
+      "mean_causal_score": 0.20997091391008596,
+      "mean_max_regime_score": 0.0,
+      "mean_csm": 0.20997091391008596
+    },
+    "P1_persistent_drift": {
+      "causal_retention_rate": 0.6666666666666666,
+      "mean_regimes_retained": 0.0,
+      "mean_transients_retained": 3.0,
+      "mean_transient_suppression_rate": 0.94,
+      "mean_distractors_retained": 2.0,
+      "mean_distractor_suppression_rate": 0.96,
+      "causal_restoration_rate": 0.6666666666666666,
+      "regime_false_restoration_rate": 0.0,
+      "transient_false_restoration_rate": 0.0,
+      "distractor_false_restoration_rate": 0.0,
+      "mean_causal_score": 0.20997091391008596,
+      "mean_max_regime_score": 0.0,
+      "mean_csm": 0.20997091391008596
+    },
+    "P2_diversified_dynamics": {
+      "causal_retention_rate": 1.0,
+      "mean_regimes_retained": 0.3333333333333333,
+      "mean_transients_retained": 3.3333333333333335,
+      "mean_transient_suppression_rate": 0.9333333333333332,
+      "mean_distractors_retained": 2.6666666666666665,
+      "mean_distractor_suppression_rate": 0.9466666666666667,
+      "causal_restoration_rate": 0.6666666666666666,
+      "regime_false_restoration_rate": 0.0,
+      "transient_false_restoration_rate": 0.0,
+      "distractor_false_restoration_rate": 0.0,
+      "mean_causal_score": 0.37408700225236263,
+      "mean_max_regime_score": 0.04108104585573826,
+      "mean_csm": 0.3330059563966244
+    },
+    "P3_two_stage_continuum": {
+      "causal_retention_rate": 1.0,
+      "mean_regimes_retained": 0.3333333333333333,
+      "mean_transients_retained": 3.3333333333333335,
+      "mean_transient_suppression_rate": 0.9333333333333332,
+      "mean_distractors_retained": 2.6666666666666665,
+      "mean_distractor_suppression_rate": 0.9466666666666667,
+      "causal_restoration_rate": 0.6666666666666666,
+      "regime_false_restoration_rate": 0.0,
+      "transient_false_restoration_rate": 0.0,
+      "distractor_false_restoration_rate": 0.0,
+      "mean_causal_score": 0.37408700225236263,
+      "mean_max_regime_score": 0.04108104585573826,
+      "mean_csm": 0.3330059563966244
+    }
+  }
+}

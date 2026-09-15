@@ -1,0 +1,1390 @@
+{
+  "benchmark_c": {
+    "S+N": {
+      "mean_target_accuracy": 0.0,
+      "std_target_accuracy": 0.0,
+      "mean_target_mrr": 0.0,
+      "std_target_mrr": 0.0,
+      "mean_targets_retained": 0.0,
+      "std_targets_retained": 0.0,
+      "mean_traps_hoarded": 100.0,
+      "std_traps_hoarded": 0.0,
+      "mean_trap_hoarding_ratio": 0.5,
+      "std_trap_hoarding_ratio": 0.0
+    },
+    "N+C": {
+      "mean_target_accuracy": 0.3,
+      "std_target_accuracy": 0.21602468994692867,
+      "mean_target_mrr": 0.3,
+      "std_target_mrr": 0.21602468994692867,
+      "mean_targets_retained": 3.0,
+      "std_targets_retained": 2.160246899469287,
+      "mean_traps_hoarded": 100.0,
+      "std_traps_hoarded": 0.0,
+      "mean_trap_hoarding_ratio": 0.5,
+      "std_trap_hoarding_ratio": 0.0
+    },
+    "Primary_0.2": {
+      "mean_target_accuracy": 0.3333333333333333,
+      "std_target_accuracy": 0.09428090415820635,
+      "mean_target_mrr": 0.3333333333333333,
+      "std_target_mrr": 0.09428090415820635,
+      "mean_targets_retained": 3.3333333333333335,
+      "std_targets_retained": 0.9428090415820634,
+      "mean_traps_hoarded": 0.0,
+      "std_traps_hoarded": 0.0,
+      "mean_trap_hoarding_ratio": 0.0,
+      "std_trap_hoarding_ratio": 0.0
+    },
+    "Novelty_Only": {
+      "mean_target_accuracy": 0.0,
+      "std_target_accuracy": 0.0,
+      "mean_target_mrr": 0.0,
+      "std_target_mrr": 0.0,
+      "mean_targets_retained": 0.0,
+      "std_targets_retained": 0.0,
+      "mean_traps_hoarded": 100.0,
+      "std_traps_hoarded": 0.0,
+      "mean_trap_hoarding_ratio": 0.5,
+      "std_trap_hoarding_ratio": 0.0
+    },
+    "Surprise_Only": {
+      "mean_target_accuracy": 0.3666666666666667,
+      "std_target_accuracy": 0.1885618083164127,
+      "mean_target_mrr": 0.3666666666666667,
+      "std_target_mrr": 0.1885618083164127,
+      "mean_targets_retained": 3.6666666666666665,
+      "std_targets_retained": 1.8856180831641267,
+      "mean_traps_hoarded": 0.6666666666666666,
+      "std_traps_hoarded": 0.9428090415820634,
+      "mean_trap_hoarding_ratio": 0.0033333333333333335,
+      "std_trap_hoarding_ratio": 0.004714045207910317
+    }
+  },
+  "contamination_sweep": {
+    "capacities": [
+      25,
+      50,
+      100,
+      200,
+      500,
+      1000
+    ],
+    "models": [
+      "S+N",
+      "N+C",
+      "Primary_0.2",
+      "Novelty_Only",
+      "Surprise_Only"
+    ],
+    "seeds": [
+      101,
+      202,
+      303
+    ],
+    "aggregated": {
+      "S+N": {
+        "25": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.88,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 22.0
+        },
+        "50": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.94,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 47.0
+        },
+        "100": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.9700000000000001,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 97.0
+        },
+        "200": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.5,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 100.0
+        },
+        "500": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.20000000000000004,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 100.0
+        },
+        "1000": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.10000000000000002,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 100.0
+        }
+      },
+      "N+C": {
+        "25": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.88,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 22.0
+        },
+        "50": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.94,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 47.0
+        },
+        "100": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.9700000000000001,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 97.0
+        },
+        "200": {
+          "mean_recall": 0.3333333333333333,
+          "mean_contamination": 0.5,
+          "mean_useful_ratio": 0.016666666666666666,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 100.0
+        },
+        "500": {
+          "mean_recall": 0.6999999999999998,
+          "mean_contamination": 0.20000000000000004,
+          "mean_useful_ratio": 0.014,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 100.0
+        },
+        "1000": {
+          "mean_recall": 0.6999999999999998,
+          "mean_contamination": 0.10000000000000002,
+          "mean_useful_ratio": 0.007,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 100.0
+        }
+      },
+      "Primary_0.2": {
+        "25": {
+          "mean_recall": 0.20000000000000004,
+          "mean_contamination": 0.0,
+          "mean_useful_ratio": 0.08,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 0.0
+        },
+        "50": {
+          "mean_recall": 0.20000000000000004,
+          "mean_contamination": 0.0,
+          "mean_useful_ratio": 0.04,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 0.0
+        },
+        "100": {
+          "mean_recall": 0.26666666666666666,
+          "mean_contamination": 0.0,
+          "mean_useful_ratio": 0.02666666666666667,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 0.0
+        },
+        "200": {
+          "mean_recall": 0.3333333333333333,
+          "mean_contamination": 0.0,
+          "mean_useful_ratio": 0.016666666666666666,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 0.0
+        },
+        "500": {
+          "mean_recall": 0.5333333333333333,
+          "mean_contamination": 0.0,
+          "mean_useful_ratio": 0.010666666666666666,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 0.0
+        },
+        "1000": {
+          "mean_recall": 0.6666666666666666,
+          "mean_contamination": 0.0,
+          "mean_useful_ratio": 0.006666666666666667,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 0.0
+        }
+      },
+      "Novelty_Only": {
+        "25": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.88,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 22.0
+        },
+        "50": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.94,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 47.0
+        },
+        "100": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.9700000000000001,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 97.0
+        },
+        "200": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.5,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 100.0
+        },
+        "500": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.20000000000000004,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 100.0
+        },
+        "1000": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.10000000000000002,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 100.0
+        }
+      },
+      "Surprise_Only": {
+        "25": {
+          "mean_recall": 0.0,
+          "mean_contamination": 0.02666666666666667,
+          "mean_useful_ratio": 0.0,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 0.6666666666666666
+        },
+        "50": {
+          "mean_recall": 0.03333333333333333,
+          "mean_contamination": 0.02,
+          "mean_useful_ratio": 0.006666666666666667,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 1.0
+        },
+        "100": {
+          "mean_recall": 0.06666666666666667,
+          "mean_contamination": 0.016666666666666666,
+          "mean_useful_ratio": 0.006666666666666667,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 1.6666666666666667
+        },
+        "200": {
+          "mean_recall": 0.13333333333333333,
+          "mean_contamination": 0.015,
+          "mean_useful_ratio": 0.006666666666666667,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 3.0
+        },
+        "500": {
+          "mean_recall": 0.20000000000000004,
+          "mean_contamination": 0.016666666666666666,
+          "mean_useful_ratio": 0.004,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 8.333333333333334
+        },
+        "1000": {
+          "mean_recall": 0.26666666666666666,
+          "mean_contamination": 0.01966666666666667,
+          "mean_useful_ratio": 0.0026666666666666666,
+          "mean_utilization": 1.0,
+          "mean_traps_hoarded": 19.666666666666668
+        }
+      }
+    },
+    "raw_trials": [
+      {
+        "model": "S+N",
+        "capacity_k": 25,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.88,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 22
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 25,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.88,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 22
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 25,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.88,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 22
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 25,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.88,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 22
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 25,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.88,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 22
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 25,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.88,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 22
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 25,
+        "seed": 101,
+        "recall": 0.4,
+        "mrr": 0.4,
+        "contamination": 0.0,
+        "useful_ratio": 0.16,
+        "utilization": 1.0,
+        "targets_retained": 4,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 25,
+        "seed": 202,
+        "recall": 0.1,
+        "mrr": 0.1,
+        "contamination": 0.0,
+        "useful_ratio": 0.04,
+        "utilization": 1.0,
+        "targets_retained": 1,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 25,
+        "seed": 303,
+        "recall": 0.1,
+        "mrr": 0.1,
+        "contamination": 0.0,
+        "useful_ratio": 0.04,
+        "utilization": 1.0,
+        "targets_retained": 1,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 25,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.88,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 22
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 25,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.88,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 22
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 25,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.88,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 22
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 25,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.0,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 25,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.0,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 25,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.08,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 2
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 50,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.94,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 47
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 50,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.94,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 47
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 50,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.94,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 47
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 50,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.94,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 47
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 50,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.94,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 47
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 50,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.94,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 47
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 50,
+        "seed": 101,
+        "recall": 0.4,
+        "mrr": 0.4,
+        "contamination": 0.0,
+        "useful_ratio": 0.08,
+        "utilization": 1.0,
+        "targets_retained": 4,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 50,
+        "seed": 202,
+        "recall": 0.1,
+        "mrr": 0.1,
+        "contamination": 0.0,
+        "useful_ratio": 0.02,
+        "utilization": 1.0,
+        "targets_retained": 1,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 50,
+        "seed": 303,
+        "recall": 0.1,
+        "mrr": 0.1,
+        "contamination": 0.0,
+        "useful_ratio": 0.02,
+        "utilization": 1.0,
+        "targets_retained": 1,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 50,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.94,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 47
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 50,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.94,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 47
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 50,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.94,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 47
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 50,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.0,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 50,
+        "seed": 202,
+        "recall": 0.1,
+        "mrr": 0.1,
+        "contamination": 0.0,
+        "useful_ratio": 0.02,
+        "utilization": 1.0,
+        "targets_retained": 1,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 50,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.06,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 3
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 100,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.97,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 97
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 100,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.97,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 97
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 100,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.97,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 97
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 100,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.97,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 97
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 100,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.97,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 97
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 100,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.97,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 97
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 100,
+        "seed": 101,
+        "recall": 0.4,
+        "mrr": 0.4,
+        "contamination": 0.0,
+        "useful_ratio": 0.04,
+        "utilization": 1.0,
+        "targets_retained": 4,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 100,
+        "seed": 202,
+        "recall": 0.3,
+        "mrr": 0.3,
+        "contamination": 0.0,
+        "useful_ratio": 0.03,
+        "utilization": 1.0,
+        "targets_retained": 3,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 100,
+        "seed": 303,
+        "recall": 0.1,
+        "mrr": 0.1,
+        "contamination": 0.0,
+        "useful_ratio": 0.01,
+        "utilization": 1.0,
+        "targets_retained": 1,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 100,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.97,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 97
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 100,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.97,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 97
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 100,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.97,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 97
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 100,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.02,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 2
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 100,
+        "seed": 202,
+        "recall": 0.2,
+        "mrr": 0.2,
+        "contamination": 0.0,
+        "useful_ratio": 0.02,
+        "utilization": 1.0,
+        "targets_retained": 2,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 100,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.03,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 3
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 200,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.5,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 200,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.5,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 200,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.5,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 200,
+        "seed": 101,
+        "recall": 0.4,
+        "mrr": 0.4,
+        "contamination": 0.5,
+        "useful_ratio": 0.02,
+        "utilization": 1.0,
+        "targets_retained": 4,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 200,
+        "seed": 202,
+        "recall": 0.3,
+        "mrr": 0.3,
+        "contamination": 0.5,
+        "useful_ratio": 0.015,
+        "utilization": 1.0,
+        "targets_retained": 3,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 200,
+        "seed": 303,
+        "recall": 0.3,
+        "mrr": 0.3,
+        "contamination": 0.5,
+        "useful_ratio": 0.015,
+        "utilization": 1.0,
+        "targets_retained": 3,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 200,
+        "seed": 101,
+        "recall": 0.4,
+        "mrr": 0.4,
+        "contamination": 0.0,
+        "useful_ratio": 0.02,
+        "utilization": 1.0,
+        "targets_retained": 4,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 200,
+        "seed": 202,
+        "recall": 0.5,
+        "mrr": 0.5,
+        "contamination": 0.0,
+        "useful_ratio": 0.025,
+        "utilization": 1.0,
+        "targets_retained": 5,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 200,
+        "seed": 303,
+        "recall": 0.1,
+        "mrr": 0.1,
+        "contamination": 0.0,
+        "useful_ratio": 0.005,
+        "utilization": 1.0,
+        "targets_retained": 1,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 200,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.5,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 200,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.5,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 200,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.5,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 200,
+        "seed": 101,
+        "recall": 0.1,
+        "mrr": 0.1,
+        "contamination": 0.02,
+        "useful_ratio": 0.005,
+        "utilization": 1.0,
+        "targets_retained": 1,
+        "traps_hoarded": 4
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 200,
+        "seed": 202,
+        "recall": 0.3,
+        "mrr": 0.3,
+        "contamination": 0.0,
+        "useful_ratio": 0.015,
+        "utilization": 1.0,
+        "targets_retained": 3,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 200,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.025,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 5
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 500,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.2,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 500,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.2,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 500,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.2,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 500,
+        "seed": 101,
+        "recall": 0.7,
+        "mrr": 0.7,
+        "contamination": 0.2,
+        "useful_ratio": 0.014,
+        "utilization": 1.0,
+        "targets_retained": 7,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 500,
+        "seed": 202,
+        "recall": 0.7,
+        "mrr": 0.7,
+        "contamination": 0.2,
+        "useful_ratio": 0.014,
+        "utilization": 1.0,
+        "targets_retained": 7,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 500,
+        "seed": 303,
+        "recall": 0.7,
+        "mrr": 0.7,
+        "contamination": 0.2,
+        "useful_ratio": 0.014,
+        "utilization": 1.0,
+        "targets_retained": 7,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 500,
+        "seed": 101,
+        "recall": 0.5,
+        "mrr": 0.5,
+        "contamination": 0.0,
+        "useful_ratio": 0.01,
+        "utilization": 1.0,
+        "targets_retained": 5,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 500,
+        "seed": 202,
+        "recall": 0.7,
+        "mrr": 0.7,
+        "contamination": 0.0,
+        "useful_ratio": 0.014,
+        "utilization": 1.0,
+        "targets_retained": 7,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 500,
+        "seed": 303,
+        "recall": 0.4,
+        "mrr": 0.4,
+        "contamination": 0.0,
+        "useful_ratio": 0.008,
+        "utilization": 1.0,
+        "targets_retained": 4,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 500,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.2,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 500,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.2,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 500,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.2,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 500,
+        "seed": 101,
+        "recall": 0.1,
+        "mrr": 0.1,
+        "contamination": 0.012,
+        "useful_ratio": 0.002,
+        "utilization": 1.0,
+        "targets_retained": 1,
+        "traps_hoarded": 6
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 500,
+        "seed": 202,
+        "recall": 0.4,
+        "mrr": 0.4,
+        "contamination": 0.004,
+        "useful_ratio": 0.008,
+        "utilization": 1.0,
+        "targets_retained": 4,
+        "traps_hoarded": 2
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 500,
+        "seed": 303,
+        "recall": 0.1,
+        "mrr": 0.1,
+        "contamination": 0.034,
+        "useful_ratio": 0.002,
+        "utilization": 1.0,
+        "targets_retained": 1,
+        "traps_hoarded": 17
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 1000,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.1,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 1000,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.1,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "S+N",
+        "capacity_k": 1000,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.1,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 1000,
+        "seed": 101,
+        "recall": 0.7,
+        "mrr": 0.7,
+        "contamination": 0.1,
+        "useful_ratio": 0.007,
+        "utilization": 1.0,
+        "targets_retained": 7,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 1000,
+        "seed": 202,
+        "recall": 0.7,
+        "mrr": 0.7,
+        "contamination": 0.1,
+        "useful_ratio": 0.007,
+        "utilization": 1.0,
+        "targets_retained": 7,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "N+C",
+        "capacity_k": 1000,
+        "seed": 303,
+        "recall": 0.7,
+        "mrr": 0.7,
+        "contamination": 0.1,
+        "useful_ratio": 0.007,
+        "utilization": 1.0,
+        "targets_retained": 7,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 1000,
+        "seed": 101,
+        "recall": 0.6,
+        "mrr": 0.6,
+        "contamination": 0.0,
+        "useful_ratio": 0.006,
+        "utilization": 1.0,
+        "targets_retained": 6,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 1000,
+        "seed": 202,
+        "recall": 0.8,
+        "mrr": 0.8,
+        "contamination": 0.0,
+        "useful_ratio": 0.008,
+        "utilization": 1.0,
+        "targets_retained": 8,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Primary_0.2",
+        "capacity_k": 1000,
+        "seed": 303,
+        "recall": 0.6,
+        "mrr": 0.6,
+        "contamination": 0.0,
+        "useful_ratio": 0.006,
+        "utilization": 1.0,
+        "targets_retained": 6,
+        "traps_hoarded": 0
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 1000,
+        "seed": 101,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.1,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 1000,
+        "seed": 202,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.1,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "Novelty_Only",
+        "capacity_k": 1000,
+        "seed": 303,
+        "recall": 0.0,
+        "mrr": 0.0,
+        "contamination": 0.1,
+        "useful_ratio": 0.0,
+        "utilization": 1.0,
+        "targets_retained": 0,
+        "traps_hoarded": 100
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 1000,
+        "seed": 101,
+        "recall": 0.2,
+        "mrr": 0.2,
+        "contamination": 0.014,
+        "useful_ratio": 0.002,
+        "utilization": 1.0,
+        "targets_retained": 2,
+        "traps_hoarded": 14
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 1000,
+        "seed": 202,
+        "recall": 0.4,
+        "mrr": 0.4,
+        "contamination": 0.01,
+        "useful_ratio": 0.004,
+        "utilization": 1.0,
+        "targets_retained": 4,
+        "traps_hoarded": 10
+      },
+      {
+        "model": "Surprise_Only",
+        "capacity_k": 1000,
+        "seed": 303,
+        "recall": 0.2,
+        "mrr": 0.2,
+        "contamination": 0.035,
+        "useful_ratio": 0.002,
+        "utilization": 1.0,
+        "targets_retained": 2,
+        "traps_hoarded": 35
+      }
+    ]
+  }
+}
