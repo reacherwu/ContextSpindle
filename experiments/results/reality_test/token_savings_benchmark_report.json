@@ -1,0 +1,26 @@
+{
+  "tokenizer": "cl100k_base",
+  "scenario_1_agent_100_turns": {
+    "step_90_full_context_tokens": 2664,
+    "step_90_sliding_window_tokens": 305,
+    "step_90_continuum_tokens": 256,
+    "single_turn_reduction_pct": 90.39,
+    "cumulative_100_turns_full_tokens": 148522,
+    "cumulative_100_turns_continuum_tokens": 5896,
+    "cumulative_reduction_pct": 96.03,
+    "root_cause_retained_continuum": true,
+    "root_cause_retained_sliding_window": false,
+    "cost_100_turns_full_usd": 0.4456,
+    "cost_100_turns_continuum_usd": 0.0177
+  },
+  "scenario_2_aiops_3000_logs": {
+    "total_events": 3000,
+    "full_history_tokens": 136623,
+    "continuum_retrieved_tokens": 252,
+    "token_reduction_pct": 99.82,
+    "root_cause_rank": 1,
+    "cost_1k_queries_full_usd": 409.87,
+    "cost_1k_queries_continuum_usd": 0.76,
+    "net_savings_1k_queries_usd": 409.11
+  }
+}

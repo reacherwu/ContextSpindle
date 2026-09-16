@@ -35,6 +35,16 @@ Under real-world production outages, thousands of repetitive symptom alerts floo
 
 ---
 
+### Chart D: Real-World Token Savings & Financial Bill Slash (OpenAI `tiktoken` `cl100k_base`)
+Evaluated across 100-step autonomous coding agent trajectories (real Git and code edits) and 3,000-event enterprise AIOps log streams:
+- **100-Turn Agent Cumulative Tokens**: Slashed from **148,522 tokens** down to **5,896 tokens** (**-96.03% token reduction**) while retaining the Step 10 root cause at **Rank #1** (standard sliding windows forget the root cause, accuracy 0%).
+- **3,000-Log Server Ingestion**: Slashed from **136,623 tokens** down to **252 tokens** (**-99.82% token reduction**).
+- **Financial Savings (Claude 3.5 Sonnet @ $3/M tokens)**: Saves **$409.11 per 1,000 incident investigations**.
+
+![Token Savings Benchmark](assets/benchmark_token_savings.png)
+
+---
+
 ## ⚡ 2. Local Machine Bare-Metal Benchmark Telemetry
 
 - **Test Machine**: Apple Mac mini (Apple M4 Chip, macOS Sequoia)

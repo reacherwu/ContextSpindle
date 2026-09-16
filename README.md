@@ -66,6 +66,9 @@ Your AI assistant will autonomously install the CLI, initialize `.continuum/`, a
 ### 🛡️ 100% Causal Retention Under Severe 99% Alert Storm Noise
 ![Alert Storm Accuracy](benchmarks/assets/benchmark_alert_storm_accuracy.png)
 
+### 💰 Real-World Token Savings & Cost Reduction (-96.0% Token Cut via tiktoken)
+![Token Savings](benchmarks/assets/benchmark_token_savings.png)
+
 </div>
 
 ---
