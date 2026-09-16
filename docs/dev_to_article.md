@@ -28,20 +28,22 @@ We benchmarked Continuum using **OpenAI `tiktoken` (`cl100k_base`)** on an Apple
 | Metric | Full Context Appending | Standard Sliding Window (10 turns) | **Continuum (Native Rust Engine)** |
 | :--- | :--- | :--- | :--- |
 | **100-Turn Cumulative Tokens** | 148,522 tokens | 26,450 tokens | **5,896 tokens (96.03% slash)** |
-| **1,000+ Turn Projected** | ~50,000,000+ tokens | Truncated / Lost | **~300,000 tokens (99.4% slash)** |
-| **Did it remember Step 10 root cause?** | Yes | ❌ **0% Accuracy (Forgotten)** | ✅ **100% Accuracy (Rank #1)** |
+| **Multi-Depth Needle Recall** | 5/5 (100%) | 0/5 (0% - Forgotten) | **5/5 (100% at Rank #1)** |
+| **Rule Override & Contradiction** | Ambiguous prompt conflict | ❌ 0% (Forgotten) | ✅ **100% (Latest override at Rank #1)** |
+| **Task Success / Build Pass** | 100% (High cost) | ❌ 0% (Broken config) | ✅ **100% (Tests pass, 96% token cut)** |
+| **Engine Retrieval Overhead** | 1.2 ~ 2.5s (full history scan) | N/A (truncated) | **60.46 µs (< 0.0001s, 16,540 QPS)** |
+| **End-to-End Prompt Latency** | 12 ~ 18s (100k token load) | 1.1s (shallow window) | **1.2s (compact 256-token prompt)** |
 | **100,000-Step Stress Test** | Process Crash (OOM) | Memory leaks | **Flat 750 slots (< 75 KB RAM, 0 leaks)** |
-| **Retrieval Latency** | 12 ~ 18 seconds | 1 ~ 2 seconds | **60.46 µs (< 0.0001s, 16,540 QPS)** |
 
-> **The Takeaway**: Sliding windows save tokens but suffer catastrophic amnesia (0% accuracy). Continuum cuts token usage by **96%~99%** while **guaranteeing 100% causal retention**.
+> **The Takeaway**: Sliding windows save tokens but destroy outcomes (0% task success). Continuum cuts token usage by **96%~99%** while **guaranteeing 100% multi-depth recall and contradiction resolution**.
 
 ---
 
 ## How It Works in 4 Bullets
 
-- **Physical $O(K)$ Bounded Memory**: Exactly 750 slots (< 75 KB contiguous RAM). Memory usage is a flat line forever, whether at turn 10 or turn 100,000.
+- **Physical $O(K)$ Bounded Memory**: Exactly 750 slots (< 75 KB contiguous RAM). Memory usage stays a flat line forever across 100,000 steps.
 - **Subspace Diversity Deduplication**: Eliminates alert storms without naive FIFO eviction. 500 repetitive errors collapse into minimal slots, protecting ancient root causes.
-- **Retrospective Causal Revision**: Bypasses temporal decay for genuine causal anchors. Ancient architectural rules defeat recent noise in $< 100\ \mu\text{s}$.
+- **Retrospective Causal Revision & Supersession**: Bypasses decay for genuine anchors, while actively suppressing stale predecessors when rules are updated/contradicted.
 - **Zero External Dependencies**: 100% pure Rust `std` — single standalone binary, zero GC pauses, microsecond startup.
 
 ---

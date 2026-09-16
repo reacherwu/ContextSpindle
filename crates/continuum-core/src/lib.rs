@@ -82,6 +82,55 @@ mod tests {
     }
 
     #[test]
+    fn test_causal_supersession_and_contradiction_resolution() {
+        let config = ContinuumConfig {
+            embedding_dim: 4,
+            state_dim: 4,
+            hot_capacity: 5,
+            cold_capacity: 10,
+            sim_threshold: 0.65,
+            causal_exempt_threshold: Some(0.30),
+            ..Default::default()
+        };
+        let mut engine = ContinuumEngine::new(config);
+
+        // Turn 5: Rule v1: db_pool = 5
+        let rule_v1_vec = vec![1.0, 0.0, 0.0, 0.0];
+        engine.step(&rule_v1_vec, 5.0, "db_pool_limit = 5");
+
+        // Turns 6..30: Background noise
+        for t in 6..30 {
+            let noise = vec![0.0, 1.0, 0.0, 0.0];
+            engine.step(&noise, t as f64, &format!("noise_{t}"));
+        }
+
+        // Turn 31: Rule v2 (Contradiction / Override): db_pool = 20
+        let rule_v2_vec = vec![0.95, 0.1, 0.0, 0.0];
+        engine.step(&rule_v2_vec, 31.0, "db_pool_limit = 20 (supersedes limit 5)");
+
+        // Turns 32..60: More background noise
+        for t in 32..60 {
+            let noise = vec![0.0, 1.0, 0.0, 0.0];
+            engine.step(&noise, t as f64, &format!("noise_{t}"));
+        }
+
+        // Query for db_pool configuration
+        let query_vec = vec![0.98, 0.05, 0.0, 0.0];
+        let matches = engine.query(&query_vec, 5);
+
+        assert!(!matches.is_empty());
+        // Rank #1 MUST be the newer override rule (Rule v2 at t=31.0)
+        assert_eq!(matches[0].timestamp, 31.0);
+        assert!(matches[0].provenance.contains("db_pool_limit = 20"));
+
+        // If Rule v1 is present in matches, it must be marked as superseded
+        if let Some(v1_match) = matches.iter().find(|m| m.timestamp == 5.0) {
+            assert!(v1_match.provenance.contains("[superseded by #"));
+            assert!(matches[0].revision_score > v1_match.revision_score);
+        }
+    }
+
+    #[test]
     fn test_native_embedder_and_semantic_bridge() {
         let embedder = RealTextEmbedder::new(16, 42);
         let bridge = SemanticCausalBridge::new();

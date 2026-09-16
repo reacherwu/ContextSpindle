@@ -89,16 +89,26 @@ impl ContinuumEngine {
     }
 
     /// Retrospective causal query across both active and cold candidate memory.
+    /// Handles temporal causal supersession: when a rule or configuration is updated
+    /// at a later turn, the newer authoritative candidate supersedes the older predecessor.
     pub fn query(&self, query_emb: &[f32], top_k: usize) -> Vec<CausalMatch> {
         let cur_state = self.temporal_core.current_state();
         let cur_time = self.step_count as f64;
 
-        let mut scored = Vec::with_capacity(self.hot_memory.len() + self.cold_memory.len());
+        struct CandidateEntry<'a> {
+            causal_match: CausalMatch,
+            embedding: &'a [f32],
+        }
+
+        let mut candidates = Vec::with_capacity(self.hot_memory.len() + self.cold_memory.len());
 
         // 1. Score all cold candidates
         for cand in &self.cold_memory.records {
             let m = self.revision_engine.score_candidate(cand, query_emb, cur_state, cur_time);
-            scored.push(m);
+            candidates.push(CandidateEntry {
+                causal_match: m,
+                embedding: &cand.compressed_embedding,
+            });
         }
 
         // 2. Score all hot records
@@ -112,8 +122,50 @@ impl ContinuumEngine {
                 provenance_summary: h_rec.payload_ref.clone(),
             };
             let m = self.revision_engine.score_candidate(&cand, query_emb, cur_state, cur_time);
-            scored.push(m);
+            candidates.push(CandidateEntry {
+                causal_match: m,
+                embedding: &h_rec.embedding,
+            });
         }
+
+        // 3. Temporal Causal Supersession & Contradiction Resolution
+        // If an older candidate i (timestamp t_i < t_j) matches the same causal subspace as a
+        // newer candidate j (timestamp t_j > t_i) where mutual_sim(i, j) >= sim_threshold,
+        // candidate j is the causal successor of candidate i.
+        // Candidate i is penalized/suppressed so the active truth ranks #1.
+        let n = candidates.len();
+        let exempt_thresh = self.config.causal_exempt_threshold.unwrap_or(0.25);
+        let supersede_thresh = (self.config.sim_threshold * 0.65).max(exempt_thresh);
+
+        for i in 0..n {
+            if candidates[i].causal_match.components.sim >= exempt_thresh {
+                let mut best_superseding_sim = 0.0f32;
+                let mut superseding_id = None;
+
+                for j in 0..n {
+                    if i != j
+                        && candidates[j].causal_match.timestamp > candidates[i].causal_match.timestamp
+                        && candidates[j].causal_match.components.sim >= exempt_thresh
+                    {
+                        let mutual_sim = crate::math::cosine_similarity(
+                            candidates[i].embedding,
+                            candidates[j].embedding,
+                        );
+                        if mutual_sim >= supersede_thresh && mutual_sim > best_superseding_sim {
+                            best_superseding_sim = mutual_sim;
+                            superseding_id = Some(candidates[j].causal_match.event_id);
+                        }
+                    }
+                }
+
+                if let Some(newer_id) = superseding_id {
+                    candidates[i].causal_match.revision_score *= (1.0 - best_superseding_sim).max(0.05);
+                    candidates[i].causal_match.provenance.push_str(&format!(" [superseded by #{newer_id}]"));
+                }
+            }
+        }
+
+        let mut scored: Vec<CausalMatch> = candidates.into_iter().map(|c| c.causal_match).collect();
 
         // Sort descending by revision_score
         scored.sort_by(|a, b| b.revision_score.partial_cmp(&a.revision_score).unwrap_or(std::cmp::Ordering::Equal));
