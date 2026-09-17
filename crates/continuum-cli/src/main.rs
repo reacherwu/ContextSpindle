@@ -687,8 +687,15 @@ fn run_upgrade() {
     println!("============================================================================");
 }
 
+fn send_mcp_msg(stdout: &mut std::io::Stdout, json_str: &str) {
+    use std::io::Write;
+    let single_line: String = json_str.chars().filter(|&c| c != '\n' && c != '\r').collect();
+    let _ = writeln!(stdout, "{}", single_line);
+    let _ = stdout.flush();
+}
+
 fn run_mcp() {
-    use std::io::{self, BufRead, Write};
+    use std::io::{self, BufRead};
 
     let stdin = io::stdin();
     let mut stdout = io::stdout();
@@ -721,8 +728,7 @@ fn run_mcp() {
                 r#"{{"jsonrpc":"2.0","id":{},"result":{{"protocolVersion":"2024-11-05","capabilities":{{"tools":{{}}}},"serverInfo":{{"name":"continuum","version":"0.1.0"}}}}}}"#,
                 id_val
             );
-            let _ = writeln!(stdout, "{}", resp);
-            let _ = stdout.flush();
+            send_mcp_msg(&mut stdout, &resp);
         } else if method == "notifications/initialized" {
             // No response required
         } else if method == "ping" {
@@ -730,19 +736,13 @@ fn run_mcp() {
                 r#"{{"jsonrpc":"2.0","id":{},"result":{{}}}}"#,
                 id_val
             );
-            let _ = writeln!(stdout, "{}", resp);
-            let _ = stdout.flush();
+            send_mcp_msg(&mut stdout, &resp);
         } else if method == "tools/list" {
             let resp = format!(
-                r#"{{"jsonrpc":"2.0","id":{},"result":{{"tools":[
-{{"name":"continuum_remember","description":"Store a critical architecture constraint, engineering decision, or tool failure into bounded O(K) memory","inputSchema":{{"type":"object","properties":{{"text":{{"type":"string","description":"The constraint, decision, or event to remember"}}}},"required":["text"]}}}},
-{{"name":"continuum_recall","description":"Retrospectively retrieve relevant past constraints, actions, and root causes in < 1ms","inputSchema":{{"type":"object","properties":{{"query":{{"type":"string","description":"The symptom, search query, or question to recall"}},"top_k":{{"type":"integer","description":"Maximum candidates to return (default 3)"}}}},"required":["query"]}}}},
-{{"name":"continuum_stats","description":"Get current bounded memory usage, physical slot count, and token savings metrics","inputSchema":{{"type":"object","properties":{{}}}}}}
-]}}}}"#,
+                r#"{{"jsonrpc":"2.0","id":{},"result":{{"tools":[{{"name":"continuum_remember","description":"Store a critical architecture constraint, engineering decision, or tool failure into bounded O(K) memory","inputSchema":{{"type":"object","properties":{{"text":{{"type":"string","description":"The constraint, decision, or event to remember"}}}},"required":["text"]}}}},{{"name":"continuum_recall","description":"Retrospectively retrieve relevant past constraints, actions, and root causes in < 1ms","inputSchema":{{"type":"object","properties":{{"query":{{"type":"string","description":"The symptom, search query, or question to recall"}},"top_k":{{"type":"integer","description":"Maximum candidates to return (default 3)"}}}},"required":["query"]}}}},{{"name":"continuum_stats","description":"Get current bounded memory usage, physical slot count, and token savings metrics","inputSchema":{{"type":"object","properties":{{}}}}}}]}}}}"#,
                 id_val
             );
-            let _ = writeln!(stdout, "{}", resp);
-            let _ = stdout.flush();
+            send_mcp_msg(&mut stdout, &resp);
         } else if method == "tools/call" {
             let tool_name = json.get_path(&["params", "name"]).and_then(|v| v.as_str()).unwrap_or("");
             let result_text = if tool_name == "continuum_remember" {
@@ -789,15 +789,13 @@ fn run_mcp() {
                 r#"{{"jsonrpc":"2.0","id":{},"result":{{"content":[{{"type":"text","text":"{}"}}]}}}}"#,
                 id_val, escaped_text
             );
-            let _ = writeln!(stdout, "{}", resp);
-            let _ = stdout.flush();
+            send_mcp_msg(&mut stdout, &resp);
         } else {
             let resp = format!(
                 r#"{{"jsonrpc":"2.0","id":{},"result":{{}}}}"#,
                 id_val
             );
-            let _ = writeln!(stdout, "{}", resp);
-            let _ = stdout.flush();
+            send_mcp_msg(&mut stdout, &resp);
         }
     }
 }
@@ -950,3 +948,32 @@ fn main() {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_mcp_tools_list_single_line_compliance() {
+        let id_val = "\"test_msg_001\"";
+        let resp = format!(
+            r#"{{"jsonrpc":"2.0","id":{},"result":{{"tools":[{{"name":"continuum_remember","description":"Store a critical architecture constraint, engineering decision, or tool failure into bounded O(K) memory","inputSchema":{{"type":"object","properties":{{"text":{{"type":"string","description":"The constraint, decision, or event to remember"}}}},"required":["text"]}}}},{{"name":"continuum_recall","description":"Retrospectively retrieve relevant past constraints, actions, and root causes in < 1ms","inputSchema":{{"type":"object","properties":{{"query":{{"type":"string","description":"The symptom, search query, or question to recall"}},"top_k":{{"type":"integer","description":"Maximum candidates to return (default 3)"}}}},"required":["query"]}}}},{{"name":"continuum_stats","description":"Get current bounded memory usage, physical slot count, and token savings metrics","inputSchema":{{"type":"object","properties":{{}}}}}}]}}}}"#,
+            id_val
+        );
+
+        // Strict stdio MCP mandate: must not contain any newlines
+        assert!(!resp.contains('\n'), "MCP response must NOT contain newlines!");
+        assert!(!resp.contains('\r'), "MCP response must NOT contain carriage returns!");
+
+        // Must parse as valid JSON
+        let parsed = json::parse_json(&resp).expect("Failed to parse MCP response as JSON");
+        assert_eq!(parsed.get("jsonrpc").unwrap().as_str().unwrap(), "2.0");
+        assert_eq!(parsed.get("id").unwrap().to_raw_id_string(), "\"test_msg_001\"");
+
+        let tools = parsed.get_path(&["result", "tools"]).unwrap().as_array().unwrap();
+        assert_eq!(tools.len(), 3);
+        let names: Vec<&str> = tools.iter().map(|t| t.get("name").unwrap().as_str().unwrap()).collect();
+        assert_eq!(names, vec!["continuum_remember", "continuum_recall", "continuum_stats"]);
+    }
+}
+
