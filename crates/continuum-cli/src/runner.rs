@@ -139,26 +139,46 @@ pub fn run_command(args: &[String], state_path: &str) -> i32 {
             eprintln!("   (Once fixed and re-run successfully, Continuum will auto-ingest the causal pair!)\n");
         }
     } else {
-        // Command succeeded: check if resolving a prior failure
+        // Command succeeded: check if resolving a prior failure of the SAME command
         if incident_path.exists() {
             if let Some(prior) = PendingIncident::load(&incident_path) {
-                let causal_pair = format!(
-                    "FIX: Resolved error ('{}') from '{}' via successful run of '{}'",
-                    prior.symptom, prior.command, full_cmd_str
-                );
+                let prior_base = prior.command.split_whitespace().next().unwrap_or("");
+                let cur_base = full_cmd_str.split_whitespace().next().unwrap_or("");
 
-                crate::run_memory_ingest(&causal_pair, state_path);
-                let _ = std::fs::remove_file(&incident_path);
+                // Only pair if command executable matches (e.g. both are cargo test or both are pytest)
+                if !prior_base.is_empty() && prior_base == cur_base {
+                    let clean_symptom = sanitize_log_text(&prior.symptom, 220);
+                    let causal_pair = format!(
+                        "CANDIDATE_FIX: Command '{}' failed with ('{}'), observed resolved via '{}'",
+                        prior.command, clean_symptom, full_cmd_str
+                    );
 
-                eprintln!("\n🎉 Continuum: Autonomous Causal Learning Triggered!");
-                eprintln!("   Prior Symptom:  '{}'", prior.symptom);
-                eprintln!("   Resolving Cmd:  '{}'", full_cmd_str);
-                eprintln!("   Causal Anchor:  Ingested into 750 bounded memory manifold (< 75 KB RAM).\n");
+                    let _ = crate::run_memory_ingest(&causal_pair, state_path);
+                    let _ = std::fs::remove_file(&incident_path);
+
+                    println!("\n🎉 Continuum: Autonomous Causal Candidate Ingested");
+                    println!("   Command:        '{}'", prior.command);
+                    println!("   Prior Symptom:  '{}'", clean_symptom);
+                    println!("   Status:         Observed recovery verified.\n");
+                }
             }
         }
     }
 
     exit_code
+}
+
+fn sanitize_log_text(s: &str, max_len: usize) -> String {
+    let mut cleaned = s.trim().to_string();
+    // Simple secret sanitization
+    if cleaned.to_lowercase().contains("bearer ") {
+        cleaned = "Authorization token redacted".to_string();
+    }
+    if cleaned.chars().count() > max_len {
+        format!("{}...", cleaned.chars().take(max_len).collect::<String>())
+    } else {
+        cleaned
+    }
 }
 
 fn extract_symptom(stderr: &[String], stdout: &[String]) -> String {

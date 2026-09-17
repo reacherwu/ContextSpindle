@@ -15,6 +15,70 @@ use crate::temporal::TemporalCore;
 use crate::types::{ColdRecord, ContinuumConfig, HotRecord};
 
 const MAGIC_HEADER: &[u8; 8] = b"CTNM0001";
+const FOOTER_MAGIC: &[u8; 8] = b"CTNMFOOT";
+
+#[inline]
+fn fnv1a_update(hash: &mut u64, bytes: &[u8]) {
+    for &b in bytes {
+        *hash ^= b as u64;
+        *hash = hash.wrapping_mul(0x100000001b3);
+    }
+}
+
+struct HashingWriter<W: Write> {
+    inner: W,
+    hash: u64,
+    enabled: bool,
+}
+
+impl<W: Write> HashingWriter<W> {
+    fn new(inner: W) -> Self {
+        Self {
+            inner,
+            hash: 0xcbf29ce484222325,
+            enabled: true,
+        }
+    }
+}
+
+impl<W: Write> Write for HashingWriter<W> {
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        let n = self.inner.write(buf)?;
+        if self.enabled {
+            fnv1a_update(&mut self.hash, &buf[..n]);
+        }
+        Ok(n)
+    }
+    fn flush(&mut self) -> io::Result<()> {
+        self.inner.flush()
+    }
+}
+
+struct HashingReader<R: Read> {
+    inner: R,
+    hash: u64,
+    enabled: bool,
+}
+
+impl<R: Read> HashingReader<R> {
+    fn new(inner: R) -> Self {
+        Self {
+            inner,
+            hash: 0xcbf29ce484222325,
+            enabled: true,
+        }
+    }
+}
+
+impl<R: Read> Read for HashingReader<R> {
+    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        let n = self.inner.read(buf)?;
+        if self.enabled {
+            fnv1a_update(&mut self.hash, &buf[..n]);
+        }
+        Ok(n)
+    }
+}
 
 pub fn save_engine_unlocked(engine: &ContinuumEngine, path: impl AsRef<Path>) -> io::Result<()> {
     let target = path.as_ref();
@@ -33,16 +97,16 @@ pub fn save_engine_unlocked(engine: &ContinuumEngine, path: impl AsRef<Path>) ->
             .unwrap_or(0)
     ));
 
-    {
+    let write_res = (|| -> io::Result<()> {
         let file = File::create(&tmp_path)?;
-        let mut writer = BufWriter::new(file);
+        let mut writer = HashingWriter::new(BufWriter::new(file));
 
-    // 1. Magic Header
-    writer.write_all(MAGIC_HEADER)?;
+        // 1. Magic Header
+        writer.write_all(MAGIC_HEADER)?;
 
-    // 2. Config
-    writer.write_all(&(engine.config.embedding_dim as u64).to_le_bytes())?;
-    writer.write_all(&(engine.config.state_dim as u64).to_le_bytes())?;
+        // 2. Config
+        writer.write_all(&(engine.config.embedding_dim as u64).to_le_bytes())?;
+        writer.write_all(&(engine.config.state_dim as u64).to_le_bytes())?;
     writer.write_all(&(engine.config.hot_capacity as u64).to_le_bytes())?;
     writer.write_all(&(engine.config.cold_capacity as u64).to_le_bytes())?;
     writer.write_all(&engine.config.sim_threshold.to_le_bytes())?;
@@ -121,19 +185,37 @@ pub fn save_engine_unlocked(engine: &ContinuumEngine, path: impl AsRef<Path>) ->
         writer.write_all(prov_bytes)?;
     }
 
+        // Checksum calculation & footer
+        let computed_hash = writer.hash;
+        writer.enabled = false;
+        writer.write_all(FOOTER_MAGIC)?;
+        writer.write_all(&computed_hash.to_le_bytes())?;
+
         writer.flush()?;
-        let f = writer.into_inner().map_err(|e| e.into_error())?;
+        let f = writer.inner.into_inner().map_err(|e| e.into_error())?;
         f.sync_all()?;
+        Ok(())
+    })();
+
+    if let Err(e) = write_res {
+        let _ = std::fs::remove_file(&tmp_path);
+        return Err(e);
     }
 
     std::fs::rename(&tmp_path, target)?;
+
+    // Fsync parent directory for durable metadata rename on POSIX systems
+    if let Ok(dir_file) = File::open(parent) {
+        let _ = dir_file.sync_all();
+    }
+
     Ok(())
 }
 
 pub fn load_engine_unlocked(path: impl AsRef<Path>) -> io::Result<ContinuumEngine> {
     let target = path.as_ref();
     let file = File::open(target)?;
-    let mut reader = BufReader::new(file);
+    let mut reader = HashingReader::new(BufReader::new(file));
 
     // 1. Magic Header
     let mut magic = [0u8; 8];
@@ -313,6 +395,31 @@ pub fn load_engine_unlocked(path: impl AsRef<Path>) -> io::Result<ContinuumEngin
         });
     }
 
+    // 7. Verify Checksum Footer
+    let computed_hash = reader.hash;
+    reader.enabled = false;
+
+    let mut footer_magic = [0u8; 8];
+    match reader.read_exact(&mut footer_magic) {
+        Ok(()) => {
+            if &footer_magic == FOOTER_MAGIC {
+                let mut cksum_buf = [0u8; 8];
+                reader.read_exact(&mut cksum_buf)?;
+                let expected_hash = u64::from_le_bytes(cksum_buf);
+                if computed_hash != expected_hash {
+                    return Err(Error::new(
+                        ErrorKind::InvalidData,
+                        "Snapshot checksum mismatch: corrupted or altered state file",
+                    ));
+                }
+            }
+        }
+        Err(e) if e.kind() == ErrorKind::UnexpectedEof => {
+            // Older snapshot without footer checksum is accepted for backward compatibility
+        }
+        Err(e) => return Err(e),
+    }
+
     let revision_engine = RevisionEngine::new(config.clone());
 
     Ok(ContinuumEngine {
@@ -387,9 +494,10 @@ mod tests {
         // Save atomically
         save_engine(&engine, &test_path).expect("Failed atomic save");
 
-        // Lockfile should not linger
-        let lock_path = format!("{}.lock", test_path.display());
-        assert!(!Path::new(&lock_path).exists(), "Lockfile was not cleaned up");
+        // Lock should be released immediately and re-acquirable
+        let lock_guard = crate::lock::FileLockGuard::acquire(&test_path, std::time::Duration::from_millis(100));
+        assert!(lock_guard.is_ok(), "Lock was not released after save");
+        drop(lock_guard);
 
         // Load back and verify bit-exact consistency
         let loaded = load_engine(&test_path).expect("Failed load");
@@ -398,6 +506,7 @@ mod tests {
         assert_eq!(loaded.hot_memory.records[0].payload_ref, "Atomic persistence test constraint");
 
         let _ = std::fs::remove_file(&test_path);
+        let _ = std::fs::remove_file(format!("{}.lock", test_path.display()));
     }
 
     #[test]
@@ -422,6 +531,38 @@ mod tests {
         assert_eq!(loaded.hot_memory.records[2].payload_ref, "Transactional Event #3");
 
         let _ = std::fs::remove_file(&test_path);
+    }
+
+    #[test]
+    fn test_persistence_checksum_and_corruption_detection() {
+        let temp_dir = std::env::temp_dir();
+        let test_path = temp_dir.join(format!("continuum_cksum_{}.state", std::process::id()));
+
+        let mut engine = ContinuumEngine::new(ContinuumConfig::default());
+        let emb = vec![0.33f32; 32];
+        engine.step(&emb, 100.0, "Checksum verification test event");
+
+        save_engine(&engine, &test_path).expect("Save failed");
+
+        // 1. Valid snapshot loads cleanly
+        let loaded = load_engine(&test_path).expect("Valid snapshot failed to load");
+        assert_eq!(loaded.step_count, 1);
+
+        // 2. Tamper with one byte in the middle of the file
+        let mut bytes = std::fs::read(&test_path).expect("Failed to read snapshot");
+        let mid = bytes.len() / 2;
+        bytes[mid] ^= 0xFF; // Flip bits
+        std::fs::write(&test_path, &bytes).expect("Failed to write tampered snapshot");
+
+        let err = load_engine(&test_path).expect_err("Corrupted snapshot should fail checksum");
+        assert_eq!(err.kind(), ErrorKind::InvalidData);
+
+        // 3. Truncate file
+        std::fs::write(&test_path, &bytes[..20]).expect("Failed to write truncated file");
+        assert!(load_engine(&test_path).is_err(), "Truncated file should fail loading");
+
+        let _ = std::fs::remove_file(&test_path);
+        let _ = std::fs::remove_file(format!("{}.lock", test_path.display()));
     }
 }
 

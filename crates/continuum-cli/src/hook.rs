@@ -182,8 +182,10 @@ pub fn run_hook_post_commit(state_path: &str) {
         hash, author, message, files_summary
     );
 
-    crate::run_memory_ingest(&record, state_path);
-    println!("✅ Continuum auto-ingested git commit [{}] into memory manifold", hash);
+    match crate::run_memory_ingest(&record, state_path) {
+        Ok(()) => println!("✅ Continuum auto-ingested git commit [{}] into memory manifold", hash),
+        Err(e) => eprintln!("⚠️ Continuum failed to ingest git commit [{}]: {}", hash, e),
+    }
 }
 
 #[cfg(test)]
