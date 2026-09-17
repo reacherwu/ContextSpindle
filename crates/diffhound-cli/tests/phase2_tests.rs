@@ -48,10 +48,13 @@ fn test_github_escape_json_str() {
     assert!(!escaped.contains('\n'));
 }
 
+#[allow(dead_code)]
 #[path = "../src/diff.rs"]
 mod diff;
+#[allow(dead_code)]
 #[path = "../src/review.rs"]
 mod review;
+#[allow(dead_code)]
 #[path = "../src/server.rs"]
 mod server;
 
