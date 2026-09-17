@@ -8,7 +8,7 @@ use continuum_core::{
 };
 
 fn print_help() {
-    println!("Continuum: Continuous Temporal Intelligence Engine (100% Native Rust)");
+    println!("Continuum: AI Team Handover & Anti-Regression Guard (100% Native Rust)");
     println!("Usage:");
     println!("  continuum init [path]                               Initialize .continuum memory workspace");
     println!("  continuum remember <text>                           Save critical constraint or decision to memory");

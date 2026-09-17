@@ -10,7 +10,7 @@ YELLOW="\033[0;33m"
 RESET="\033[0m"
 
 echo -e "${BOLD}${BLUE}========================================================================${RESET}"
-echo -e "${BOLD}${BLUE}  Continuum: Continuous Temporal Memory Intelligence for AI Agents       ${RESET}"
+echo -e "${BOLD}${BLUE}  Continuum: AI Team Handover & Anti-Regression Guard for AI Agents      ${RESET}"
 echo -e "${BOLD}${BLUE}========================================================================${RESET}"
 
 OS="$(uname -s)"

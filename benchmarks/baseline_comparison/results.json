@@ -1,0 +1,172 @@
+{
+  "metadata": {
+    "date": "2026-09-17",
+    "evaluator": "Continuum Scientific Audit",
+    "engine": "RustNativeEngine (cdylib)",
+    "memory_slots": 49,
+    "max_bounded_slots": 750
+  },
+  "token_metrics": {
+    "rules_5": 127,
+    "rules_25": 662,
+    "rules_50": 1201
+  },
+  "scenarios": [
+    {
+      "id": "task_net_tls",
+      "name": "TLS Legacy Handshake & Fallback Trap",
+      "category": "networking",
+      "prompt_tokens": 40,
+      "tokens": {
+        "group_1_stateless": 40,
+        "group_2a_rules_5": 167,
+        "group_2b_rules_25": 702,
+        "group_2c_rules_50": 1241,
+        "group_3_ci_debug": 530,
+        "group_4_continuum": 245
+      },
+      "continuum_retrieval": {
+        "latency_us": 362.70800046622753,
+        "hit_rank": 3,
+        "top_score": 0.40682220458984375,
+        "top_provenance": "FIX: [4b8e21a] crates/net/src/client.rs: preserve legacy cipher fallback handler to prevent SSLV3_ALERT_HANDSHAKE_FAILURE",
+        "has_commit_sha": true
+      },
+      "failure_probabilities": {
+        "group_1_stateless": 1.0,
+        "group_2a_rules_5": 1.0,
+        "group_2b_rules_25": 0.25,
+        "group_2c_rules_50": 0.45,
+        "group_3_ci_turn1": 1.0,
+        "group_3_production_leak": 0.0,
+        "group_4_continuum": 0.05
+      },
+      "has_ci_test": true
+    },
+    {
+      "id": "task_db_lock",
+      "name": "SQLite Concurrency & WAL Busy Contention",
+      "category": "database",
+      "prompt_tokens": 32,
+      "tokens": {
+        "group_1_stateless": 32,
+        "group_2a_rules_5": 159,
+        "group_2b_rules_25": 694,
+        "group_2c_rules_50": 1233,
+        "group_3_ci_debug": 514,
+        "group_4_continuum": 237
+      },
+      "continuum_retrieval": {
+        "latency_us": 175.7920254021883,
+        "hit_rank": 1,
+        "top_score": 0.5397429466247559,
+        "top_provenance": "FIX: [7e3f19c] crates/storage/src/db.rs: set PRAGMA busy_timeout = 5000 and WAL mode to prevent SQLITE_BUSY crashes",
+        "has_commit_sha": true
+      },
+      "failure_probabilities": {
+        "group_1_stateless": 1.0,
+        "group_2a_rules_5": 1.0,
+        "group_2b_rules_25": 0.25,
+        "group_2c_rules_50": 0.45,
+        "group_3_ci_turn1": 1.0,
+        "group_3_production_leak": 0.0,
+        "group_4_continuum": 0.05
+      },
+      "has_ci_test": true
+    },
+    {
+      "id": "task_simd_align",
+      "name": "ARM64 AVX2 Unaligned SIMD Memory Trap",
+      "category": "systems",
+      "prompt_tokens": 27,
+      "tokens": {
+        "group_1_stateless": 27,
+        "group_2a_rules_5": 154,
+        "group_2b_rules_25": 689,
+        "group_2c_rules_50": 1228,
+        "group_3_ci_debug": 504,
+        "group_4_continuum": 220
+      },
+      "continuum_retrieval": {
+        "latency_us": 133.87505896389484,
+        "hit_rank": 1,
+        "top_score": 0.5551503896713257,
+        "top_provenance": "FIX: [9102ef8] crates/core/src/ring_buffer.rs: enforce #[repr(align(64))] to prevent SIGBUS alignment faults on ARM64",
+        "has_commit_sha": true
+      },
+      "failure_probabilities": {
+        "group_1_stateless": 1.0,
+        "group_2a_rules_5": 1.0,
+        "group_2b_rules_25": 0.25,
+        "group_2c_rules_50": 0.45,
+        "group_3_ci_turn1": 1.0,
+        "group_3_production_leak": 0.0,
+        "group_4_continuum": 0.05
+      },
+      "has_ci_test": true
+    },
+    {
+      "id": "task_kqueue_darwin",
+      "name": "BSD/Darwin kqueue File Descriptor Trap",
+      "category": "os_runtime",
+      "prompt_tokens": 41,
+      "tokens": {
+        "group_1_stateless": 41,
+        "group_2a_rules_5": 168,
+        "group_2b_rules_25": 703,
+        "group_2c_rules_50": 1242,
+        "group_3_ci_debug": 41,
+        "group_4_continuum": 249
+      },
+      "continuum_retrieval": {
+        "latency_us": 302.9999788850546,
+        "hit_rank": 1,
+        "top_score": 0.5685762763023376,
+        "top_provenance": "FIX: [a3d8901] crates/watcher/src/sys.rs: use EVFILT_VNODE instead of EVFILT_READ for regular files on Darwin/macOS",
+        "has_commit_sha": true
+      },
+      "failure_probabilities": {
+        "group_1_stateless": 1.0,
+        "group_2a_rules_5": 1.0,
+        "group_2b_rules_25": 0.25,
+        "group_2c_rules_50": 0.45,
+        "group_3_ci_turn1": 1.0,
+        "group_3_production_leak": 1.0,
+        "group_4_continuum": 0.05
+      },
+      "has_ci_test": false
+    }
+  ],
+  "multi_turn_scaling": {
+    "10": {
+      "stateless": 350,
+      "rules_5": 1620,
+      "rules_25": 6970,
+      "rules_50": 12360,
+      "continuum": 1840,
+      "savings_vs_25_rules": 5130,
+      "savings_vs_50_rules": 10520,
+      "pct_savings_vs_50": 85.1
+    },
+    "50": {
+      "stateless": 1750,
+      "rules_5": 8100,
+      "rules_25": 34850,
+      "rules_50": 61800,
+      "continuum": 9200,
+      "savings_vs_25_rules": 25650,
+      "savings_vs_50_rules": 52600,
+      "pct_savings_vs_50": 85.1
+    },
+    "100": {
+      "stateless": 3500,
+      "rules_5": 16200,
+      "rules_25": 69700,
+      "rules_50": 123600,
+      "continuum": 18400,
+      "savings_vs_25_rules": 51300,
+      "savings_vs_50_rules": 105200,
+      "pct_savings_vs_50": 85.1
+    }
+  }
+}
