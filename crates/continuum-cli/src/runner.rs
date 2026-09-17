@@ -120,12 +120,14 @@ pub fn run_command(args: &[String], state_path: &str) -> i32 {
     let incident_path = PathBuf::from(INCIDENT_FILE);
 
     if exit_code != 0 {
-        // Command failed: extract failure symptom
-        let symptom = extract_symptom(&stderr_lines, &stdout_lines);
+        // Command failed: extract failure symptom and sanitize immediately
+        let raw_symptom = extract_symptom(&stderr_lines, &stdout_lines);
+        let symptom = sanitize_log_text(&raw_symptom, 300);
+        let sanitized_cmd = sanitize_log_text(&full_cmd_str, 500);
         let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
 
         let incident = PendingIncident {
-            command: full_cmd_str.clone(),
+            command: sanitized_cmd,
             timestamp: now,
             symptom: symptom.clone(),
             exit_code,
@@ -169,11 +171,36 @@ pub fn run_command(args: &[String], state_path: &str) -> i32 {
 }
 
 fn sanitize_log_text(s: &str, max_len: usize) -> String {
-    let mut cleaned = s.trim().to_string();
-    // Simple secret sanitization
-    if cleaned.to_lowercase().contains("bearer ") {
-        cleaned = "Authorization token redacted".to_string();
+    let mut words = Vec::new();
+    let mut redact_next = false;
+
+    for word in s.split_whitespace() {
+        let clean_word = word.trim_matches(|c| c == '\'' || c == '"' || c == '(' || c == ')' || c == '[' || c == ']');
+        let lower = clean_word.to_lowercase();
+        if redact_next {
+            words.push("[REDACTED_SECRET]".to_string());
+            redact_next = false;
+            continue;
+        }
+
+        if lower == "bearer" || lower == "token" || lower == "password" {
+            words.push(word.to_string());
+            redact_next = true;
+        } else if lower.starts_with("eyj")
+            || lower.contains("password=")
+            || lower.contains("passwd=")
+            || lower.contains("secret=")
+            || lower.contains("api_key=")
+            || lower.contains("apikey=")
+            || lower.contains("token=")
+        {
+            words.push("[REDACTED_SECRET]".to_string());
+        } else {
+            words.push(word.to_string());
+        }
     }
+
+    let cleaned = words.join(" ");
     if cleaned.chars().count() > max_len {
         format!("{}...", cleaned.chars().take(max_len).collect::<String>())
     } else {
