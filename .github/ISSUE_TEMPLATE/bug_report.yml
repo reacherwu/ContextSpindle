@@ -1,0 +1,35 @@
+name: Bug report
+description: Create a report to help us improve DiffHound
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug in DiffHound!
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us what you expected to happen instead.
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Steps
+      description: How can we reproduce this? Include diff or command run.
+      placeholder: |
+        1. Run `diffhound review --base ...`
+        2. See output ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: DiffHound Version
+      description: Output of `diffhound version`
+      placeholder: diffhound v0.2.0
+    validations:
+      required: true
