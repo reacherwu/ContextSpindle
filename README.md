@@ -1,5 +1,11 @@
 # Continuum — AI Team Handover & Anti-Regression Guard
 
+<div align="center">
+
+**English** | [中文说明](README_CN.md)
+
+</div>
+
 [![Rust: 100% Native](https://img.shields.io/badge/Rust-100%25%20Pure%20Native-dea584.svg?logo=rust&logoColor=white)](crates/continuum-core)
 [![Zero External Crates](https://img.shields.io/badge/Dependencies-0%20(Pure%20std)-brightgreen.svg?logo=rust&logoColor=white)](#)
 [![Tests: 82 Passing](https://img.shields.io/badge/tests-82%20passing-brightgreen)](#)
@@ -7,53 +13,52 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22765180.svg)](https://doi.org/10.5281/zenodo.22765180)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-purple.svg)](LICENSE)
 
-> **“让新接手的 AI，少重复团队已经解决过的错误。”**  
-> *Prevent new AI sessions and agents from repeating errors your team has already solved.*  
-> 专为同时维护多个代码仓库、重度使用 AI 编程（Cursor, Claude Code, Windsurf, Hermes）的开发团队与外包团队设计。
+> **“Prevent new AI sessions and agents from repeating errors your team has already solved.”**  
+> Designed for software development agencies and engineering teams maintaining multiple repositories with AI tools (Cursor, Claude Code, Windsurf, Hermes).
 
 ---
 
-## 🎯 核心交付的 3 个确定性结果
+## 🎯 3 Concrete Outcomes Delivered
 
-| 交付价值 | 传统 AI 编程现状 | 接入 Continuum 团队守护 |
+| Outcome | Traditional AI Coding Reality | With Continuum Team Guard |
 | :--- | :--- | :--- |
-| **1. 跨成员/跨 Agent 零成本交接** | 换人接手、换 IDE 或开新会话，AI 瞬间失忆，必须手动复制一堆 Prompt 交代项目潜规则。 | **自动感知项目流形**：项目约束常驻在仓库根目录，换谁接手都无需重复解释。 |
-| **2. 故障与避坑有据可查** | 解决过的疑难杂症散落在聊天记录里，AI 靠模糊概率脑补，经常给出似是而非的答案。 | **带验证闭环的因果记录**：自动关联报错症状、成功修复命令（如测试通过）与 Git 版本。 |
-| **3. 提醒与物理阻断防返工** | AI 稍不注意就把上周刚修好的边界条件又改坏了，反复踩同一个坑。 | **编码时精准提醒，CI 中测试物理拦截**：关键规则沉淀为回归测试，死守质量红线。 |
+| **1. Zero-Context Handover** | Switching devs, IDEs, or starting a new session causes AI amnesia. Developers waste time re-prompting project constraints. | **Automatic Repository Manifold**: Project rules live in the repo root; any dev or AI picks up the context instantly. |
+| **2. Verifiable Audit Trail** | Past fixes get lost in chat histories. AI hallucinates plausible but incorrect solutions from fuzzy memories. | **Causal Pairing with Verification**: Pairs failure symptoms directly with working fix commands (e.g. green test runs) and Git commits. |
+| **3. Live Warnings & CI Gatekeeping** | AI quietly re-breaks edge cases resolved last week, re-introducing regressions into main branches. | **Active Warnings + Deterministic Tests**: Turns critical rules into regression tests to physically block errors in CI/CD. |
 
 ---
 
-## 💡 为什么多项目团队与外包团队最需要它？
+## 💡 Why Software Agencies & Multi-Repo Teams Need It
 
-在频繁切换代码仓库的多项目开发中，**AI 造成的返工消耗的是真金白银的工时与客户交付信任**：
+In fast-paced environments rotating between multiple client codebases, **AI-induced rework directly burns billable hours and client trust**:
 
-1. **规则混淆**：团队上午修客户 A 的 React 18，下午改客户 B 的 Vue 2 遗留系统。AI 极易把 A 项目的语法和包习惯性代入 B 项目；
-2. **隐性暗坑重复踩**：比如“客户的支付网关有严格顺序要求”、“表 X 写入必须加分布式锁”，老员工踩过一次，新员工或新开的会话依然会反复中招；
-3. **返工无法计费**：因为重复犯错导致的调试和返工，无法向客户结算工时，直接侵蚀团队的利润。
+1. **Convention Bleeding**: Devs work on Client A's React 18 in the morning, and Client B's legacy Vue 2 in the afternoon. AI habitually bleeds patterns across projects.
+2. **Repeating Hidden Traps**: Niche client quirks (e.g. *"payment webhook requires strict HMAC order"*, *"table X requires a distributed lock"*) are learned the hard way once, but newly spawned AI sessions stumble into them again.
+3. **Unbillable Rework**: Debugging the same regression twice cannot be billed to the client—it directly eats into the agency's net margin.
 
 ---
 
-## 🚀 3 步极简接入（0 学习成本）
+## 🚀 3-Step Setup (Zero Friction)
 
-### 1. 安装 Continuum CLI
+### 1. Install Continuum CLI
 ```bash
 curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash 2>/dev/null || cargo install --path crates/continuum-cli
 ```
 
-### 2. 在项目仓库中初始化并挂载 Hook
+### 2. Initialize in Repository and Mount Git Hook
 ```bash
-# 在代码仓库根目录下执行
+# Inside target project repository root
 continuum-cli init .
 continuum-cli hook install .
 ```
-- 创建 `< 75 KB` 的物理有界状态文件 `.continuum/memory.state`；
-- 自动安装 Git post-commit hook，后续团队提交代码时自动捕获配置变更与关键提交。
+- Creates an ultra-compact `< 75 KB` state file at `.continuum/memory.state`.
+- Automatically captures configuration changes and commits on every `git commit`.
 
-### 3. 配置到团队的常用 IDE (Cursor / Claude / Windsurf)
+### 3. Connect to Team IDEs (Cursor / Claude / Windsurf)
 
-Continuum 内置了**零依赖的标准 MCP (Model Context Protocol) 服务**。
+Continuum includes a **built-in, zero-dependency MCP (Model Context Protocol) stdio server**.
 
-#### Cursor 接入 (`~/.cursor/mcp.json`):
+#### Cursor (`~/.cursor/mcp.json`):
 ```json
 {
   "mcpServers": {
@@ -72,47 +77,48 @@ claude mcp add continuum continuum-cli mcp
 
 ---
 
-## 🛠️ 日常工作流：无感流转
+## 🛠️ Daily Workflow: Completely Frictionless
 
-团队成员**完全不需要改变日常开发习惯**，Continuum 在水面之下默默守护：
+Developers **do not need to change their daily habits**. Continuum operates silently beneath the surface:
 
 ```bash
-# 1. 记下一条关键项目约束或安全底线
-continuum-cli remember "RULE: 客户支付网关回调接口必须验证 HMAC 签名，且超时时间为 3 秒"
+# 1. Record a critical project constraint or architectural guardrail
+continuum-cli remember "RULE: Client payment callback must verify HMAC SHA256 signature with 3s timeout"
 
-# 2. 自动因果结对：用 runner 跑测试，报错自动捕获，修好后自动配对记录
+# 2. Autonomous Causal Pairing: run tests through runner; failure symptoms auto-pair with fixes
 continuum-cli run cargo test
-# 或
+# or
 continuum-cli run pytest
 
-# 3. 任何 Agent 遇到疑似报错或在重构前，微秒级检索相关经验
-continuum-cli recall "支付网关超时" 2
-# 机器模式支持结构化 JSON 输出
-continuum-cli recall "支付网关超时" 2 --json
+# 3. Microsecond recall (< 100 μs) before refactoring or when debugging
+continuum-cli recall "payment gateway timeout" 2
+
+# Machine mode: structured JSON output for AI Agent integration
+continuum-cli recall "payment gateway timeout" 2 --json
 ```
 
 ---
 
-## ⚡ 底层硬核技术保障（100% 纯 Native Rust）
+## ⚡ Hardened Production Engineering (100% Native Rust)
 
-Continuum 绝不是玩具式的胶水脚本，而是采用生产级标准构建的高性能系统：
+Continuum is not a fragile glue script—it is an industrial-grade systems binary:
 
-- **100% 纯 Rust 标准库**：`crates/continuum-core` **0 外部 crate 依赖**，单二进制独立运行，内存占用严格封顶在 **~75 KB**，绝无 Python 堆碎片膨胀；
-- **OS 内核级 `flock` 并发保护**：使用操作系统原生的文件锁描述符，多 IDE 窗口或并行 Agent 写入时绝不死锁、不丢更新；
-- **断电安全与 Checksum**：原子重命名后显式执行**父目录 `fsync`**，快照内置 `CTNMFOOT` 签名与 64 位校验和，杜绝坏文件加载；
-- **全套回归测试守卫**：82 项自动化单元测试与端到端回归测试 100% PASS。
+- **100% Pure Rust Standard Library**: `crates/continuum-core` has **0 external crate dependencies**, single standalone binary, memory strictly bounded at **~75 KB** (zero Python heap bloat or GC pauses);
+- **OS Kernel `flock` Mutual Exclusion**: Uses operating system kernel file locks; process crashes automatically release the lock descriptor, eliminating deadlocks and split-brain writes;
+- **Power-Loss Durability & Checksums**: Atomic replacement followed by **parent directory `fsync`**, with built-in `CTNMFOOT` signatures and 64-bit FNV-1a checksums;
+- **Full Regression Test Guard**: 82 automated unit, regression, and C-ABI integration tests passing 100%.
 
 ---
 
-## 📄 学术背景与规范
+## 📄 Academic Citation & Prior Art
 
-Continuum 的双层流形与因果回溯理论体系由团队独立推导并发表存档于 **CERN Zenodo**：
+The foundational two-tier manifold and retrospective causal revision architecture were independently derived and archived on **CERN Zenodo**:
 - **Paper**: *Continuum: A Deterministic O(K)-Bounded Two-Tier Memory Manifold for Resilient Autonomous Agents under Temporal Alert Storms*
 - **Author**: Jun Wu
 - **DOI**: [https://doi.org/10.5281/zenodo.22765180](https://doi.org/10.5281/zenodo.22765180)
 
 ---
 
-## 📜 开源协议
+## 📜 License
 
-本项目采用 **GNU Affero General Public License v3.0 (AGPL-v3)** 开源。个人开发者与团队均可免费在本地使用。
+Released under the **GNU Affero General Public License v3.0 (AGPL-v3)**. Free and open-source for developers and teams locally.
