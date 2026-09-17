@@ -1,6 +1,10 @@
-# Continuum & DiffHound — 零噪音 AI 防回归引擎 (Zero-Noise PR Guard)
+# DiffHound (by Continuum) — 零噪音 AI 防回归引擎 (Zero-Noise PR Guard)
 
 <div align="center">
+
+<img src="docs/assets/diffhound_logo.jpg" alt="DiffHound Logo" width="220" style="border-radius: 50%; box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);" />
+
+<h3>专抓兔子遗漏的隐蔽回归，绝不瞎提无聊意见。</h3>
 
 [English](README.md) | **中文说明**
 

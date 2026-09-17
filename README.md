@@ -1,6 +1,10 @@
-# Continuum & DiffHound — Zero-Noise AI Anti-Regression Engine
+# DiffHound (by Continuum) — Zero-Noise AI Anti-Regression Engine
 
 <div align="center">
+
+<img src="docs/assets/diffhound_logo.jpg" alt="DiffHound Logo" width="220" style="border-radius: 50%; box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);" />
+
+<h3>The Hound that catches the regressions rabbits miss.</h3>
 
 **English** | [中文说明](README_CN.md)
 
