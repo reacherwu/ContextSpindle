@@ -16,17 +16,13 @@ use crate::types::{ColdRecord, ContinuumConfig, HotRecord};
 
 const MAGIC_HEADER: &[u8; 8] = b"CTNM0001";
 
-pub fn save_engine(engine: &ContinuumEngine, path: impl AsRef<Path>) -> io::Result<()> {
+pub fn save_engine_unlocked(engine: &ContinuumEngine, path: impl AsRef<Path>) -> io::Result<()> {
     let target = path.as_ref();
     let parent = target.parent().unwrap_or_else(|| Path::new("."));
     if !parent.as_os_str().is_empty() {
         std::fs::create_dir_all(parent)?;
     }
 
-    // 1. Acquire cross-process file lock (2000ms timeout)
-    let _lock = crate::lock::FileLockGuard::acquire(target, std::time::Duration::from_millis(2000))?;
-
-    // 2. Prepare temporary file in the same directory for atomic rename
     let tmp_path = parent.join(format!(
         ".{}.tmp.{}.{}",
         target.file_name().and_then(|n| n.to_str()).unwrap_or("state"),
@@ -134,9 +130,8 @@ pub fn save_engine(engine: &ContinuumEngine, path: impl AsRef<Path>) -> io::Resu
     Ok(())
 }
 
-pub fn load_engine(path: impl AsRef<Path>) -> io::Result<ContinuumEngine> {
+pub fn load_engine_unlocked(path: impl AsRef<Path>) -> io::Result<ContinuumEngine> {
     let target = path.as_ref();
-    let _lock = crate::lock::FileLockGuard::acquire(target, std::time::Duration::from_millis(2000))?;
     let file = File::open(target)?;
     let mut reader = BufReader::new(file);
 
@@ -330,6 +325,52 @@ pub fn load_engine(path: impl AsRef<Path>) -> io::Result<ContinuumEngine> {
     })
 }
 
+/// Thread/process-safe save with exclusive lock.
+pub fn save_engine(engine: &ContinuumEngine, path: impl AsRef<Path>) -> io::Result<()> {
+    let target = path.as_ref();
+    let _lock = crate::lock::FileLockGuard::acquire(target, std::time::Duration::from_millis(2000))?;
+    save_engine_unlocked(engine, target)
+}
+
+/// Thread/process-safe load with exclusive lock.
+pub fn load_engine(path: impl AsRef<Path>) -> io::Result<ContinuumEngine> {
+    let target = path.as_ref();
+    let _lock = crate::lock::FileLockGuard::acquire(target, std::time::Duration::from_millis(2000))?;
+    load_engine_unlocked(target)
+}
+
+/// Transactional Read-Modify-Write (RMW) mutation on ContinuumEngine state file.
+/// Holds the cross-process lock across the ENTIRE load -> mutate -> atomic save lifecycle,
+/// eliminating race conditions and lost updates under concurrent multi-agent access.
+pub fn mutate_engine_transactional<F, R>(
+    path: impl AsRef<Path>,
+    default_config: Option<ContinuumConfig>,
+    f: F,
+) -> io::Result<R>
+where
+    F: FnOnce(&mut ContinuumEngine) -> io::Result<R>,
+{
+    let target = path.as_ref();
+    let parent = target.parent().unwrap_or_else(|| Path::new("."));
+    if !parent.as_os_str().is_empty() {
+        std::fs::create_dir_all(parent)?;
+    }
+
+    let _lock = crate::lock::FileLockGuard::acquire(target, std::time::Duration::from_millis(3000))?;
+
+    let mut engine = if target.exists() {
+        load_engine_unlocked(target)?
+    } else {
+        ContinuumEngine::new(default_config.unwrap_or_default())
+    };
+
+    let res = f(&mut engine)?;
+
+    save_engine_unlocked(&engine, target)?;
+
+    Ok(res)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -355,6 +396,30 @@ mod tests {
         assert_eq!(loaded.step_count, 1);
         assert_eq!(loaded.hot_memory.len(), 1);
         assert_eq!(loaded.hot_memory.records[0].payload_ref, "Atomic persistence test constraint");
+
+        let _ = std::fs::remove_file(&test_path);
+    }
+
+    #[test]
+    fn test_mutate_engine_transactional_rmw() {
+        let temp_dir = std::env::temp_dir();
+        let test_path = temp_dir.join(format!("continuum_rmw_{}.state", std::process::id()));
+
+        // Perform 3 sequential transactional mutations
+        for i in 1..=3 {
+            let res = mutate_engine_transactional(&test_path, None, |eng| {
+                let emb = vec![0.05f32 * (i as f32); 32];
+                eng.step(&emb, i as f64, &format!("Transactional Event #{i}"));
+                Ok(eng.step_count)
+            });
+            assert_eq!(res.unwrap(), i as u64);
+        }
+
+        // Verify loaded state has all 3 events perfectly preserved
+        let loaded = load_engine(&test_path).expect("Failed to load state");
+        assert_eq!(loaded.step_count, 3);
+        assert_eq!(loaded.hot_memory.len(), 3);
+        assert_eq!(loaded.hot_memory.records[2].payload_ref, "Transactional Event #3");
 
         let _ = std::fs::remove_file(&test_path);
     }

@@ -19,7 +19,10 @@ pub mod types;
 pub use embedder::RealTextEmbedder;
 pub use engine::ContinuumEngine;
 pub use lock::FileLockGuard;
-pub use persistence::{load_engine, save_engine};
+pub use persistence::{
+    load_engine, load_engine_unlocked, mutate_engine_transactional, save_engine,
+    save_engine_unlocked,
+};
 pub use semantic_bridge::SemanticCausalBridge;
 pub use types::{CausalMatch, ContinuumConfig, ScoreComponents, StreamStepResult};
 

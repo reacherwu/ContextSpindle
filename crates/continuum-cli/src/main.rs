@@ -560,33 +560,31 @@ fn run_memory_query(query: &str, snapshot_path: &str, top_k: usize) {
 }
 
 fn run_memory_ingest(text: &str, snapshot_path: &str) {
-    if let Some(parent) = std::path::Path::new(snapshot_path).parent() {
-        let _ = std::fs::create_dir_all(parent);
-    }
+    let default_cfg = ContinuumConfig {
+        embedding_dim: 32,
+        state_dim: 32,
+        hot_capacity: 250,
+        cold_capacity: 500,
+        causal_exempt_threshold: Some(0.25),
+        sim_threshold: 0.65,
+        ..Default::default()
+    };
 
-    let mut engine = ContinuumEngine::load_from_file(snapshot_path).unwrap_or_else(|_| {
-        let cfg = ContinuumConfig {
-            embedding_dim: 32,
-            state_dim: 32,
-            hot_capacity: 250,
-            cold_capacity: 500,
-            causal_exempt_threshold: Some(0.25),
-            sim_threshold: 0.65,
-            ..Default::default()
-        };
-        ContinuumEngine::new(cfg)
-    });
+    let res = continuum_core::mutate_engine_transactional(
+        snapshot_path,
+        Some(default_cfg),
+        |engine| {
+            let dim = engine.config.embedding_dim;
+            let embedder = RealTextEmbedder::new(dim, 42);
+            let emb = embedder.embed(text);
+            let step_id = engine.step_count as f64;
+            engine.step(&emb, step_id, text);
+            Ok(())
+        },
+    );
 
-    let dim = engine.config.embedding_dim;
-    let embedder = RealTextEmbedder::new(dim, 42);
-    let emb = embedder.embed(text);
-    let step_id = engine.step_count as f64;
-    engine.step(&emb, step_id, text);
-
-    match engine.save_to_file(snapshot_path) {
-        Ok(()) => eprintln!("Ingested event into memory (active slots: {}/{}, snapshot: '{}')",
-            engine.total_slots(), engine.config.hot_capacity + engine.config.cold_capacity, snapshot_path),
-        Err(e) => eprintln!("Failed to persist snapshot: {e}"),
+    if let Err(e) = res {
+        eprintln!("Failed to ingest event into memory: {e}");
     }
 }
 
