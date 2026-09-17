@@ -1,28 +1,46 @@
-name: DiffHound Zero-Noise PR Guard
+name: DiffHound Anti-Regression Guard
 
 on:
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ main, master ]
   push:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
-  diffhound-guard:
-    name: DiffHound Regression Gate
+  guard:
+    name: DiffHound Zero-Noise PR Guard
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Install Rust Toolchain
+      - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Run DiffHound PR Review
-        uses: ./
+      - name: Cache Cargo Dependencies
+        uses: actions/cache@v4
         with:
-          base-ref: ${{ github.base_ref || 'HEAD~1' }}
-          head-ref: 'HEAD'
-          threshold: '0.45'
-          fail-on-regression: 'false'
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Install DiffHound CLI
+        run: cargo install --path crates/diffhound-cli
+
+      - name: Run DiffHound Review
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_REF="origin/${{ github.base_ref }}"
+          else
+            BASE_REF="HEAD~1"
+          fi
+          echo "Inspecting diff against base: $BASE_REF"
+          diffhound review --base "$BASE_REF" --fail-on-regression --threshold 0.45
