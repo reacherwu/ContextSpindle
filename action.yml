@@ -1,0 +1,47 @@
+name: 'DiffHound AI PR Guard'
+description: 'Zero-Noise Anti-Regression & Architecture PR Reviewer for AI-Generated Code.'
+author: 'Reacher Wu <reacherwu@gmail.com>'
+branding:
+  icon: 'shield'
+  color: 'cyan'
+
+inputs:
+  base-ref:
+    description: 'Base branch or commit SHA to compare against (e.g. origin/main, github.base_ref)'
+    required: false
+    default: 'origin/main'
+  head-ref:
+    description: 'Head branch or commit SHA to evaluate'
+    required: false
+    default: 'HEAD'
+  threshold:
+    description: 'Sensitivity score threshold for regression detection (0.0 to 1.0)'
+    required: false
+    default: '0.45'
+  fail-on-regression:
+    description: 'Whether to block CI check if regressions are detected'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run DiffHound Zero-Noise PR Review
+      shell: bash
+      run: |
+        # 1. Install or locate diffhound binary
+        if ! command -v diffhound >/dev/null 2>&1; then
+          cargo install --path "${{ github.action_path }}/crates/diffhound-cli"
+        fi
+
+        # 2. Execute review
+        FLAGS=""
+        if [ "${{ inputs.fail-on-regression }}" = "true" ]; then
+          FLAGS="--fail-on-regression"
+        fi
+
+        diffhound review \
+          --base "${{ inputs.base-ref }}" \
+          --head "${{ inputs.head-ref }}" \
+          --threshold "${{ inputs.threshold }}" \
+          $FLAGS
