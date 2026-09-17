@@ -1,100 +1,59 @@
-# Continuum — Continuous Temporal Intelligence Memory Engine
+# Continuum — AI Team Handover & Anti-Regression Guard
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22765180.svg)](https://doi.org/10.5281/zenodo.22765180)
 [![Rust: 100% Native](https://img.shields.io/badge/Rust-100%25%20Pure%20Native-dea584.svg?logo=rust&logoColor=white)](crates/continuum-core)
 [![Zero External Crates](https://img.shields.io/badge/Dependencies-0%20(Pure%20std)-brightgreen.svg?logo=rust&logoColor=white)](#)
-[![Edition: 2021](https://img.shields.io/badge/Edition-2021-black.svg?logo=rust&logoColor=white)](Cargo.toml)
-[![Tests](https://img.shields.io/badge/tests-62%20passing-brightgreen)](#)
-[![Memory Bound](https://img.shields.io/badge/Memory-750%20Slots%20Flat%20O(K)-blue.svg)](#)
+[![Tests: 82 Passing](https://img.shields.io/badge/tests-82%20passing-brightgreen)](#)
+[![Memory: Flat O(K)](https://img.shields.io/badge/Memory-750%20Slots%20Flat%20O(K)-blue.svg)](#)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22765180.svg)](https://doi.org/10.5281/zenodo.22765180)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-purple.svg)](LICENSE)
 
-> **The High-Performance Native Rust Implementation of Continuum Memory Architectures (CMA, [arXiv:2601.09913](https://arxiv.org/abs/2601.09913)).**  
-> Continuum is an ultra-fast, deterministic $O(K)$ bounded two-tier memory manifold for autonomous coding agents (Claude Code, Cursor, OpenHands, Codex) and streaming AIOps systems. While early CMA frameworks (like ShyftLabs or FormulateAI) rely on heavy Python runtimes, external Redis servers, and cloud vector databases (Qdrant/Mem0), Continuum executes entirely in **100% pure native Rust standard library (0 external crate dependencies)** with strictly bounded physical slots (< 75 KB RAM) and **< 100 microsecond** retrospective recall.
+> **“让新接手的 AI，少重复团队已经解决过的错误。”**  
+> *Prevent new AI sessions and agents from repeating errors your team has already solved.*  
+> 专为同时维护多个代码仓库、重度使用 AI 编程（Cursor, Claude Code, Windsurf, Hermes）的开发团队与外包团队设计。
 
 ---
 
-## 🤖 The "One-Prompt" AI Integration (Cursor / Claude Code / Google IDX / OpenClaw)
+## 🎯 核心交付的 3 个确定性结果
 
-You don't need to manually configure anything. Simply **copy and paste this prompt directly into your AI assistant's chat**:
-
-```text
-Please read the integration protocol from https://github.com/reacherwu/continuum (specifically AGENTS.md) and autonomously equip yourself with the Continuum Bounded Memory Engine for this project.
-
-Run:
-1. `curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash 2>/dev/null || cargo install --path crates/continuum-cli`
-2. `continuum-cli init .`
-
-Once installed, actively use `continuum remember` to store our architectural constraints and bug resolutions, and use `continuum recall` to retrieve past context in < 100 microseconds. Confirm when ready.
-```
-
-Your AI assistant will autonomously install the CLI, initialize `.continuum/`, and gain microsecond lifetime recall!
-
----
-
-## ⚡ Key Architectural Superpowers
-
-| Feature | Raw Context Appending | With Continuum Native Engine |
+| 交付价值 | 传统 AI 编程现状 | 接入 Continuum 团队守护 |
 | :--- | :--- | :--- |
-| **Token Bill per Query** | Up to 150,000 tokens | **~2,500 tokens (96.8% reduction)** |
-| **5-Minute Cache TTL Invalidation** | Flushed every 5 mins of pause | **Immune (Local state persistent)** |
-| **Query Latency** | 12 ~ 18 seconds | **< 100 microseconds (0.0001s)** |
-| **Attention Quality** | Degrades (*Lost-in-the-Middle*) | **100% Causal Recall (Rank #1)** |
-| **Memory Footprint** | Unbounded growth ($O(T)$) | **Flat 750 slots constant ($O(1)$)** |
-| **Data Privacy** | Cloud transmission | **100% Local Native Rust CPU Execution** |
-
-1. **Strict Physical $O(K)$ Boundedness**: Active Hot RAM ($K_{\text{hot}}=250$) + Candidate Cold Manifold ($K_{\text{cold}}=500$). The physical footprint is permanently capped at 750 slots ($< 75\text{ KB}$), completely eliminating Python heap bloat and GC pauses.
-2. **Subspace Diversity Deduplication**: Prunes records with maximal mutual redundancy ($\max \cos(\mathbf{x}_i, \mathbf{x}_j) \ge \tau_{\text{sim}}$), never temporal age. Thousands of redundant alert-storm messages collapse into minimal slots.
-3. **Retrospective Causal Revision & Decay Exemption**: When terminal symptoms occur, historical records with high causal alignment ($\ge \theta_{\text{exempt}}$) bypass recency penalties entirely ($\text{TempCompat}=1.0$), ensuring ancient root causes defeat recent noise.
-4. **Dual-Channel Semantic Causal Bridge**: Deterministic $< 10\ \mu\text{s}$ diagnostic projection bridging vocabulary gaps between actions and error symptoms.
-5. **Microsecond Zero-Loss Persistence**: Bit-exact state snapshots serialize to disk in $< 350\ \mu\text{s}$ and restore in $< 1\ \text{ms}$, 100% recovered across machine reboots.
+| **1. 跨成员/跨 Agent 零成本交接** | 换人接手、换 IDE 或开新会话，AI 瞬间失忆，必须手动复制一堆 Prompt 交代项目潜规则。 | **自动感知项目流形**：项目约束常驻在仓库根目录，换谁接手都无需重复解释。 |
+| **2. 故障与避坑有据可查** | 解决过的疑难杂症散落在聊天记录里，AI 靠模糊概率脑补，经常给出似是而非的答案。 | **带验证闭环的因果记录**：自动关联报错症状、成功修复命令（如测试通过）与 Git 版本。 |
+| **3. 提醒与物理阻断防返工** | AI 稍不注意就把上周刚修好的边界条件又改坏了，反复踩同一个坑。 | **编码时精准提醒，CI 中测试物理拦截**：关键规则沉淀为回归测试，死守质量红线。 |
 
 ---
 
-## 📊 Real Bare-Metal Hardware Benchmark Results (Apple M4)
+## 💡 为什么多项目团队与外包团队最需要它？
 
-> All charts below are generated from real execution telemetry on an **Apple M4 (macOS Sequoia)** running pure native Rust (`crates/continuum-core`).  
-> Detailed reproduction steps and log outputs are documented in [**benchmarks/README.md**](benchmarks/README.md).
+在频繁切换代码仓库的多项目开发中，**AI 造成的返工消耗的是真金白银的工时与客户交付信任**：
 
-<div align="center">
-
-### ⚡ Constant < 100 μs Retrospective Recall vs O(T) Vector Degradation
-![Latency Scaling](benchmarks/assets/benchmark_latency_scaling.png)
-
-### 🔒 Strictly Constant 75 KB RAM Allocation (Zero Heap Bloat over 10,000 Turns)
-![Memory Footprint](benchmarks/assets/benchmark_memory_footprint.png)
-
-### 🛡️ 100% Causal Retention Under Severe 99% Alert Storm Noise
-![Alert Storm Accuracy](benchmarks/assets/benchmark_alert_storm_accuracy.png)
-
-### 💰 Real-World Token Savings & Cost Reduction (-96.0% Token Cut via tiktoken)
-![Token Savings](benchmarks/assets/benchmark_token_savings.png)
-
-</div>
+1. **规则混淆**：团队上午修客户 A 的 React 18，下午改客户 B 的 Vue 2 遗留系统。AI 极易把 A 项目的语法和包习惯性代入 B 项目；
+2. **隐性暗坑重复踩**：比如“客户的支付网关有严格顺序要求”、“表 X 写入必须加分布式锁”，老员工踩过一次，新员工或新开的会话依然会反复中招；
+3. **返工无法计费**：因为重复犯错导致的调试和返工，无法向客户结算工时，直接侵蚀团队的利润。
 
 ---
 
-## 📦 Quick Installation (10 Seconds)
+## 🚀 3 步极简接入（0 学习成本）
 
+### 1. 安装 Continuum CLI
 ```bash
-curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash 2>/dev/null || cargo install --path crates/continuum-cli
 ```
 
-*(Or build locally: `cargo install --path crates/continuum-cli`)*
-
-Verify installation:
+### 2. 在项目仓库中初始化并挂载 Hook
 ```bash
-continuum-cli version
-# continuum 0.1.0 (native rust core)
+# 在代码仓库根目录下执行
+continuum-cli init .
+continuum-cli hook install .
 ```
+- 创建 `< 75 KB` 的物理有界状态文件 `.continuum/memory.state`；
+- 自动安装 Git post-commit hook，后续团队提交代码时自动捕获配置变更与关键提交。
 
----
+### 3. 配置到团队的常用 IDE (Cursor / Claude / Windsurf)
 
-## 🔌 One-Click IDE Integration via Model Context Protocol (MCP)
+Continuum 内置了**零依赖的标准 MCP (Model Context Protocol) 服务**。
 
-Continuum contains a **native, zero-dependency MCP server** built directly into the Rust binary.
-
-### For Cursor IDE:
-Add to `~/.cursor/mcp.json`:
+#### Cursor 接入 (`~/.cursor/mcp.json`):
 ```json
 {
   "mcpServers": {
@@ -106,71 +65,54 @@ Add to `~/.cursor/mcp.json`:
 }
 ```
 
-### For Claude Desktop:
-Add to `claude_desktop_config.json`:
-```json
-{
-  "mcpServers": {
-    "continuum": {
-      "command": "continuum-cli",
-      "args": ["mcp"]
-    }
-  }
-}
-```
-
-### For Claude Code CLI:
+#### Claude Code / Claude Desktop:
 ```bash
 claude mcp add continuum continuum-cli mcp
 ```
 
 ---
 
-## 💻 Interactive CLI Reference
+## 🛠️ 日常工作流：无感流转
+
+团队成员**完全不需要改变日常开发习惯**，Continuum 在水面之下默默守护：
 
 ```bash
-# 1. Initialize local repository memory manifold (< 75 KB)
-continuum-cli init
+# 1. 记下一条关键项目约束或安全底线
+continuum-cli remember "RULE: 客户支付网关回调接口必须验证 HMAC 签名，且超时时间为 3 秒"
 
-# 2. Zero-Friction Git Hook: auto-ingest commit logs & file diffs on every commit
-continuum-cli hook install .
-
-# 3. Autonomous Command Runner: auto-pairs error symptoms with subsequent fixes
+# 2. 自动因果结对：用 runner 跑测试，报错自动捕获，修好后自动配对记录
 continuum-cli run cargo test
-continuum-cli run pytest tests/
+# 或
+continuum-cli run pytest
 
-# 4. Store a critical architectural rule or constraint
-continuum-cli remember "PostgreSQL connection pool max_connections=50 idle_timeout=10s"
-
-# 5. Retrieve past causal root causes in < 100 μs
-continuum-cli recall "database connection timeout" 2
-
-# 6. View token savings ROI and Pro tier ($15/mo)
-continuum-cli upgrade
+# 3. 任何 Agent 遇到疑似报错或在重构前，微秒级检索相关经验
+continuum-cli recall "支付网关超时" 2
+# 机器模式支持结构化 JSON 输出
+continuum-cli recall "支付网关超时" 2 --json
 ```
 
 ---
 
-## 📄 Academic Publication & Prior Art
+## ⚡ 底层硬核技术保障（100% 纯 Native Rust）
 
-Continuum's theoretical formulation and empirical evaluations are officially published and archived on **CERN Zenodo**:
+Continuum 绝不是玩具式的胶水脚本，而是采用生产级标准构建的高性能系统：
 
-- **Paper Title**: *Continuum: A Deterministic $O(K)$-Bounded Two-Tier Memory Manifold for Resilient Autonomous Agents under Temporal Alert Storms*
+- **100% 纯 Rust 标准库**：`crates/continuum-core` **0 外部 crate 依赖**，单二进制独立运行，内存占用严格封顶在 **~75 KB**，绝无 Python 堆碎片膨胀；
+- **OS 内核级 `flock` 并发保护**：使用操作系统原生的文件锁描述符，多 IDE 窗口或并行 Agent 写入时绝不死锁、不丢更新；
+- **断电安全与 Checksum**：原子重命名后显式执行**父目录 `fsync`**，快照内置 `CTNMFOOT` 签名与 64 位校验和，杜绝坏文件加载；
+- **全套回归测试守卫**：82 项自动化单元测试与端到端回归测试 100% PASS。
+
+---
+
+## 📄 学术背景与规范
+
+Continuum 的双层流形与因果回溯理论体系由团队独立推导并发表存档于 **CERN Zenodo**：
+- **Paper**: *Continuum: A Deterministic O(K)-Bounded Two-Tier Memory Manifold for Resilient Autonomous Agents under Temporal Alert Storms*
 - **Author**: Jun Wu
-- **Official DOI**: [https://doi.org/10.5281/zenodo.22765180](https://doi.org/10.5281/zenodo.22765180)
-
-```bibtex
-@article{wu2026continuum,
-  title={Continuum: A Deterministic O(K)-Bounded Two-Tier Memory Manifold for Resilient Autonomous Agents under Temporal Alert Storms},
-  author={Wu, Jun},
-  journal={CERN Zenodo},
-  doi={10.5281/zenodo.22765180},
-  year={2026}
-}
-```
+- **DOI**: [https://doi.org/10.5281/zenodo.22765180](https://doi.org/10.5281/zenodo.22765180)
 
 ---
 
-## 📜 License & Commercial Open-Core
+## 📜 开源协议
 
-Continuum is released under the **GNU Affero General Public License v3.0 (AGPL-v3)**. It is **100% free and open-source for individual developers and researchers**. Multi-device encrypted cloud sync and team manifold collaboration are currently in development as part of our future roadmap ([Read our License Boundaries Guide](https://reacherwu.github.io/continuum/license.html)).
+本项目采用 **GNU Affero General Public License v3.0 (AGPL-v3)** 开源。个人开发者与团队均可免费在本地使用。
