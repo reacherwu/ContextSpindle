@@ -86,9 +86,16 @@ fn run_review(args: &[String]) {
     let mut pr_number: Option<u64> = std::env::var("PR_NUMBER").ok().and_then(|s| s.parse::<u64>().ok());
     let mut threshold = 0.65f32;
 
+    let mut diff_file: Option<String> = None;
     let mut i = 0;
     while i < args.len() {
         match args[i].as_str() {
+            "--diff-file" => {
+                if i + 1 < args.len() {
+                    diff_file = Some(args[i + 1].clone());
+                    i += 1;
+                }
+            }
             "--base" => {
                 if i + 1 < args.len() {
                     base_ref = Some(args[i + 1].clone());
@@ -136,11 +143,21 @@ fn run_review(args: &[String]) {
     }
 
     // 1. Obtain git diff
-    let diff_text = match get_git_diff(base_ref.as_deref(), head_ref.as_deref()) {
-        Ok(d) => d,
-        Err(e) => {
-            eprintln!("❌ DiffHound: Failed to obtain git diff: {e}");
-            exit(1);
+    let diff_text = if let Some(ref path) = diff_file {
+        match std::fs::read_to_string(path) {
+            Ok(d) => d,
+            Err(e) => {
+                eprintln!("❌ DiffHound: Failed to read diff file '{path}': {e}");
+                exit(1);
+            }
+        }
+    } else {
+        match get_git_diff(base_ref.as_deref(), head_ref.as_deref()) {
+            Ok(d) => d,
+            Err(e) => {
+                eprintln!("❌ DiffHound: Failed to obtain git diff: {e}");
+                exit(1);
+            }
         }
     };
 
