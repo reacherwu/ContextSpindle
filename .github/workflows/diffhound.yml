@@ -33,7 +33,7 @@ jobs:
             ${{ runner.os }}-cargo-
 
       - name: Install DiffHound CLI
-        run: cargo install --path crates/diffhound-cli
+        run: cargo install --force --path crates/diffhound-cli
 
       - name: Run DiffHound Review
         run: |

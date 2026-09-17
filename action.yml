@@ -31,7 +31,7 @@ runs:
       run: |
         # 1. Install or locate diffhound binary
         if ! command -v diffhound >/dev/null 2>&1; then
-          cargo install --path "${{ github.action_path }}/crates/diffhound-cli"
+          cargo install --force --path "${{ github.action_path }}/crates/diffhound-cli"
         fi
 
         # 2. Execute review
