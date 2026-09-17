@@ -113,13 +113,13 @@
    ```bash
    cargo test --workspace
    ```
-   必须保证全绿（当前基准：4 / 4 PASS）。
+   必须保证全绿（当前基准：18 / 18 PASS）。
 2. **Python 绑定与集成测试**：
    ```bash
    python3 -m unittest discover tests
    ```
    必须保证全绿（当前基准：58 / 58 PASS）。
-3. **三大真实场景验证**：
+3. **四大真实场景验证**：
    ```bash
    ./target/release/continuum-cli demo aiops
    ./target/release/continuum-cli demo persona
@@ -127,3 +127,53 @@
    ./target/release/continuum-cli demo persistence
    ```
    所有场景必须全部输出 `🎉 VERDICT: SUCCESS`，目标因果必须稳居 **Rank #1 / Top-3**。
+
+---
+
+## 8. 工业级健壮性与系统防御法则 (Production Hardening & System Robustness Laws)
+
+在真实多 Agent 协作、多 IDE 并行与自动化 CI/CD 环境下，软件面临各种极端工况（并发踩踏、进程崩溃、断电断网、坏数据注入）。必须时刻恪守以下六大系统防御红线：
+
+### 8.1 调用端错误透明穿透律 (Error Propagation Law)
+- ❌ **Anti-Pattern (假报成功与错误吞没)**：
+  在底层存储或加载失败时，只在日志打印一句 warning 却返回 0，或者在 MCP 协议中只在文本里写“失败”却仍把调用标记为成功。这会使上层调度 Agent 误以为记忆已固化，从而执行不可逆的后续动作。
+- ✅ **Production Law**：
+  - **CLI 严格非零退出**：当 `remember`、`recall`、`ingest` 遇到 I/O 或状态损坏，必须立即向 `stderr` 打印错误并以非零状态码（`exit(1)`）退出。
+  - **MCP 协议 `isError: true`**：当底层执行失败，JSON-RPC 响应体必须显式带上 `isError: true`。
+  - **冷启动与数据损坏严格界定**：文件不存在是合法的冷启动状态；而文件已存在但读取/校验失败属于**致命损坏**，严禁静默覆盖为空引擎，必须报错拦截。
+
+### 8.2 内核级死锁免疫并发锁律 (Kernel Flock vs. Timestamp Stealing)
+- ❌ **Anti-Pattern (应用层时间戳抢锁)**：
+  使用自创的“锁文件时间戳超过 5 秒即强制删除并抢占”。若系统执行大文件读写或发生 GC 暂停超过 5 秒，锁将被后置进程暴力强拆，导致两个进程同时写入造成数据穿透；而在文件删除时又存在 unlink-create 竞态。
+- ✅ **Production Law**：
+  - **OS 内核级顾问锁**：采用操作系统内核原生的 `flock(fd, LOCK_EX | LOCK_NB)`。
+  - **异常自愈**：当持锁进程崩溃、被 `kill -9` 或异常退出时，操作系统内核自动回收文件描述符并解除锁定，天然免疫死锁。
+  - **Inode 锚点保全**：`.lock` 文件作为文件系统 Inode 永久存在，绝不进行脆弱的删文件竞争。
+
+### 8.3 事务性 RMW 保护律 (RMW Transactional Atomicity)
+- ❌ **Anti-Pattern (分离锁导致的更新丢失)**：
+  读取时加锁读取并立即释放，计算完成后再加锁写入。两个并发 Agent 同时读取到状态 $S_0$，各自计算后写入，后写入者将彻底抹杀先写入者的状态修改。
+- ✅ **Production Law**：
+  - **全周期事务锁**：提供 `mutate_engine_transactional`，单把内核排他锁从 `load_engine -> mutate -> save_engine` 全程锁定，确保 Read-Modify-Write 过程具备严格的跨进程线性化与串行化。
+
+### 8.4 断电安全与元数据落盘一致性律 (Durability & Checksum Law)
+- ❌ **Anti-Pattern (半写坏文件与悬挂临时文件)**：
+  写入未完成即遭遇断电或异常，在磁盘留下残缺的 `.tmp` 僵尸文件；或者目标文件只写了一半被误认为正常。
+- ✅ **Production Law**：
+  - **异常自清理**：写临时文件时若遇任何错误，必须在返回前显式 `unlink` 该临时文件。
+  - **父目录 fsync**：POSIX 标准下，`rename` 仅修改目录项内存。必须在原子替换后，对父目录执行 `fsync`，确保目录元数据物理刷盘，提供真实的断电一致性。
+  - **尾部魔数与校验和**：文件末尾追加 `CTNMFOOT` 签名与 64 位校验和（FNV-1a/CRC32）。读取时全量比对，损坏或截断文件直接报 `InvalidData`，严禁加载乱码。
+
+### 8.5 自主因果同源收敛与安全脱敏律 (Attribution Affinity & Sanitization)
+- ❌ **Anti-Pattern (张冠李戴与凭据泄漏)**：
+  命令运行器将前面失败的 `pytest` 随意与后面成功的 `git status` 结为因果修复对；或者将终端输出中打印的 API Token、Database Password 原文存入持久化记忆库。
+- ✅ **Production Law**：
+  - **可执行文件同源校验**：只有当成功执行的命令与先前失败命令的基础程序一致（如 `pytest` 对 `pytest`）时才允许结对。
+  - **客观语义标注**：自动结对只能标注为 `CANDIDATE_FIX`，客观表明其为候选因果，杜绝绝对断言。
+  - **凭据脱敏过滤器**：入库前必须经由过滤流水线（`sanitize_log_text`），彻底遮蔽 Bearer Token、私钥、密码字段。
+
+### 8.6 机器优先结构化接口律 (Machine-First Structured Interface)
+- ❌ **Anti-Pattern (让 Agent 解析人类排版)**：
+  要求调用端 AI Agent 解析带有多层边框、表格符号和换行缩进的控制台人类排版。既大幅浪费上下文 Token，又极易因终端宽度截断引发正则解析失灵。
+- ✅ **Production Law**：
+  - **双轨输出支持**：CLI 必须为 `recall` 和 `query` 提供 `--json` 参数，返回紧凑、类型完备的 JSON 数组（包含 `rank`, `score`, `event_id`, `provenance`, `components`），机器调用走 JSON，人类交互走控制台高亮。

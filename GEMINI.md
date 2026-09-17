@@ -19,6 +19,16 @@
    - When semantic similarity $\ge \theta_{\text{exempt}}$, temporal decay is exempted ($\text{TempCompat} = 1.0$), ensuring ancient root causes defeat recent background chatter.
 4. **Lightweight Semantic Causal Bridge**:
    - For domain discrepancies (e.g. error symptom vs. historical configuration action), use dual-channel query projection ($q_{\text{bridged}} = (1-\lambda) q_{\text{symptom}} + \lambda q_{\text{hypothesis}}$). Keep projection deterministic and $< 10\ \mu\text{s}$ without cloud LLM roundtrips.
+5. **Transactional RMW & OS Kernel `flock`**:
+   - Cross-process concurrency MUST use OS kernel-level `flock(fd, LOCK_EX | LOCK_NB)` via standard libc FFI. NEVER use application-level timestamp stealing (e.g. 5s deletion).
+   - RMW operations (Read-Modify-Write) MUST hold the transactional lock across `load -> mutate -> save`.
+6. **Zero-Loss Durability & Checksums**:
+   - Atomic save writes to `.tmp.*` and renames. Write failures must immediately clean up tempfiles.
+   - After rename, parent directory MUST be fsync'd for POSIX metadata durability.
+   - Snapshots MUST include `CTNMFOOT` signature and 64-bit checksum. Corrupted files must fail with `InvalidData`, NEVER faking an empty engine.
+7. **Error Propagation & Machine-First Interface**:
+   - Storage/retrieval failures MUST exit with code `1` in CLI and return `isError: true` in MCP protocol.
+   - `recall` supports `--json` structured machine output with four-factor component breakdowns.
 
 ---
 
@@ -39,6 +49,9 @@
 - ❌ **The Toy Benchmark Trap**: NEVER use synthetic randomly generated vectors (e.g., $v_{\text{query}} = 0.85 v_{\text{root}} + ...$) as primary proof of capability. Always evaluate using real text corpora (AIOps logs, conversational turns, Git trajectories).
 - ❌ **Alert Storm Truncation**: NEVER apply a pre-filter top-k cutoff before causal revision scoring. The true root cause may have low initial raw similarity during an alert storm.
 - ❌ **Python Heap Bloat**: NEVER store unbounded string representations in Python heap for long streams; Python allocator causes up to 724MB heap fragmentation. Keep memory flat in native Rust.
+- ❌ **Silent Failure / Fake Success**: NEVER catch an I/O error or corrupted state file and construct an empty engine to pretend success. Always bubble up non-zero exits and `isError: true`.
+- ❌ **Timestamp Lock Stealing**: NEVER steal or delete a lockfile based on wall-clock timestamp timeouts. Let the OS kernel clean up locks on process exit.
+- ❌ **Attribution Pollution**: NEVER attribute unrelated commands as fixes for prior incidents; enforce command affinity (`cur_base == prior_base`), sanitize log tokens, and tag as `CANDIDATE_FIX`.
 
 ---
 
