@@ -84,7 +84,7 @@ fn run_review(args: &[String]) {
     let mut post_comment = false;
     let mut repo: Option<String> = std::env::var("GITHUB_REPOSITORY").ok();
     let mut pr_number: Option<u64> = std::env::var("PR_NUMBER").ok().and_then(|s| s.parse::<u64>().ok());
-    let mut threshold = 0.45f32;
+    let mut threshold = 0.65f32;
 
     let mut i = 0;
     while i < args.len() {

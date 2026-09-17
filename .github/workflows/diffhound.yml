@@ -43,4 +43,4 @@ jobs:
             BASE_REF="HEAD~1"
           fi
           echo "Inspecting diff against base: $BASE_REF"
-          diffhound review --base "$BASE_REF" --fail-on-regression --threshold 0.45
+          diffhound review --base "$BASE_REF" --fail-on-regression --threshold 0.65
