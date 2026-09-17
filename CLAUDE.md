@@ -17,6 +17,9 @@ When working in this repository:
    - When resolving a complex bug or establishing a project constraint:
      - MCP Tool: `continuum_remember(text: "RULE/FIX: ...")`
      - Shell CLI: `continuum-cli remember "RULE/FIX: ..."`
+3. **Autonomous Command Execution & Git Ingestion**:
+   - Run tests/builds with automatic failure symptom & causal fix pairing: `continuum-cli run <command...>`
+   - Enable zero-friction Git commit ingestion: `continuum-cli hook install .`
 
 ---
 

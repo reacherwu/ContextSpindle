@@ -40,7 +40,17 @@ Once initialized, adhere to these memory retention standards:
    ```bash
    continuum-cli remember "FIX: <symptom, e.g. SSLV3_ALERT_HANDSHAKE_FAILURE> caused by <action, e.g. missing CipherString in openssl.cnf>"
    ```
-3. **Microsecond Retrospective Recall (< 100 μs)**:
+3. **Autonomous Command Execution & Causal Fix Learning**:
+   Run builds/tests through Continuum runner to automatically pair failures with subsequent fixes:
+   ```bash
+   continuum-cli run <command, e.g. cargo test or pytest>
+   ```
+4. **Zero-Friction Git Commit Ingestion**:
+   Auto-record git commits and file modifications:
+   ```bash
+   continuum-cli hook install .
+   ```
+5. **Microsecond Retrospective Recall (< 100 μs)**:
    When encountering a failure, test error, or before starting a complex refactor, query Continuum memory:
    ```bash
    continuum-cli recall "<query or error symptom>" 3

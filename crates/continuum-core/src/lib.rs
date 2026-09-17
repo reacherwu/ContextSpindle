@@ -8,6 +8,7 @@ pub mod embedder;
 pub mod engine;
 pub mod ffi;
 pub mod hot_memory;
+pub mod lock;
 pub mod math;
 pub mod persistence;
 pub mod revision;
@@ -17,6 +18,7 @@ pub mod types;
 
 pub use embedder::RealTextEmbedder;
 pub use engine::ContinuumEngine;
+pub use lock::FileLockGuard;
 pub use persistence::{load_engine, save_engine};
 pub use semantic_bridge::SemanticCausalBridge;
 pub use types::{CausalMatch, ContinuumConfig, ScoreComponents, StreamStepResult};

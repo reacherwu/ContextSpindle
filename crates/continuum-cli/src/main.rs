@@ -1,4 +1,6 @@
-//! Continuum CLI: Standalone Continuous Temporal Intelligence Engine in pure Rust.
+mod hook;
+mod json;
+mod runner;
 
 use std::time::Instant;
 use continuum_core::{
@@ -11,6 +13,9 @@ fn print_help() {
     println!("  continuum init [path]                               Initialize .continuum memory workspace");
     println!("  continuum remember <text>                           Save critical constraint or decision to memory");
     println!("  continuum recall <query_text> [k]                   Retrieve causal memory in < 100 μs");
+    println!("  continuum run <command...>                          Run command with autonomous failure/fix causal learning");
+    println!("  continuum hook install [path]                       Install automatic Git post-commit memory hook");
+    println!("  continuum hook uninstall [path]                     Remove Git post-commit memory hook");
     println!("  continuum mcp                                       Launch Model Context Protocol (MCP) server for IDEs");
     println!("  continuum upgrade                                   View Pro tier subscription & token savings ROI");
     println!("  continuum demo <aiops|persona|github|persistence>   Run full native scenario demo");
@@ -414,74 +419,6 @@ fn safe_truncate(s: &str, max_chars: usize) -> String {
     }
 }
 
-fn find_key_value_start(line: &str, field: &str) -> Option<usize> {
-    let quote_field_quote = format!("\"{}\"", field);
-    let key_pos = line.find(&quote_field_quote)?;
-    let after_key = &line[key_pos + quote_field_quote.len()..];
-    let colon_rel = after_key.find(':')?;
-    if after_key[..colon_rel].trim().is_empty() {
-        Some(key_pos + quote_field_quote.len() + colon_rel + 1)
-    } else {
-        None
-    }
-}
-
-fn extract_raw_json_value(line: &str, field: &str) -> Option<String> {
-    let start_pos = find_key_value_start(line, field)?;
-    let rest = line[start_pos..].trim_start();
-    if rest.starts_with('"') {
-        let mut end_pos = 1;
-        let bytes = rest.as_bytes();
-        while end_pos < bytes.len() {
-            if bytes[end_pos] == b'\\' {
-                end_pos += 2;
-            } else if bytes[end_pos] == b'"' {
-                end_pos += 1;
-                break;
-            } else {
-                end_pos += 1;
-            }
-        }
-        Some(rest[..end_pos].to_string())
-    } else {
-        let end = rest.find([',', '}', ']', ' ']).unwrap_or(rest.len());
-        Some(rest[..end].trim().to_string())
-    }
-}
-
-fn extract_json_field(line: &str, field: &str) -> Option<String> {
-    let start_pos = find_key_value_start(line, field)?;
-    let rest = line[start_pos..].trim_start();
-    if rest.starts_with('"') {
-        let mut result = String::new();
-        let mut chars = rest[1..].chars();
-        while let Some(c) = chars.next() {
-            if c == '\\' {
-                if let Some(next_c) = chars.next() {
-                    match next_c {
-                        'n' => result.push('\n'),
-                        'r' => result.push('\r'),
-                        't' => result.push('\t'),
-                        '\\' => result.push('\\'),
-                        '"' => result.push('"'),
-                        other => {
-                            result.push('\\');
-                            result.push(other);
-                        }
-                    }
-                }
-            } else if c == '"' {
-                break;
-            } else {
-                result.push(c);
-            }
-        }
-        Some(result)
-    } else {
-        let end = rest.find([',', '}']).unwrap_or(rest.len());
-        Some(rest[..end].trim().to_string())
-    }
-}
 
 fn default_snapshot_path() -> String {
     let home = std::env::var("HOME").unwrap_or_else(|_| "/tmp".to_string());
@@ -540,13 +477,19 @@ fn run_memory_sync(transcript_path: &str, snapshot_path: &str) {
             continue;
         }
 
-        let step_idx = extract_json_field(&line, "step_index")
-            .and_then(|s| s.parse::<u64>().ok())
-            .unwrap_or(count as u64);
-        let step_type = extract_json_field(&line, "type").unwrap_or_else(|| "EVENT".to_string());
-        let content = extract_json_field(&line, "content").unwrap_or_else(|| safe_truncate(&line, 300));
+        let v = match json::parse_json(&line) {
+            Ok(val) => val,
+            Err(_) => continue,
+        };
 
-        let prov = format!("[step_{step_idx}] [{step_type}] {content}");
+        let step_idx = v.get("step_index")
+            .and_then(|x| x.as_u64())
+            .unwrap_or(count as u64);
+        let step_type = v.get("type").and_then(|x| x.as_str()).unwrap_or("EVENT");
+        let content = v.get("content").and_then(|x| x.as_str()).unwrap_or("");
+        let content_str = if content.is_empty() { safe_truncate(&line, 300) } else { content.to_string() };
+
+        let prov = format!("[step_{step_idx}] [{step_type}] {content_str}");
         let emb = embedder.embed(&prov);
         engine.step(&emb, step_idx as f64, &prov);
         count += 1;
@@ -762,8 +705,16 @@ fn run_mcp() {
             continue;
         }
 
-        let id_val = extract_raw_json_value(trimmed, "id").unwrap_or_else(|| "null".to_string());
-        let method = extract_json_field(trimmed, "method").unwrap_or_default();
+        let json = match json::parse_json(trimmed) {
+            Ok(v) => v,
+            Err(e) => {
+                eprintln!("MCP JSON-RPC parse error: {e}");
+                continue;
+            }
+        };
+
+        let id_val = json.get("id").map(|v| v.to_raw_id_string()).unwrap_or_else(|| "null".to_string());
+        let method = json.get("method").and_then(|v| v.as_str()).unwrap_or("");
 
         if method == "initialize" {
             let resp = format!(
@@ -793,14 +744,20 @@ fn run_mcp() {
             let _ = writeln!(stdout, "{}", resp);
             let _ = stdout.flush();
         } else if method == "tools/call" {
-            let tool_name = extract_json_field(trimmed, "name").unwrap_or_default();
+            let tool_name = json.get_path(&["params", "name"]).and_then(|v| v.as_str()).unwrap_or("");
             let result_text = if tool_name == "continuum_remember" {
-                let text_arg = extract_json_field(trimmed, "text").unwrap_or_else(|| "empty_event".to_string());
-                run_memory_ingest(&text_arg, &state_path);
+                let text_arg = json.get_path(&["params", "arguments", "text"])
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("empty_event");
+                run_memory_ingest(text_arg, &state_path);
                 format!("Stored constraint in Continuum memory: '{}' (Active slots saved in {})", text_arg, state_path)
             } else if tool_name == "continuum_recall" {
-                let query_arg = extract_json_field(trimmed, "query").unwrap_or_default();
-                let k_arg = extract_json_field(trimmed, "top_k").and_then(|s| s.parse::<usize>().ok()).unwrap_or(3);
+                let query_arg = json.get_path(&["params", "arguments", "query"])
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("");
+                let k_arg = json.get_path(&["params", "arguments", "top_k"])
+                    .and_then(|v| v.as_u64())
+                    .unwrap_or(3) as usize;
 
                 let engine = ContinuumEngine::load_from_file(&state_path).unwrap_or_else(|_| {
                     ContinuumEngine::new(ContinuumConfig::default())
@@ -808,7 +765,7 @@ fn run_mcp() {
                 let dim = engine.config.embedding_dim;
                 let embedder = RealTextEmbedder::new(dim, 42);
                 let bridge = SemanticCausalBridge::new();
-                let (v_bridged, _) = bridge.project_query(&query_arg, &embedder, 0.50);
+                let (v_bridged, _) = bridge.project_query(query_arg, &embedder, 0.50);
                 let matches = engine.query(&v_bridged, k_arg);
 
                 let mut out = format!("Retrieved {} causal memories (< 100 μs native Rust):\n", matches.len());
@@ -868,6 +825,38 @@ fn main() {
             let snap = find_active_state_file();
             let k = args.get(3).and_then(|s| s.parse::<usize>().ok()).unwrap_or(3);
             run_memory_query(query, &snap, k);
+        }
+        "run" | "exec" => {
+            if args.len() < 3 {
+                eprintln!("Usage: continuum run <command> [args...]");
+                std::process::exit(1);
+            }
+            let cmd_args = &args[2..];
+            let snap = find_active_state_file();
+            let code = runner::run_command(cmd_args, &snap);
+            std::process::exit(code);
+        }
+        "hook" => {
+            let sub = args.get(2).map(|s| s.as_str()).unwrap_or("help");
+            match sub {
+                "install" => {
+                    let target = args.get(3).map(|s| s.as_str()).unwrap_or(".");
+                    hook::run_hook_install(target);
+                }
+                "uninstall" => {
+                    let target = args.get(3).map(|s| s.as_str()).unwrap_or(".");
+                    hook::run_hook_uninstall(target);
+                }
+                "post-commit" => {
+                    let snap = find_active_state_file();
+                    hook::run_hook_post_commit(&snap);
+                }
+                _ => {
+                    println!("Usage:");
+                    println!("  continuum hook install [dir]      Install automatic Git post-commit memory hook");
+                    println!("  continuum hook uninstall [dir]    Remove Git post-commit memory hook");
+                }
+            }
         }
         "mcp" => {
             run_mcp();

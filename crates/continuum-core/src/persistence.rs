@@ -17,8 +17,29 @@ use crate::types::{ColdRecord, ContinuumConfig, HotRecord};
 const MAGIC_HEADER: &[u8; 8] = b"CTNM0001";
 
 pub fn save_engine(engine: &ContinuumEngine, path: impl AsRef<Path>) -> io::Result<()> {
-    let file = File::create(path)?;
-    let mut writer = BufWriter::new(file);
+    let target = path.as_ref();
+    let parent = target.parent().unwrap_or_else(|| Path::new("."));
+    if !parent.as_os_str().is_empty() {
+        std::fs::create_dir_all(parent)?;
+    }
+
+    // 1. Acquire cross-process file lock (2000ms timeout)
+    let _lock = crate::lock::FileLockGuard::acquire(target, std::time::Duration::from_millis(2000))?;
+
+    // 2. Prepare temporary file in the same directory for atomic rename
+    let tmp_path = parent.join(format!(
+        ".{}.tmp.{}.{}",
+        target.file_name().and_then(|n| n.to_str()).unwrap_or("state"),
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|d| d.as_nanos())
+            .unwrap_or(0)
+    ));
+
+    {
+        let file = File::create(&tmp_path)?;
+        let mut writer = BufWriter::new(file);
 
     // 1. Magic Header
     writer.write_all(MAGIC_HEADER)?;
@@ -104,12 +125,19 @@ pub fn save_engine(engine: &ContinuumEngine, path: impl AsRef<Path>) -> io::Resu
         writer.write_all(prov_bytes)?;
     }
 
-    writer.flush()?;
+        writer.flush()?;
+        let f = writer.into_inner().map_err(|e| e.into_error())?;
+        f.sync_all()?;
+    }
+
+    std::fs::rename(&tmp_path, target)?;
     Ok(())
 }
 
 pub fn load_engine(path: impl AsRef<Path>) -> io::Result<ContinuumEngine> {
-    let file = File::open(path)?;
+    let target = path.as_ref();
+    let _lock = crate::lock::FileLockGuard::acquire(target, std::time::Duration::from_millis(2000))?;
+    let file = File::open(target)?;
     let mut reader = BufReader::new(file);
 
     // 1. Magic Header
@@ -301,3 +329,34 @@ pub fn load_engine(path: impl AsRef<Path>) -> io::Result<ContinuumEngine> {
         step_count,
     })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_atomic_persistence_and_clean_state() {
+        let temp_dir = std::env::temp_dir();
+        let test_path = temp_dir.join(format!("continuum_atomic_{}.state", std::process::id()));
+
+        let mut engine = ContinuumEngine::new(ContinuumConfig::default());
+        let emb = vec![0.1f32; 32];
+        engine.step(&emb, 1.0, "Atomic persistence test constraint");
+
+        // Save atomically
+        save_engine(&engine, &test_path).expect("Failed atomic save");
+
+        // Lockfile should not linger
+        let lock_path = format!("{}.lock", test_path.display());
+        assert!(!Path::new(&lock_path).exists(), "Lockfile was not cleaned up");
+
+        // Load back and verify bit-exact consistency
+        let loaded = load_engine(&test_path).expect("Failed load");
+        assert_eq!(loaded.step_count, 1);
+        assert_eq!(loaded.hot_memory.len(), 1);
+        assert_eq!(loaded.hot_memory.records[0].payload_ref, "Atomic persistence test constraint");
+
+        let _ = std::fs::remove_file(&test_path);
+    }
+}
+

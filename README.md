@@ -132,13 +132,20 @@ claude mcp add continuum continuum-cli mcp
 # 1. Initialize local repository memory manifold (< 75 KB)
 continuum-cli init
 
-# 2. Store a critical architectural rule or constraint
+# 2. Zero-Friction Git Hook: auto-ingest commit logs & file diffs on every commit
+continuum-cli hook install .
+
+# 3. Autonomous Command Runner: auto-pairs error symptoms with subsequent fixes
+continuum-cli run cargo test
+continuum-cli run pytest tests/
+
+# 4. Store a critical architectural rule or constraint
 continuum-cli remember "PostgreSQL connection pool max_connections=50 idle_timeout=10s"
 
-# 3. Retrieve past causal root causes in < 100 μs
+# 5. Retrieve past causal root causes in < 100 μs
 continuum-cli recall "database connection timeout" 2
 
-# 4. View token savings ROI and Pro tier ($15/mo)
+# 6. View token savings ROI and Pro tier ($15/mo)
 continuum-cli upgrade
 ```
 
