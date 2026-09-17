@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # DiffHound 1-Shot CI Installer for Open Source Repositories
-# Usage: curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/crates/diffhound-cli/install-ci.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/reacherwu/diffhound/main/crates/diffhound-cli/install-ci.sh | bash
 
 set -euo pipefail
 
@@ -52,7 +52,7 @@ jobs:
             ${{ runner.os }}-cargo-
 
       - name: Run DiffHound Review
-        uses: reacherwu/continuum@main
+        uses: reacherwu/diffhound@main
         with:
           base-ref: 'origin/${{ github.base_ref }}'
           fail-on-regression: true

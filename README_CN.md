@@ -70,7 +70,7 @@
 ### 1. 开源项目一键安装脚本（推荐）
 在任何 Git 代码仓库根目录下执行这一行命令，自动完成 CI 守护门禁配置：
 ```bash
-curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/crates/diffhound-cli/install-ci.sh | bash
+curl -fsSL https://raw.githubusercontent.com/reacherwu/diffhound/main/crates/diffhound-cli/install-ci.sh | bash
 ```
 
 ### 2. 本地单机版 CLI 代码审查
@@ -95,7 +95,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: reacherwu/continuum@main
+      - uses: reacherwu/diffhound@main
         with:
           fail-on-regression: true
           threshold: '0.65'

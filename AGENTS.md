@@ -12,7 +12,7 @@ Execute the following bash commands in the workspace terminal:
 
 ```bash
 # 1. Install or update continuum-cli globally
-curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash 2>/dev/null || cargo install --path crates/continuum-cli
+curl -fsSL https://raw.githubusercontent.com/reacherwu/diffhound/main/install.sh | bash 2>/dev/null || cargo install --path crates/continuum-cli
 
 # 2. Initialize the bounded memory manifold in the current project
 continuum-cli init .

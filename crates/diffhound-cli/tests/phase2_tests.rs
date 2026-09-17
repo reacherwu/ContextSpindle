@@ -15,7 +15,7 @@ fn test_json_parser_on_github_webhook_payload() {
         "number": 42,
         "repository": {
             "name": "continuum",
-            "full_name": "reacherwu/continuum",
+            "full_name": "reacherwu/diffhound",
             "private": false
         },
         "pull_request": {
@@ -35,7 +35,7 @@ fn test_json_parser_on_github_webhook_payload() {
 
     let parsed = parse_json(payload).expect("Failed to parse GitHub webhook payload");
     assert_eq!(parsed.get("action").and_then(|v| v.as_str()), Some("opened"));
-    assert_eq!(parsed.get_path(&["repository", "full_name"]).and_then(|v| v.as_str()), Some("reacherwu/continuum"));
+    assert_eq!(parsed.get_path(&["repository", "full_name"]).and_then(|v| v.as_str()), Some("reacherwu/diffhound"));
     assert_eq!(parsed.get_path(&["pull_request", "number"]).and_then(|v| v.as_i64()), Some(42));
     assert_eq!(parsed.get_path(&["pull_request", "head", "sha"]).and_then(|v| v.as_str()), Some("4b8e21a89c9"));
 }

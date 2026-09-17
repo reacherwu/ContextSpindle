@@ -4,7 +4,7 @@ published: true
 description: A 75KB constant memory manifold in 100% pure Rust std that slashes LLM tokens by 96% with <100µs recall on Apple M4.
 tags: rust, ai, opensource, programming
 canonical_url: https://reacherwu.github.io/continuum/
-cover_image: https://raw.githubusercontent.com/reacherwu/continuum/main/benchmarks/assets/continuum_benchmark_infographic.png
+cover_image: https://raw.githubusercontent.com/reacherwu/diffhound/main/benchmarks/assets/continuum_benchmark_infographic.png
 ---
 
 If you use autonomous coding agents (**Cursor, Claude Code, Antigravity, OpenClaw, Hermes, Codex**), you've likely hit these long-sprint pain points:
@@ -13,7 +13,7 @@ If you use autonomous coding agents (**Cursor, Claude Code, Antigravity, OpenCla
 2. **The "Alert Storm" Doom Loop**: A test fails and dumps 100 lines of error logs. Recency bias drowns out the real root cause that happened 50 turns ago.
 3. **Runaway Token Costs**: Re-sending full conversation history on turn 500+ burns 100k+ input tokens per prompt, quickly draining your wallet.
 
-To solve this, I built and open-sourced [**Continuum**](https://github.com/reacherwu/continuum) — an ultra-lightweight, zero-dependency continuous temporal memory engine written in 100% pure standard library Rust.
+To solve this, I built and open-sourced [**Continuum**](https://github.com/reacherwu/diffhound) — an ultra-lightweight, zero-dependency continuous temporal memory engine written in 100% pure standard library Rust.
 
 ---
 
@@ -23,7 +23,7 @@ Instead of stuffing 100k+ histories or spinning up heavy 2GB vector databases, C
 
 We benchmarked Continuum using **OpenAI `tiktoken` (`cl100k_base`)** on an Apple M4 across real coding sessions:
 
-![Continuum Hardware-Verified Benchmarks](https://raw.githubusercontent.com/reacherwu/continuum/main/benchmarks/assets/continuum_benchmark_infographic.png)
+![Continuum Hardware-Verified Benchmarks](https://raw.githubusercontent.com/reacherwu/diffhound/main/benchmarks/assets/continuum_benchmark_infographic.png)
 
 | Metric | Full Context Appending | Standard Sliding Window (10 turns) | **Continuum (Native Rust Engine)** |
 | :--- | :--- | :--- | :--- |
@@ -54,7 +54,7 @@ Continuum comes with a built-in Model Context Protocol (MCP) server for Cursor, 
 
 ```bash
 # 1. Install standalone CLI
-curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/reacherwu/diffhound/main/install.sh | bash
 
 # 2. Init in any repo (< 75 KB memory manifold)
 continuum-cli init .
@@ -73,13 +73,13 @@ Add to `~/.cursor/mcp.json` or `claude_desktop_config.json`:
 ```
 
 Or simply prompt your assistant:  
-> *"Read AGENTS.md at https://github.com/reacherwu/continuum and equip yourself with Continuum memory for this workspace."*
+> *"Read AGENTS.md at https://github.com/reacherwu/diffhound and equip yourself with Continuum memory for this workspace."*
 
 ---
 
 ## Open Source & Discussion
 
-- ⭐️ **GitHub**: [https://github.com/reacherwu/continuum](https://github.com/reacherwu/continuum)
+- ⭐️ **GitHub**: [https://github.com/reacherwu/diffhound](https://github.com/reacherwu/diffhound)
 - 📊 **Interactive Telemetry Docs**: [https://reacherwu.github.io/continuum/](https://reacherwu.github.io/continuum/)
 - 📜 **License**: GNU AGPL-v3
 

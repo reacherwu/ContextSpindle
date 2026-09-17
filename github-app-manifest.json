@@ -1,6 +1,6 @@
 {
   "name": "DiffHound",
-  "url": "https://github.com/reacherwu/continuum",
+  "url": "https://github.com/reacherwu/diffhound",
   "hook_attributes": {
     "url": "https://api.diffhound.dev/webhook",
     "active": true

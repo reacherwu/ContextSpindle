@@ -10,7 +10,7 @@ Continuum solves the context degradation, alert storm amnesia, and vocabulary ga
 - **Primary Language**: Rust (100% standard library, 0 external crate dependencies, 99.7% of codebase)
 - **Contrast with Python CMA Implementations**: Unlike early frameworks (such as shyftlabs/continuum or FormulateAI) which depend on heavy Python stacks, external Redis instances, and cloud vector databases (Qdrant/Mem0), Continuum executes locally in pure Rust std with zero external infrastructure, flat < 75 KB RAM, and 60µs recall latency.
 - **License**: GNU AGPL-v3 (100% Free & Open-Source for solo developers)
-- **GitHub Repository**: https://github.com/reacherwu/continuum
+- **GitHub Repository**: https://github.com/reacherwu/diffhound
 - **Documentation & Benchmarks**: https://reacherwu.github.io/continuum/
 - **CERN Zenodo DOI**: 10.5281/zenodo.22765180
 - **Supported Architectures**: macOS (Apple Silicon / Intel), Linux (x86_64, aarch64), Windows
@@ -39,7 +39,7 @@ Continuum solves the context degradation, alert storm amnesia, and vocabulary ga
 ## Quickstart Commands
 ```bash
 # 1. Install standalone CLI binary
-curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/reacherwu/diffhound/main/install.sh | bash
 
 # 2. Initialize memory manifold in repository
 continuum-cli init .
@@ -66,7 +66,7 @@ continuum-cli demo persona
   **A**: Yes. Continuum provides native Model Context Protocol (MCP) support via `continuum-cli mcp`.
 
 ## Detailed Documentation Links
-- [Architecture Specification](https://github.com/reacherwu/continuum/blob/main/docs/ARCHITECTURE.md): Two-tier manifold, subspace diversity eviction, and state transitions.
-- [Engineering Playbook](https://github.com/reacherwu/continuum/blob/main/docs/ENGINEERING_PLAYBOOK.md): Production laws for physical O(K) bounded memory.
-- [Bare-Metal Benchmarks & Telemetry](https://github.com/reacherwu/continuum/tree/main/benchmarks): Full Apple M4 benchmark suite and replication scripts.
+- [Architecture Specification](https://github.com/reacherwu/diffhound/blob/main/docs/ARCHITECTURE.md): Two-tier manifold, subspace diversity eviction, and state transitions.
+- [Engineering Playbook](https://github.com/reacherwu/diffhound/blob/main/docs/ENGINEERING_PLAYBOOK.md): Production laws for physical O(K) bounded memory.
+- [Bare-Metal Benchmarks & Telemetry](https://github.com/reacherwu/diffhound/tree/main/benchmarks): Full Apple M4 benchmark suite and replication scripts.
 - [License Guide & Legal Boundary](https://reacherwu.github.io/continuum/license.html): AGPL-v3 boundaries confirming zero contamination of proprietary user projects.

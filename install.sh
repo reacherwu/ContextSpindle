@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Continuum One-Line Instant Installer
-# Usage: curl -fsSL https://raw.githubusercontent.com/reacherwu/continuum/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/reacherwu/diffhound/main/install.sh | bash
 set -e
 
 BOLD="\033[1m"
@@ -28,7 +28,7 @@ if command -v cargo >/dev/null 2>&1; then
         cargo install --path "${SCRIPT_DIR}/crates/continuum-cli" --force --quiet
     else
         echo -e "-> Building from local repository..."
-        cargo install --git https://github.com/reacherwu/continuum continuum-cli --force --quiet
+        cargo install --git https://github.com/reacherwu/diffhound continuum-cli --force --quiet
     fi
 else
     echo -e "${YELLOW}-> Cargo not found. Checking local pre-compiled binaries...${RESET}"

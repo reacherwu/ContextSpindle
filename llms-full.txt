@@ -93,7 +93,7 @@ Exposed MCP Tools:
 ---
 
 ## 6. Official Metadata
-- **Repository**: https://github.com/reacherwu/continuum
+- **Repository**: https://github.com/reacherwu/diffhound
 - **Documentation**: https://reacherwu.github.io/continuum/
 - **License**: GNU Affero General Public License v3.0 (AGPL-v3)
 - **DOI**: 10.5281/zenodo.22765180
