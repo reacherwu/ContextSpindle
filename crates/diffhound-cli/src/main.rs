@@ -1,7 +1,10 @@
-//! DiffHound CLI: Zero-Noise AI PR Guard & Anti-Regression Engine.
+//! DiffHound CLI & Webhook Server: Zero-Noise AI PR Guard & Anti-Regression Engine.
 
 mod diff;
+mod github;
+mod json;
 mod review;
+mod server;
 
 use std::path::{Path, PathBuf};
 use std::process::exit;
@@ -26,7 +29,10 @@ fn print_help() {
     println!("{}", DIFFHOUND_BANNER);
     println!("Usage:");
     println!("  diffhound review [--base <ref>] [--head <ref>] [--fail-on-regression] [--threshold <float>]");
+    println!("                   [--post-comment] [--repo <owner/repo>] [--pr <number>]");
     println!("                                     Inspect git diff for regressions against historical fixes");
+    println!("  diffhound server [--port <u16>] [--github-token <token>] [--threshold <float>]");
+    println!("                                     Run standalone GitHub App webhook daemon");
     println!("  diffhound init [path]              Initialize .diffhound memory state in repository");
     println!("  diffhound remember <text>          Ingest architectural rule or fix into bounded memory");
     println!("  diffhound recall <query> [k]       Retrospectively query historical memory in < 100 μs");
@@ -38,6 +44,9 @@ fn print_help() {
     println!("  --head <ref>              Head branch or commit to diff (default: working tree or HEAD)");
     println!("  --fail-on-regression      Exit with status code 1 if potential regression is detected");
     println!("  --threshold <float>       Sensitivity score threshold (default: 0.45)");
+    println!("  --post-comment            Post markdown review directly to GitHub PR via REST API");
+    println!("  --repo <owner/repo>       Target GitHub repository (default: $GITHUB_REPOSITORY)");
+    println!("  --pr <number>             Target Pull Request number (default: $PR_NUMBER)");
     println!("  --json                    Output machine-readable JSON format");
 }
 
@@ -50,11 +59,12 @@ fn main() {
 
     match args[1].as_str() {
         "review" => run_review(&args[2..]),
+        "server" => run_server(&args[2..]),
         "init" => run_init(&args[2..]),
         "remember" => run_remember(&args[2..]),
         "recall" => run_recall(&args[2..]),
         "version" | "--version" | "-v" => {
-            println!("diffhound v0.1.0 (Zero-Noise AI PR Guard, 100% Native Rust)");
+            println!("diffhound v0.2.0 (Zero-Noise AI PR Guard, 100% Native Rust)");
         }
         "help" | "--help" | "-h" => {
             print_help();
@@ -71,6 +81,9 @@ fn run_review(args: &[String]) {
     let mut head_ref: Option<String> = None;
     let mut fail_on_regression = false;
     let mut json_output = false;
+    let mut post_comment = false;
+    let mut repo: Option<String> = std::env::var("GITHUB_REPOSITORY").ok();
+    let mut pr_number: Option<u64> = std::env::var("PR_NUMBER").ok().and_then(|s| s.parse::<u64>().ok());
     let mut threshold = 0.45f32;
 
     let mut i = 0;
@@ -90,6 +103,21 @@ fn run_review(args: &[String]) {
             }
             "--fail-on-regression" => {
                 fail_on_regression = true;
+            }
+            "--post-comment" => {
+                post_comment = true;
+            }
+            "--repo" => {
+                if i + 1 < args.len() {
+                    repo = Some(args[i + 1].clone());
+                    i += 1;
+                }
+            }
+            "--pr" => {
+                if i + 1 < args.len() {
+                    pr_number = args[i + 1].parse::<u64>().ok();
+                    i += 1;
+                }
             }
             "--json" => {
                 json_output = true;
@@ -130,26 +158,29 @@ fn run_review(args: &[String]) {
     // 2. Locate or initialize memory manifold
     let state_file = locate_memory_state();
     let mut engine = match state_file {
-        Some(ref p) => match ContinuumEngine::load_from_file(p) {
-            Ok(eng) => eng,
-            Err(_) => {
-                let cfg = ContinuumConfig::default();
-                ContinuumEngine::new(cfg)
-            }
-        },
-        None => {
-            let cfg = ContinuumConfig::default();
-            ContinuumEngine::new(cfg)
-        }
+        Some(ref p) => ContinuumEngine::load_from_file(p).unwrap_or_else(|_| ContinuumEngine::new(ContinuumConfig::default())),
+        None => ContinuumEngine::new(ContinuumConfig::default()),
     };
 
     // 3. Perform Zero-Noise Review
     let report = perform_review(&file_diffs, &mut engine, threshold);
 
-    // 4. Write GitHub Step Summary
+    // 4. Write GitHub Step Summary (if in GitHub Actions)
     report.write_github_step_summary();
 
-    // 5. Output
+    // 5. Optionally post PR comment directly to GitHub
+    if post_comment && !report.is_clean() {
+        if let Ok(token) = std::env::var("GITHUB_TOKEN") {
+            if let (Some(r), Some(pr)) = (repo.as_ref(), pr_number) {
+                match github::post_pr_comment(&token, r, pr, &report.to_markdown()) {
+                    Ok(()) => println!("✅ DiffHound successfully posted regression alert to PR #{}", pr),
+                    Err(e) => eprintln!("⚠️ DiffHound failed to post PR comment: {e}"),
+                }
+            }
+        }
+    }
+
+    // 6. Output to stdout
     if json_output {
         println!(
             r#"{{"status":"{}","files_scanned":{},"alerts_count":{},"latency_us":{:.2}}}"#,
@@ -164,6 +195,61 @@ fn run_review(args: &[String]) {
 
     if fail_on_regression && !report.is_clean() {
         eprintln!("❌ DiffHound check failed: Potential regression detected. PR blocked.");
+        exit(1);
+    }
+}
+
+fn run_server(args: &[String]) {
+    let mut port = 8080u16;
+    let mut secret: Option<String> = std::env::var("DIFFHOUND_WEBHOOK_SECRET").ok();
+    let mut github_token: Option<String> = std::env::var("GITHUB_TOKEN").ok();
+    let mut threshold = 0.45f32;
+
+    let mut i = 0;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--port" | "-p" => {
+                if i + 1 < args.len() {
+                    if let Ok(p) = args[i + 1].parse::<u16>() {
+                        port = p;
+                    }
+                    i += 1;
+                }
+            }
+            "--secret" => {
+                if i + 1 < args.len() {
+                    secret = Some(args[i + 1].clone());
+                    i += 1;
+                }
+            }
+            "--github-token" => {
+                if i + 1 < args.len() {
+                    github_token = Some(args[i + 1].clone());
+                    i += 1;
+                }
+            }
+            "--threshold" => {
+                if i + 1 < args.len() {
+                    if let Ok(t) = args[i + 1].parse::<f32>() {
+                        threshold = t;
+                    }
+                    i += 1;
+                }
+            }
+            _ => {}
+        }
+        i += 1;
+    }
+
+    let cfg = server::ServerConfig {
+        port,
+        webhook_secret: secret,
+        github_token,
+        threshold,
+    };
+
+    if let Err(e) = server::run_webhook_server(cfg) {
+        eprintln!("❌ DiffHound Server Error: {e}");
         exit(1);
     }
 }

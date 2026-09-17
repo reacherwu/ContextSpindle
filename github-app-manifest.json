@@ -1,0 +1,23 @@
+{
+  "name": "DiffHound",
+  "url": "https://github.com/reacherwu/continuum",
+  "hook_attributes": {
+    "url": "https://api.diffhound.dev/webhook",
+    "active": true
+  },
+  "redirect_url": "https://api.diffhound.dev/callback",
+  "description": "Zero-Noise AI PR Guard & Anti-Regression Engine. Catches the regressions rabbits miss.",
+  "public": true,
+  "default_permissions": {
+    "pull_requests": "write",
+    "checks": "write",
+    "contents": "read",
+    "issues": "write",
+    "metadata": "read"
+  },
+  "default_events": [
+    "pull_request",
+    "check_run",
+    "check_suite"
+  ]
+}
