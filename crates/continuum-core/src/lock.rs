@@ -1,119 +1,52 @@
-//! Cross-Process File Locking in pure Rust standard library.
+//! OS advisory locks for cooperating local processes (Rust 1.89+).
 //!
-//! Provides advisory locking with stale lock auto-expiration and timeout.
-//! ZERO external crate dependencies.
+//! The sidecar inode is permanent: never delete it or steal a lock based on age.
+//! Stop ALL old create-new-protocol writers before upgrading or rolling back.
+//! All participants must use the same path; hard-link aliases are not supported.
 
-use std::fs::{File, OpenOptions};
-use std::io::{Read, Write};
+use std::fs::{File, OpenOptions, TryLockError};
+use std::io;
 use std::path::{Path, PathBuf};
-use std::thread::sleep;
-use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
+use std::time::{Duration, Instant};
 
-/// RAII Guard for an acquired cross-process file lock.
-/// Automatically releases the lock when dropped.
+/// Exclusive OS lock released by closing its owned file, including on process exit.
 #[derive(Debug)]
 pub struct FileLockGuard {
+    _file: File,
     lock_path: PathBuf,
 }
 
 impl FileLockGuard {
-    /// Attempts to acquire an exclusive advisory file lock within `timeout`.
-    pub fn acquire(path: impl AsRef<Path>, timeout: Duration) -> std::io::Result<Self> {
-        let lock_path = PathBuf::from(format!("{}.lock", path.as_ref().display()));
+    /// Acquire within `timeout`. A zero timeout makes one nonblocking attempt.
+    /// The target's parent must already exist. Never remove the sidecar file.
+    pub fn acquire(path: impl AsRef<Path>, timeout: Duration) -> io::Result<Self> {
+        let mut name = path.as_ref().as_os_str().to_os_string();
+        name.push(".lock");
+        let lock_path = PathBuf::from(name);
         let start = Instant::now();
-        let pid = std::process::id();
-
+        let file = OpenOptions::new().read(true).write(true).create(true)
+            .truncate(false).open(&lock_path)?;
         loop {
-            // Attempt atomic creation of lockfile
-            match OpenOptions::new().write(true).create_new(true).open(&lock_path) {
-                Ok(mut file) => {
-                    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
-                    let payload = format!("pid={}\ntime={}\n", pid, now);
-                    let _ = file.write_all(payload.as_bytes());
-                    let _ = file.sync_all();
-                    return Ok(Self { lock_path });
-                }
-                Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => {
-                    // Check if existing lock is stale (> 5 seconds old)
-                    if Self::is_lock_stale(&lock_path) {
-                        let _ = std::fs::remove_file(&lock_path);
-                        continue;
+            match file.try_lock() {
+                Ok(()) => return Ok(Self { _file: file, lock_path }),
+                Err(TryLockError::WouldBlock) => {
+                    let remaining = timeout.saturating_sub(start.elapsed());
+                    if remaining.is_zero() {
+                        return Err(io::Error::new(io::ErrorKind::TimedOut,
+                            format!("Timed out acquiring lock on '{}'", lock_path.display())));
                     }
-
+                    std::thread::sleep(remaining.min(Duration::from_millis(10)));
+                }
+                Err(TryLockError::Error(e)) if e.kind() == io::ErrorKind::Interrupted => {
                     if start.elapsed() >= timeout {
-                        return Err(std::io::Error::new(
-                            std::io::ErrorKind::TimedOut,
-                            format!("Timed out acquiring lock on '{}'", lock_path.display()),
-                        ));
+                        return Err(io::Error::new(io::ErrorKind::TimedOut, "Lock acquisition interrupted until timeout"));
                     }
-
-                    // Jittered backoff: 2ms to 20ms
-                    let elapsed_ms = start.elapsed().as_millis();
-                    let backoff = Duration::from_millis(2 + (elapsed_ms % 18) as u64);
-                    sleep(backoff);
                 }
-                Err(e) => return Err(e),
+                Err(TryLockError::Error(e)) => return Err(e),
             }
         }
     }
 
-    /// Checks if a lock file is stale (held by a dead process or > 5s old).
-    fn is_lock_stale(lock_path: &Path) -> bool {
-        if let Ok(mut f) = File::open(lock_path) {
-            let mut buf = String::new();
-            if f.read_to_string(&mut buf).is_ok() {
-                for line in buf.lines() {
-                    if let Some(rest) = line.strip_prefix("time=") {
-                        if let Ok(ts) = rest.trim().parse::<u64>() {
-                            let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
-                            if now.saturating_sub(ts) > 5 {
-                                return true; // Stale lock older than 5 seconds
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        false
-    }
-
-    /// Return the path of the active lockfile.
-    pub fn lock_path(&self) -> &Path {
-        &self.lock_path
-    }
-}
-
-impl Drop for FileLockGuard {
-    fn drop(&mut self) {
-        let _ = std::fs::remove_file(&self.lock_path);
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_lock_acquire_and_release() {
-        let temp_dir = std::env::temp_dir();
-        let target = temp_dir.join(format!("continuum_lock_test_{}", std::process::id()));
-        let lock_file = PathBuf::from(format!("{}.lock", target.display()));
-
-        {
-            let guard = FileLockGuard::acquire(&target, Duration::from_millis(500)).expect("Lock acquire failed");
-            assert!(lock_file.exists());
-            assert_eq!(guard.lock_path(), &lock_file);
-
-            // Second acquire must fail / timeout while guard is held
-            let second = FileLockGuard::acquire(&target, Duration::from_millis(50));
-            assert!(second.is_err());
-        }
-
-        // After guard is dropped, lockfile must be removed
-        assert!(!lock_file.exists());
-
-        // Now lock can be re-acquired immediately
-        let guard2 = FileLockGuard::acquire(&target, Duration::from_millis(500));
-        assert!(guard2.is_ok());
-    }
+    /// Path of the permanent sidecar, not evidence that a lock is held.
+    pub fn lock_path(&self) -> &Path { &self.lock_path }
 }

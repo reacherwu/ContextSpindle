@@ -93,9 +93,20 @@ impl JsonValue {
     pub fn to_json_string(&self) -> String {
         match self {
             JsonValue::Null => "null".to_string(),
-            JsonValue::Bool(b) => if *b { "true".to_string() } else { "false".to_string() },
+            JsonValue::Bool(b) => {
+                if *b {
+                    "true".to_string()
+                } else {
+                    "false".to_string()
+                }
+            }
             JsonValue::Number(n) => {
-                if n.fract() == 0.0 && !n.is_infinite() && !n.is_nan() && *n >= (i64::MIN as f64) && *n <= (i64::MAX as f64) {
+                if n.fract() == 0.0
+                    && !n.is_infinite()
+                    && !n.is_nan()
+                    && *n >= (i64::MIN as f64)
+                    && *n <= (i64::MAX as f64)
+                {
                     format!("{}", *n as i64)
                 } else {
                     format!("{}", n)
@@ -186,7 +197,10 @@ impl<'a> JsonParser<'a> {
             return Err(format!(
                 "Unexpected trailing characters at pos {}: '{}'",
                 parser.pos,
-                parser.chars[parser.pos..].iter().take(20).collect::<String>()
+                parser.chars[parser.pos..]
+                    .iter()
+                    .take(20)
+                    .collect::<String>()
             ));
         }
         Ok(val)
@@ -216,7 +230,9 @@ impl<'a> JsonParser<'a> {
 
     fn parse_value(&mut self) -> Result<JsonValue, String> {
         self.skip_whitespace();
-        let c = self.peek().ok_or_else(|| "Unexpected EOF while parsing JSON value".to_string())?;
+        let c = self
+            .peek()
+            .ok_or_else(|| "Unexpected EOF while parsing JSON value".to_string())?;
         match c {
             'n' => self.parse_null(),
             't' | 'f' => self.parse_bool(),
@@ -224,7 +240,10 @@ impl<'a> JsonParser<'a> {
             '[' => self.parse_array(),
             '{' => self.parse_object(),
             '-' | '0'..='9' => self.parse_number(),
-            other => Err(format!("Unexpected character '{}' at pos {}", other, self.pos)),
+            other => Err(format!(
+                "Unexpected character '{}' at pos {}",
+                other, self.pos
+            )),
         }
     }
 
@@ -261,6 +280,18 @@ impl<'a> JsonParser<'a> {
         }
     }
 
+    fn parse_hex_quad(&mut self) -> Result<u32, String> {
+        let mut code = 0;
+        for _ in 0..4 {
+            let digit = self
+                .next_char()
+                .and_then(|c| c.to_digit(16))
+                .ok_or_else(|| "Expected four hexadecimal digits in Unicode escape".to_string())?;
+            code = (code << 4) | digit;
+        }
+        Ok(code)
+    }
+
     fn parse_string(&mut self) -> Result<String, String> {
         if self.next_char() != Some('"') {
             return Err(format!("Expected '\"' at pos {}", self.pos));
@@ -270,7 +301,9 @@ impl<'a> JsonParser<'a> {
             match c {
                 '"' => return Ok(s),
                 '\\' => {
-                    let esc = self.next_char().ok_or_else(|| "Unexpected EOF after escape".to_string())?;
+                    let esc = self
+                        .next_char()
+                        .ok_or_else(|| "Unexpected EOF after escape".to_string())?;
                     match esc {
                         '"' => s.push('"'),
                         '\\' => s.push('\\'),
@@ -281,12 +314,18 @@ impl<'a> JsonParser<'a> {
                         'r' => s.push('\r'),
                         't' => s.push('\t'),
                         'u' => {
-                            let mut hex = String::with_capacity(4);
-                            for _ in 0..4 {
-                                hex.push(self.next_char().ok_or_else(|| "Unexpected EOF in \\u escape".to_string())?);
+                            let mut code = self.parse_hex_quad()?;
+                            if (0xd800..=0xdbff).contains(&code) {
+                                if self.next_char() != Some('\\') || self.next_char() != Some('u') {
+                                    return Err("High surrogate requires a low surrogate escape"
+                                        .to_string());
+                                }
+                                let low = self.parse_hex_quad()?;
+                                if !(0xdc00..=0xdfff).contains(&low) {
+                                    return Err("Invalid low surrogate".to_string());
+                                }
+                                code = 0x10000 + ((code - 0xd800) << 10) + (low - 0xdc00);
                             }
-                            let code = u32::from_str_radix(&hex, 16)
-                                .map_err(|e| format!("Invalid hex escape \\u{}: {}", hex, e))?;
                             let decoded = char::from_u32(code)
                                 .ok_or_else(|| format!("Invalid unicode code point: {:x}", code))?;
                             s.push(decoded);
@@ -325,8 +364,8 @@ impl<'a> JsonParser<'a> {
                 }
             }
         }
-        if let Some(c) = self.peek() {
-            if c == 'e' || c == 'E' {
+        if let Some(c) = self.peek()
+            && (c == 'e' || c == 'E') {
                 self.pos += 1;
                 if self.peek() == Some('+') || self.peek() == Some('-') {
                     self.pos += 1;
@@ -339,9 +378,10 @@ impl<'a> JsonParser<'a> {
                     }
                 }
             }
-        }
         let raw: String = self.chars[start..self.pos].iter().collect();
-        let num: f64 = raw.parse().map_err(|e| format!("Failed to parse number '{}': {}", raw, e))?;
+        let num: f64 = raw
+            .parse()
+            .map_err(|e| format!("Failed to parse number '{}': {}", raw, e))?;
         Ok(JsonValue::Number(num))
     }
 
@@ -435,7 +475,10 @@ mod tests {
         assert_eq!(parse_json("false").unwrap(), JsonValue::Bool(false));
         assert_eq!(parse_json("42").unwrap(), JsonValue::Number(42.0));
         assert_eq!(parse_json("-17.5").unwrap(), JsonValue::Number(-17.5));
-        assert_eq!(parse_json("\"hello world\"").unwrap(), JsonValue::String("hello world".to_string()));
+        assert_eq!(
+            parse_json("\"hello world\"").unwrap(),
+            JsonValue::String("hello world".to_string())
+        );
     }
 
     #[test]
@@ -463,9 +506,24 @@ mod tests {
         assert_eq!(v.get("jsonrpc").unwrap().as_str().unwrap(), "2.0");
         assert_eq!(v.get("id").unwrap().to_raw_id_string(), "\"msg_01J8K9\"");
         assert_eq!(v.get("method").unwrap().as_str().unwrap(), "tools/call");
-        assert_eq!(v.get_path(&["params", "name"]).unwrap().as_str().unwrap(), "continuum_recall");
-        assert_eq!(v.get_path(&["params", "arguments", "query"]).unwrap().as_str().unwrap(), "database pool cap");
-        assert_eq!(v.get_path(&["params", "arguments", "top_k"]).unwrap().as_u64().unwrap(), 5);
+        assert_eq!(
+            v.get_path(&["params", "name"]).unwrap().as_str().unwrap(),
+            "continuum_recall"
+        );
+        assert_eq!(
+            v.get_path(&["params", "arguments", "query"])
+                .unwrap()
+                .as_str()
+                .unwrap(),
+            "database pool cap"
+        );
+        assert_eq!(
+            v.get_path(&["params", "arguments", "top_k"])
+                .unwrap()
+                .as_u64()
+                .unwrap(),
+            5
+        );
     }
 
     #[test]

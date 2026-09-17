@@ -1,30 +1,40 @@
 mod hook;
 mod json;
+mod mcp;
+mod memory_api;
+mod memory_cli;
 mod runner;
+use memory_api::{ApiError, Result};
 
+use continuum_core::{ContinuumConfig, ContinuumEngine, RealTextEmbedder, SemanticCausalBridge};
 use std::time::Instant;
-use continuum_core::{
-    ContinuumConfig, ContinuumEngine, RealTextEmbedder, SemanticCausalBridge,
-};
 
 fn print_help() {
     println!("Continuum: Continuous Temporal Intelligence Engine (100% Native Rust)");
     println!("Usage:");
     println!("  continuum init [path]                               Initialize .continuum memory workspace");
     println!("  continuum remember <text>                           Save critical constraint or decision to memory");
-    println!("  continuum recall <query_text> [k]                   Retrieve causal memory in < 100 μs");
+    println!(
+        "  continuum recall <query_text> [k]                   Retrieve causal memory in < 100 μs"
+    );
     println!("  continuum run <command...>                          Run command with autonomous failure/fix causal learning");
     println!("  continuum hook install [path]                       Install automatic Git post-commit memory hook");
-    println!("  continuum hook uninstall [path]                     Remove Git post-commit memory hook");
+    println!(
+        "  continuum hook uninstall [path]                     Remove Git post-commit memory hook"
+    );
     println!("  continuum mcp                                       Launch Model Context Protocol (MCP) server for IDEs");
     println!("  continuum upgrade                                   View Pro tier subscription & token savings ROI");
     println!("  continuum demo <aiops|persona|github|persistence>   Run full native scenario demo");
     println!("  continuum memory sync <transcript_path> [snapshot]  Ingest conversation transcript into bounded state");
     println!("  continuum memory query <query_text> [snapshot] [k]  Query causal memory in < 100 μs native Rust");
-    println!("  continuum memory ingest <text> [snapshot]           Ingest a single event into memory");
+    println!(
+        "  continuum memory ingest <text> [snapshot]           Ingest a single event into memory"
+    );
     println!("  continuum memory inspect [snapshot]                 Inspect active memory state and slots");
     println!("  continuum snapshot [filepath]                       Save state snapshot to disk");
-    println!("  continuum restore [filepath]                        Load and inspect snapshot from disk");
+    println!(
+        "  continuum restore [filepath]                        Load and inspect snapshot from disk"
+    );
     println!("  continuum benchmark                                 Run engine throughput & latency benchmark");
     println!("  continuum stats                                     Display memory and engine invariants");
     println!("  continuum help                                      Display this help message");
@@ -77,11 +87,28 @@ fn run_demo_aiops() {
 
     let ingest_duration = t0.elapsed();
     let throughput = 3000.0 / ingest_duration.as_secs_f64();
-    println!("-> Ingested 3,000 events in {:?} ({:.0} events/sec)", ingest_duration, throughput);
-    println!("-> Active Memory Slots: {} / 750 invariant (Physical O(K) flat memory)", engine.total_slots());
-    let in_hot = engine.hot_memory.records.iter().any(|r| r.event_id == root_id);
-    let in_cold = engine.cold_memory.records.iter().any(|r| r.event_id == root_id);
-    println!("-> Event {}: in_hot={}, in_cold={}", root_id, in_hot, in_cold);
+    println!(
+        "-> Ingested 3,000 events in {:?} ({:.0} events/sec)",
+        ingest_duration, throughput
+    );
+    println!(
+        "-> Active Memory Slots: {} / 750 invariant (Physical O(K) flat memory)",
+        engine.total_slots()
+    );
+    let in_hot = engine
+        .hot_memory
+        .records
+        .iter()
+        .any(|r| r.event_id == root_id);
+    let in_cold = engine
+        .cold_memory
+        .records
+        .iter()
+        .any(|r| r.event_id == root_id);
+    println!(
+        "-> Event {}: in_hot={}, in_cold={}",
+        root_id, in_hot, in_cold
+    );
 
     println!("\n[2/3] Terminal Incident Occurs at t=3000:");
     let symptom_query = "Cluster incident: 504 Gateway Timeout in checkout service caused by database connection pool exhausted";
@@ -95,9 +122,16 @@ fn run_demo_aiops() {
     let matches = engine.query(&v_bridged, 10);
     let query_lat = t_query.elapsed();
 
-    println!("-> Retrospective Query Latency: {:?} (< 100 μs native execution!)", query_lat);
+    println!(
+        "-> Retrospective Query Latency: {:?} (< 100 μs native execution!)",
+        query_lat
+    );
     let all_matches = engine.query(&v_bridged, 750);
-    if let Some((pos, m)) = all_matches.iter().enumerate().find(|(_, m)| m.event_id == root_id) {
+    if let Some((pos, m)) = all_matches
+        .iter()
+        .enumerate()
+        .find(|(_, m)| m.event_id == root_id)
+    {
         println!("  -> Target ID {} is at Rank #{}: Score={:.4} (sim={:.4}, state={:.4}, temp={:.4}, prov={:.4}) | Provenance: {}",
             root_id, pos + 1, m.revision_score, m.components.sim, m.components.state_compat, m.components.temporal_compat, m.components.provenance_compat, m.provenance);
     }
@@ -108,10 +142,23 @@ fn run_demo_aiops() {
         if is_target {
             found_root = true;
         }
-        let tag = if is_target { "✅ [TRUE ROOT CAUSE]" } else { "   [BACKGROUND/ALERT]" };
+        let tag = if is_target {
+            "✅ [TRUE ROOT CAUSE]"
+        } else {
+            "   [BACKGROUND/ALERT]"
+        };
         let prov_snippet = safe_truncate(&m.provenance, 60);
-        println!("  #{:2} {} Event ID: {:4} | Score: {:.4} (sim={:.4}, state={:.4}, temp={:.4}) | {}",
-            i + 1, tag, m.event_id, m.revision_score, m.components.sim, m.components.state_compat, m.components.temporal_compat, prov_snippet);
+        println!(
+            "  #{:2} {} Event ID: {:4} | Score: {:.4} (sim={:.4}, state={:.4}, temp={:.4}) | {}",
+            i + 1,
+            tag,
+            m.event_id,
+            m.revision_score,
+            m.components.sim,
+            m.components.state_compat,
+            m.components.temporal_compat,
+            prov_snippet
+        );
     }
 
     if found_root {
@@ -185,8 +232,15 @@ fn run_demo_persona() {
     }
 
     let ingest_dur = t0.elapsed();
-    println!("-> Ingested 2,000 turns in {:?} ({:.0} turns/sec)", ingest_dur, 2000.0 / ingest_dur.as_secs_f64());
-    println!("-> Active Memory Slots: {} / 500 bounded slots invariant", engine.total_slots());
+    println!(
+        "-> Ingested 2,000 turns in {:?} ({:.0} turns/sec)",
+        ingest_dur,
+        2000.0 / ingest_dur.as_secs_f64()
+    );
+    println!(
+        "-> Active Memory Slots: {} / 500 bounded slots invariant",
+        engine.total_slots()
+    );
 
     println!("\n[2/3] User Prompt at Turn 2000:");
     let query_text = "User prompt: Book a surprise 5-course tasting dinner tonight at the new gourmet bistro in town, check dietary safety restrictions";
@@ -200,12 +254,27 @@ fn run_demo_persona() {
     println!("-> Query Latency: {:?} (< 100 μs execution!)", q_lat);
     for (i, m) in matches.iter().enumerate() {
         let is_target = m.event_id == root_id;
-        let tag = if is_target { "✅ [LIFE CONSTRAINT]" } else { "   [RECENT CHATTER]" };
+        let tag = if is_target {
+            "✅ [LIFE CONSTRAINT]"
+        } else {
+            "   [RECENT CHATTER]"
+        };
         let prov = safe_truncate(&m.provenance, 60);
-        println!("  #{} {} ID: {:4} | Causal Score: {:.4} | {}", i + 1, tag, m.event_id, m.revision_score, prov);
+        println!(
+            "  #{} {} ID: {:4} | Causal Score: {:.4} | {}",
+            i + 1,
+            tag,
+            m.event_id,
+            m.revision_score,
+            prov
+        );
     }
 
-    if matches.first().map(|m| m.event_id == root_id).unwrap_or(false) {
+    if matches
+        .first()
+        .map(|m| m.event_id == root_id)
+        .unwrap_or(false)
+    {
         println!("\n🎉 VERDICT: SUCCESS! Lethal allergy constraint preserved at Rank #1 across 2,000 turns in bounded 500 slots!");
     } else {
         println!("\n❌ VERDICT: Failed to rank constraint at Rank #1.");
@@ -262,9 +331,20 @@ fn run_demo_github() {
     println!("-> Query Latency: {:?}", lat);
     for (i, m) in matches.iter().enumerate() {
         let is_target = m.event_id == root_id;
-        let tag = if is_target { "✅ [ROOT CAUSE ACTION]" } else { "   [ERROR MESSAGE]" };
+        let tag = if is_target {
+            "✅ [ROOT CAUSE ACTION]"
+        } else {
+            "   [ERROR MESSAGE]"
+        };
         let prov = safe_truncate(&m.provenance, 60);
-        println!("  #{} {} ID: {:2} | Score: {:.4} | {}", i + 1, tag, m.event_id, m.revision_score, prov);
+        println!(
+            "  #{} {} ID: {:2} | Score: {:.4} | {}",
+            i + 1,
+            tag,
+            m.event_id,
+            m.revision_score,
+            prov
+        );
     }
 
     if matches.iter().any(|m| m.event_id == root_id) {
@@ -299,33 +379,48 @@ fn run_demo_persistence() {
         let text = if t == critical_id {
             critical_text.to_string()
         } else {
-            format!("Event #{t}: Worker heartbeat status=healthy memory_used={}MB latency=12ms", 100 + (t % 50))
+            format!(
+                "Event #{t}: Worker heartbeat status=healthy memory_used={}MB latency=12ms",
+                100 + (t % 50)
+            )
         };
         let emb = embedder.embed(&text);
         engine.step(&emb, t as f64, &text);
     }
 
-    println!("-> Ingested 500 events. Active slots: {} / 150", engine.total_slots());
+    println!(
+        "-> Ingested 500 events. Active slots: {} / 150",
+        engine.total_slots()
+    );
 
     // Pre-shutdown query
     let query_text = "Compliance check: audit log retention and truncation policy";
     let q_emb = embedder.embed(query_text);
     let pre_matches = engine.query(&q_emb, 150);
     let pre_crit_rank = pre_matches.iter().position(|m| m.event_id == critical_id);
-    println!("-> Pre-shutdown: Target event #{} is at Rank #{:?}", critical_id, pre_crit_rank.map(|r| r + 1));
+    println!(
+        "-> Pre-shutdown: Target event #{} is at Rank #{:?}",
+        critical_id,
+        pre_crit_rank.map(|r| r + 1)
+    );
 
     println!("\n[Phase 2/4] Simulating computer shutdown: Writing memory state to disk...");
     let temp_dir = std::env::temp_dir();
     let snapshot_file = temp_dir.join("continuum_reboot_test.state");
 
     let t_save = Instant::now();
-    engine.save_to_file(&snapshot_file).expect("Failed to persist snapshot");
+    engine
+        .save_to_file(&snapshot_file)
+        .expect("Failed to persist snapshot");
     let save_lat = t_save.elapsed();
 
     let file_metadata = std::fs::metadata(&snapshot_file).expect("Snapshot file missing");
     let file_kb = file_metadata.len() as f64 / 1024.0;
     println!("-> Snapshot written to disk in {:?}", save_lat);
-    println!("-> Snapshot file size on disk: {:.2} KB (< 300 KB ultra-compact!)", file_kb);
+    println!(
+        "-> Snapshot file size on disk: {:.2} KB (< 300 KB ultra-compact!)",
+        file_kb
+    );
 
     println!("\n[Phase 3/4] SIMULATING COMPLETE POWER OFF / PROCESS REBOOT:");
     drop(engine); // All RAM evaporated!
@@ -333,21 +428,36 @@ fn run_demo_persistence() {
 
     println!("\n[Phase 4/4] Computer powers on: Restoring Continuum engine from disk...");
     let t_load = Instant::now();
-    let restored_engine = ContinuumEngine::load_from_file(&snapshot_file).expect("Failed to restore engine");
+    let restored_engine =
+        ContinuumEngine::load_from_file(&snapshot_file).expect("Failed to restore engine");
     let load_lat = t_load.elapsed();
     let _ = std::fs::remove_file(&snapshot_file);
 
     println!("-> Engine restored from disk in {:?}", load_lat);
-    println!("-> Restored memory slots: {} / 150 (Step count: {})", restored_engine.total_slots(), restored_engine.step_count);
+    println!(
+        "-> Restored memory slots: {} / 150 (Step count: {})",
+        restored_engine.total_slots(),
+        restored_engine.step_count
+    );
 
     // Post-reboot query
     let post_matches = restored_engine.query(&q_emb, 150);
     let post_crit_rank = post_matches.iter().position(|m| m.event_id == critical_id);
-    println!("-> Post-reboot: Target event #{} is at Rank #{:?}", critical_id, post_crit_rank.map(|r| r + 1));
+    println!(
+        "-> Post-reboot: Target event #{} is at Rank #{:?}",
+        critical_id,
+        post_crit_rank.map(|r| r + 1)
+    );
 
     println!("\nTop-3 Candidates After Reboot:");
     for (i, m) in post_matches.iter().take(3).enumerate() {
-        println!("  #{} Event ID: {:3} | Score: {:.4} | {}", i + 1, m.event_id, m.revision_score, safe_truncate(&m.provenance, 60));
+        println!(
+            "  #{} Event ID: {:3} | Score: {:.4} | {}",
+            i + 1,
+            m.event_id,
+            m.revision_score,
+            safe_truncate(&m.provenance, 60)
+        );
     }
 
     let mut exact_match = pre_matches.len() == post_matches.len();
@@ -384,7 +494,10 @@ fn run_benchmark() {
     println!("\nBenchmarking Stream Ingestion (10,000 events)...");
     let t0 = Instant::now();
     for t in 0..10_000 {
-        let text = format!("Log entry #{t}: server status 200 latency=15ms worker_id={}", t % 16);
+        let text = format!(
+            "Log entry #{t}: server status 200 latency=15ms worker_id={}",
+            t % 16
+        );
         let emb = embedder.embed(&text);
         engine.step(&emb, t as f64, &text);
     }
@@ -393,8 +506,14 @@ fn run_benchmark() {
 
     println!("  Total Time:       {:?}", total_time);
     println!("  Throughput:       {:.0} events / second", throughput);
-    println!("  Latency / Event:  {:.2} μs / event", (total_time.as_secs_f64() / 10_000.0) * 1e6);
-    println!("  Physical Memory:  {} / 750 slots strictly bounded", engine.total_slots());
+    println!(
+        "  Latency / Event:  {:.2} μs / event",
+        (total_time.as_secs_f64() / 10_000.0) * 1e6
+    );
+    println!(
+        "  Physical Memory:  {} / 750 slots strictly bounded",
+        engine.total_slots()
+    );
 
     println!("\nBenchmarking Retrospective Query Latency (1,000 queries over 750 slots)...");
     let query_emb = embedder.embed("Checkout incident 504 Gateway Timeout");
@@ -407,7 +526,10 @@ fn run_benchmark() {
 
     println!("  Total Query Time: {:?}", q_total);
     println!("  Mean Latency:     {:.2} μs / query", q_lat);
-    println!("  Query QPS:        {:.0} queries / second", 1_000.0 / q_total.as_secs_f64());
+    println!(
+        "  Query QPS:        {:.0} queries / second",
+        1_000.0 / q_total.as_secs_f64()
+    );
     println!("\n[SUMMARY] Rust native engine runs at {:.0} events/sec ingestion and {:.1} μs query latency!", throughput, q_lat);
 }
 
@@ -419,27 +541,22 @@ fn safe_truncate(s: &str, max_chars: usize) -> String {
     }
 }
 
-
 fn default_snapshot_path() -> String {
     let home = std::env::var("HOME").unwrap_or_else(|_| "/tmp".to_string());
     format!("{home}/.continuum/agent_memory.state")
 }
 
-fn run_memory_sync(transcript_path: &str, snapshot_path: &str) {
+fn run_memory_sync(transcript_path: &str, snapshot_path: &str) -> Result<()> {
     use std::fs::File;
     use std::io::{BufRead, BufReader};
 
-    let file = match File::open(transcript_path) {
-        Ok(f) => f,
-        Err(e) => {
-            eprintln!("Error opening transcript file '{transcript_path}': {e}");
-            return;
-        }
-    };
+    memory_api::validate_path(snapshot_path)?;
+    let file = File::open(transcript_path)?;
 
-    if let Some(parent) = std::path::Path::new(snapshot_path).parent() {
-        let _ = std::fs::create_dir_all(parent);
-    }
+    if let Some(parent) = std::path::Path::new(snapshot_path).parent()
+        && !parent.as_os_str().is_empty() {
+            std::fs::create_dir_all(parent)?;
+        }
 
     let dim = 32;
     let embedder = RealTextEmbedder::new(dim, 42);
@@ -469,25 +586,25 @@ fn run_memory_sync(transcript_path: &str, snapshot_path: &str) {
     let mut count = 0;
 
     for line_res in reader.lines() {
-        let line = match line_res {
-            Ok(l) => l,
-            Err(_) => continue,
-        };
+        let line = line_res?;
         if line.trim().is_empty() {
             continue;
         }
 
-        let v = match json::parse_json(&line) {
-            Ok(val) => val,
-            Err(_) => continue,
-        };
+        let v = json::parse_json(&line)
+            .map_err(|e| ApiError::invalid(format!("invalid transcript JSON: {e}")))?;
 
-        let step_idx = v.get("step_index")
+        let step_idx = v
+            .get("step_index")
             .and_then(|x| x.as_u64())
             .unwrap_or(count as u64);
         let step_type = v.get("type").and_then(|x| x.as_str()).unwrap_or("EVENT");
         let content = v.get("content").and_then(|x| x.as_str()).unwrap_or("");
-        let content_str = if content.is_empty() { safe_truncate(&line, 300) } else { content.to_string() };
+        let content_str = if content.is_empty() {
+            safe_truncate(&line, 300)
+        } else {
+            content.to_string()
+        };
 
         let prov = format!("[step_{step_idx}] [{step_type}] {content_str}");
         let emb = embedder.embed(&prov);
@@ -498,30 +615,30 @@ fn run_memory_sync(transcript_path: &str, snapshot_path: &str) {
     let dur = t0.elapsed();
     let throughput = count as f64 / dur.as_secs_f64();
 
-    match engine.save_to_file(snapshot_path) {
-        Ok(()) => {
-            let meta = std::fs::metadata(snapshot_path).ok();
-            let kb = meta.map(|m| m.len() as f64 / 1024.0).unwrap_or(0.0);
-            println!("\n🎉 Successfully ingested {} conversation steps in pure Rust!", count);
-            println!("  Ingest Duration: {:?} ({:.0} steps/sec)", dur, throughput);
-            println!("  Active Memory:   {} / 750 physical slots (O(K) invariant)", engine.total_slots());
-            println!("  Hot Working RAM: {} slots", engine.hot_memory.len());
-            println!("  Cold Manifold:   {} slots", engine.cold_memory.len());
-            println!("  Snapshot Size:   {:.2} KB on disk (< 100 KB ultra-compact)", kb);
-        }
-        Err(e) => eprintln!("Failed to save snapshot to '{snapshot_path}': {e}"),
-    }
+    engine.save_to_file(snapshot_path)?;
+    let kb = std::fs::metadata(snapshot_path)?.len() as f64 / 1024.0;
+    println!(
+        "\n🎉 Successfully ingested {} conversation steps in pure Rust!",
+        count
+    );
+    println!("  Ingest Duration: {:?} ({:.0} steps/sec)", dur, throughput);
+    println!(
+        "  Active Memory:   {} / 750 physical slots (O(K) invariant)",
+        engine.total_slots()
+    );
+    println!("  Hot Working RAM: {} slots", engine.hot_memory.len());
+    println!("  Cold Manifold:   {} slots", engine.cold_memory.len());
+    println!(
+        "  Snapshot Size:   {:.2} KB on disk (< 100 KB ultra-compact)",
+        kb
+    );
+    Ok(())
 }
 
-fn run_memory_query(query: &str, snapshot_path: &str, top_k: usize) {
+fn run_memory_query(query: &str, snapshot_path: &str, top_k: usize) -> Result<()> {
+    memory_api::validate_text(query)?;
     let t0 = Instant::now();
-    let engine = match ContinuumEngine::load_from_file(snapshot_path) {
-        Ok(e) => e,
-        Err(e) => {
-            eprintln!("Error loading snapshot '{snapshot_path}': {e}");
-            return;
-        }
-    };
+    let engine = memory_api::load(snapshot_path)?;
     let load_time = t0.elapsed();
 
     let dim = engine.config.embedding_dim;
@@ -538,16 +655,30 @@ fn run_memory_query(query: &str, snapshot_path: &str, top_k: usize) {
     println!("============================================================================");
     println!("Query:             '{}'", query);
     println!("Snapshot:          '{}'", snapshot_path);
-    println!("State Loaded:      {:?} ({} active slots)", load_time, engine.total_slots());
-    println!("Query Latency:     {:?} (< 100 μs native microsecond execution!)", query_time);
+    println!(
+        "State Loaded:      {:?} ({} active slots)",
+        load_time,
+        engine.total_slots()
+    );
+    println!(
+        "Query Latency:     {:?} (< 100 μs native microsecond execution!)",
+        query_time
+    );
     if !exp.expanded_concepts.is_empty() {
         println!("Semantic Concepts: {:?}", exp.expanded_concepts);
     }
     println!("----------------------------------------------------------------------------");
 
     for (i, m) in matches.iter().enumerate() {
-        println!("#{} [Score: {:.4} | sim={:.4}, state={:.4}, temp={:.4}] Event ID: {}",
-            i + 1, m.revision_score, m.components.sim, m.components.state_compat, m.components.temporal_compat, m.event_id);
+        println!(
+            "#{} [Score: {:.4} | sim={:.4}, state={:.4}, temp={:.4}] Event ID: {}",
+            i + 1,
+            m.revision_score,
+            m.components.sim,
+            m.components.state_compat,
+            m.components.temporal_compat,
+            m.event_id
+        );
         let prov = m.provenance.replace('\n', " ");
         let prov_clean = prov.trim();
         let prov_display: String = if prov_clean.chars().count() > 140 {
@@ -557,50 +688,14 @@ fn run_memory_query(query: &str, snapshot_path: &str, top_k: usize) {
         };
         println!("   {}\n", prov_display);
     }
+    Ok(())
 }
 
+// Compatibility bridge for the separately maintained hook module.
 fn run_memory_ingest(text: &str, snapshot_path: &str) {
-    let default_cfg = ContinuumConfig {
-        embedding_dim: 32,
-        state_dim: 32,
-        hot_capacity: 250,
-        cold_capacity: 500,
-        causal_exempt_threshold: Some(0.25),
-        sim_threshold: 0.65,
-        ..Default::default()
-    };
-
-    let res = continuum_core::mutate_engine_transactional(
-        snapshot_path,
-        Some(default_cfg),
-        |engine| {
-            let dim = engine.config.embedding_dim;
-            let embedder = RealTextEmbedder::new(dim, 42);
-            let emb = embedder.embed(text);
-            let step_id = engine.step_count as f64;
-            engine.step(&emb, step_id, text);
-            Ok(())
-        },
-    );
-
-    if let Err(e) = res {
-        eprintln!("Failed to ingest event into memory: {e}");
-    }
-}
-
-fn run_memory_inspect(snapshot_path: &str) {
-    match ContinuumEngine::load_from_file(snapshot_path) {
-        Ok(engine) => {
-            println!("Continuum Engine Snapshot: '{}'", snapshot_path);
-            println!("  Total Slots Used: {} / {}", engine.total_slots(), engine.config.hot_capacity + engine.config.cold_capacity);
-            println!("  Hot Memory:       {} / {}", engine.hot_memory.len(), engine.config.hot_capacity);
-            println!("  Cold Memory:      {} / {}", engine.cold_memory.len(), engine.config.cold_capacity);
-            println!("  Total Steps:      {}", engine.step_count);
-            println!("  Embedding Dim:    {}", engine.config.embedding_dim);
-            println!("  State Dim:        {}", engine.config.state_dim);
-            println!("  Causal Exempt θ:  {:?}", engine.config.causal_exempt_threshold);
-        }
-        Err(e) => eprintln!("Failed to load snapshot from '{snapshot_path}': {e}"),
+    if let Err(error) = memory_api::ingest(text, snapshot_path) {
+        eprintln!("{}: {}", error.code, error.message);
+        std::process::exit(error.exit_code());
     }
 }
 
@@ -617,30 +712,21 @@ fn find_active_state_file() -> String {
     default_snapshot_path()
 }
 
-fn run_init(target_dir: &str) {
+fn run_init(target_dir: &str) -> Result<()> {
     let base_path = std::path::Path::new(target_dir);
     let continuum_dir = base_path.join(".continuum");
-    if let Err(e) = std::fs::create_dir_all(&continuum_dir) {
-        eprintln!("Failed to create directory '{:?}': {e}", continuum_dir);
-        return;
-    }
+    std::fs::create_dir_all(&continuum_dir)?;
 
     let state_file = continuum_dir.join("memory.state");
     let cfg_file = continuum_dir.join("config.json");
 
-    if !state_file.exists() {
-        let cfg = ContinuumConfig {
-            embedding_dim: 32,
-            state_dim: 32,
-            hot_capacity: 250,
-            cold_capacity: 500,
-            causal_exempt_threshold: Some(0.25),
-            sim_threshold: 0.65,
-            ..Default::default()
-        };
-        let engine = ContinuumEngine::new(cfg);
-        let _ = engine.save_to_file(&state_file);
-    }
+    // Creation and loading share the writer lock: never replace a state created
+    // by another writer between an existence check and acquiring that lock.
+    continuum_core::mutate_engine_transactional(
+        &state_file,
+        Some(memory_api::default_config()),
+        |_| Ok(()),
+    )?;
 
     let config_content = r#"{
   "version": "1.0",
@@ -651,15 +737,19 @@ fn run_init(target_dir: &str) {
   "causal_decay_exemption": true,
   "mcp_enabled": true
 }"#;
-    let _ = std::fs::write(&cfg_file, config_content);
+    std::fs::write(&cfg_file, config_content)?;
 
-    println!("Initialized Continuum bounded memory repository in '{:?}'", continuum_dir);
+    println!(
+        "Initialized Continuum bounded memory repository in '{:?}'",
+        continuum_dir
+    );
     println!("  State File:  '{:?}'", state_file);
     println!("  Config File: '{:?}'", cfg_file);
     println!("  Memory Cap:  750 slots (O(K) constant memory invariant)");
     println!("\nQuick Start:");
     println!("  continuum remember \"Important architecture constraint...\"");
     println!("  continuum recall \"architecture constraint\"");
+    Ok(())
 }
 
 fn run_upgrade() {
@@ -685,142 +775,89 @@ fn run_upgrade() {
     println!("============================================================================");
 }
 
-fn send_mcp_msg(stdout: &mut std::io::Stdout, json_str: &str) {
-    use std::io::Write;
-    let single_line: String = json_str.chars().filter(|&c| c != '\n' && c != '\r').collect();
-    let _ = writeln!(stdout, "{}", single_line);
-    let _ = stdout.flush();
-}
-
-fn run_mcp() {
-    use std::io::{self, BufRead};
-
-    let stdin = io::stdin();
-    let mut stdout = io::stdout();
-
-    let state_path = find_active_state_file();
-
-    for line_res in stdin.lock().lines() {
-        let line = match line_res {
-            Ok(l) => l,
-            Err(_) => break,
-        };
-        let trimmed = line.trim();
-        if trimmed.is_empty() {
-            continue;
-        }
-
-        let json = match json::parse_json(trimmed) {
-            Ok(v) => v,
-            Err(e) => {
-                eprintln!("MCP JSON-RPC parse error: {e}");
-                continue;
-            }
-        };
-
-        let id_val = json.get("id").map(|v| v.to_raw_id_string()).unwrap_or_else(|| "null".to_string());
-        let method = json.get("method").and_then(|v| v.as_str()).unwrap_or("");
-
-        if method == "initialize" {
-            let resp = format!(
-                r#"{{"jsonrpc":"2.0","id":{},"result":{{"protocolVersion":"2024-11-05","capabilities":{{"tools":{{}}}},"serverInfo":{{"name":"continuum","version":"0.1.0"}}}}}}"#,
-                id_val
-            );
-            send_mcp_msg(&mut stdout, &resp);
-        } else if method == "notifications/initialized" {
-            // No response required
-        } else if method == "ping" {
-            let resp = format!(
-                r#"{{"jsonrpc":"2.0","id":{},"result":{{}}}}"#,
-                id_val
-            );
-            send_mcp_msg(&mut stdout, &resp);
-        } else if method == "tools/list" {
-            let resp = format!(
-                r#"{{"jsonrpc":"2.0","id":{},"result":{{"tools":[{{"name":"continuum_remember","description":"Store a critical architecture constraint, engineering decision, or tool failure into bounded O(K) memory","inputSchema":{{"type":"object","properties":{{"text":{{"type":"string","description":"The constraint, decision, or event to remember"}}}},"required":["text"]}}}},{{"name":"continuum_recall","description":"Retrospectively retrieve relevant past constraints, actions, and root causes in < 1ms","inputSchema":{{"type":"object","properties":{{"query":{{"type":"string","description":"The symptom, search query, or question to recall"}},"top_k":{{"type":"integer","description":"Maximum candidates to return (default 3)"}}}},"required":["query"]}}}},{{"name":"continuum_stats","description":"Get current bounded memory usage, physical slot count, and token savings metrics","inputSchema":{{"type":"object","properties":{{}}}}}}]}}}}"#,
-                id_val
-            );
-            send_mcp_msg(&mut stdout, &resp);
-        } else if method == "tools/call" {
-            let tool_name = json.get_path(&["params", "name"]).and_then(|v| v.as_str()).unwrap_or("");
-            let result_text = if tool_name == "continuum_remember" {
-                let text_arg = json.get_path(&["params", "arguments", "text"])
-                    .and_then(|v| v.as_str())
-                    .unwrap_or("empty_event");
-                run_memory_ingest(text_arg, &state_path);
-                format!("Stored constraint in Continuum memory: '{}' (Active slots saved in {})", text_arg, state_path)
-            } else if tool_name == "continuum_recall" {
-                let query_arg = json.get_path(&["params", "arguments", "query"])
-                    .and_then(|v| v.as_str())
-                    .unwrap_or("");
-                let k_arg = json.get_path(&["params", "arguments", "top_k"])
-                    .and_then(|v| v.as_u64())
-                    .unwrap_or(3) as usize;
-
-                let engine = ContinuumEngine::load_from_file(&state_path).unwrap_or_else(|_| {
-                    ContinuumEngine::new(ContinuumConfig::default())
-                });
-                let dim = engine.config.embedding_dim;
-                let embedder = RealTextEmbedder::new(dim, 42);
-                let bridge = SemanticCausalBridge::new();
-                let (v_bridged, _) = bridge.project_query(query_arg, &embedder, 0.50);
-                let matches = engine.query(&v_bridged, k_arg);
-
-                let mut out = format!("Retrieved {} causal memories (< 100 μs native Rust):\n", matches.len());
-                for (i, m) in matches.iter().enumerate() {
-                    let prov = safe_truncate(&m.provenance.replace('\n', " "), 120);
-                    out.push_str(&format!("#{}: [Score: {:.4}] {}\n", i + 1, m.revision_score, prov));
-                }
-                out
-            } else if tool_name == "continuum_stats" {
-                let engine = ContinuumEngine::load_from_file(&state_path).unwrap_or_else(|_| {
-                    ContinuumEngine::new(ContinuumConfig::default())
-                });
-                format!("Continuum Memory Engine (100% Native Rust):\n- Active Slots: {} / 750 bounded invariant\n- Estimated Token Savings: 96.8%\n- Snapshot Path: {}",
-                    engine.total_slots(), state_path)
-            } else {
-                format!("Unknown tool: '{}'", tool_name)
-            };
-
-            let escaped_text = result_text.replace('\\', "\\\\").replace('"', "\\\"").replace('\n', "\\n").replace('\r', "");
-            let resp = format!(
-                r#"{{"jsonrpc":"2.0","id":{},"result":{{"content":[{{"type":"text","text":"{}"}}]}}}}"#,
-                id_val, escaped_text
-            );
-            send_mcp_msg(&mut stdout, &resp);
-        } else {
-            let resp = format!(
-                r#"{{"jsonrpc":"2.0","id":{},"result":{{}}}}"#,
-                id_val
-            );
-            send_mcp_msg(&mut stdout, &resp);
-        }
+fn parse_output_options(mut args: Vec<String>) -> (Vec<String>, bool) {
+    let mut machine = false;
+    while args.get(1).map(String::as_str) == Some("--json") {
+        args.remove(1);
+        machine = true;
     }
+    // Child command arguments belong entirely to the runner.
+    if matches!(args.get(1).map(String::as_str), Some("run" | "exec")) {
+        return (args, machine);
+    }
+    let boundary = args.iter().position(|arg| arg == "--");
+    let end = boundary.unwrap_or(args.len());
+    // Retain the established trailing option, but never consume required text
+    // or paths. Everything after `--` is literal, including `--json`.
+    let required_end = match args.get(1).map(String::as_str) {
+        Some("remember" | "record" | "recall" | "find") => 3,
+        Some("memory") => match args.get(2).map(String::as_str) {
+            Some("ingest" | "query" | "sync" | "check") => 4,
+            Some("backup" | "restore") => 5,
+            _ => 3,
+        },
+        _ => 2,
+    };
+    let trailing =
+        end > 2 && (boundary.is_some() || end > required_end) && args[end - 1] == "--json";
+    if let Some(index) = boundary {
+        args.remove(index);
+    }
+    if trailing {
+        args.remove(end - 1);
+        machine = true;
+    }
+    (args, machine)
 }
 
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
+    let (args, machine) = parse_output_options(std::env::args().collect());
+    if let Err(error) = dispatch(&args, machine) {
+        if machine {
+            println!("{}", error.json());
+        } else {
+            eprintln!("{}: {}", error.code, error.message);
+        }
+        std::process::exit(error.exit_code());
+    }
+}
+
+fn dispatch(args: &[String], machine: bool) -> Result<()> {
     if args.len() < 2 {
         print_help();
-        return;
+        return Ok(());
     }
 
     match args[1].as_str() {
         "init" => {
+            memory_cli::arity(args, 2, 3, "init [path]")?;
             let path = args.get(2).map(|s| s.as_str()).unwrap_or(".");
-            run_init(path);
+            run_init(path)?;
         }
         "remember" | "record" => {
-            let text = args.get(2).map(|s| s.as_str()).expect("Usage: continuum remember <text>");
+            memory_cli::arity(args, 3, 3, "remember <text>")?;
+            let text = &args[2];
             let snap = find_active_state_file();
-            run_memory_ingest(text, &snap);
-            println!("✅ Stored in Continuum memory manifold (Active state: '{}')", snap);
+            let result = memory_api::ingest(text, &snap)?;
+            if machine {
+                println!("{result}");
+            } else {
+                println!(
+                    "✅ Stored in Continuum memory manifold (Active state: '{}')",
+                    snap
+                );
+            }
         }
         "recall" | "find" => {
-            let query = args.get(2).map(|s| s.as_str()).expect("Usage: continuum recall <query_text> [k]");
+            memory_cli::arity(args, 3, 4, "recall <query_text> [k]")?;
+            let query = &args[2];
             let snap = find_active_state_file();
-            let k = args.get(3).and_then(|s| s.parse::<usize>().ok()).unwrap_or(3);
-            run_memory_query(query, &snap, k);
+            let k = memory_api::top_k(args.get(3).map(String::as_str), 3)?;
+            if machine {
+                println!("{}", memory_api::query(query, &snap, k)?);
+            } else {
+                run_memory_query(query, &snap, k)?;
+            }
         }
         "run" | "exec" => {
             if args.len() < 3 {
@@ -850,12 +887,15 @@ fn main() {
                 _ => {
                     println!("Usage:");
                     println!("  continuum hook install [dir]      Install automatic Git post-commit memory hook");
-                    println!("  continuum hook uninstall [dir]    Remove Git post-commit memory hook");
+                    println!(
+                        "  continuum hook uninstall [dir]    Remove Git post-commit memory hook"
+                    );
                 }
             }
         }
         "mcp" => {
-            run_mcp();
+            memory_cli::arity(args, 2, 2, "mcp")?;
+            mcp::run(&find_active_state_file())?;
         }
         "upgrade" | "pro" => {
             run_upgrade();
@@ -872,68 +912,34 @@ fn main() {
                 }
             }
         }
-        "memory" => {
-            let default_snap = default_snapshot_path();
-            let sub = args.get(2).map(|s| s.as_str()).unwrap_or("help");
-            match sub {
-                "sync" => {
-                    let transcript = args.get(3).map(|s| s.as_str()).expect("Usage: continuum memory sync <transcript_jsonl_path> [snapshot_path]");
-                    let snap = args.get(4).map(|s| s.as_str()).unwrap_or(&default_snap);
-                    run_memory_sync(transcript, snap);
-                }
-                "query" => {
-                    let query_str = args.get(3).map(|s| s.as_str()).expect("Usage: continuum memory query <query_string> [snapshot_path] [top_k]");
-                    let snap = args.get(4).map(|s| s.as_str()).unwrap_or(&default_snap);
-                    let k = args.get(5).and_then(|s| s.parse::<usize>().ok()).unwrap_or(5);
-                    run_memory_query(query_str, snap, k);
-                }
-                "ingest" => {
-                    let text = args.get(3).map(|s| s.as_str()).expect("Usage: continuum memory ingest <text> [snapshot_path]");
-                    let snap = args.get(4).map(|s| s.as_str()).unwrap_or(&default_snap);
-                    run_memory_ingest(text, snap);
-                }
-                "inspect" | "stats" => {
-                    let snap = args.get(3).map(|s| s.as_str()).unwrap_or(&default_snap);
-                    run_memory_inspect(snap);
-                }
-                _ => {
-                    println!("Usage:");
-                    println!("  continuum memory sync <transcript_path> [snapshot_path]");
-                    println!("  continuum memory query <query_string> [snapshot_path] [top_k]");
-                    println!("  continuum memory ingest <text> [snapshot_path]");
-                    println!("  continuum memory inspect [snapshot_path]");
-                }
-            }
-        }
+        "memory" => memory_cli::run(&args[2..], machine)?,
         "snapshot" => {
+            memory_cli::arity(args, 2, 3, "snapshot [path]")?;
             let path = args.get(2).map(|s| s.as_str()).unwrap_or("continuum.state");
             let cfg = ContinuumConfig::default();
             let engine = ContinuumEngine::new(cfg);
-            match engine.save_to_file(path) {
-                Ok(()) => println!("Successfully saved initial snapshot to '{path}'"),
-                Err(e) => eprintln!("Failed to save snapshot to '{path}': {e}"),
-            }
+            engine.save_to_file(path)?;
+            println!("Successfully saved initial snapshot to '{path}'");
         }
         "restore" => {
+            memory_cli::arity(args, 2, 3, "restore [path]")?;
             let path = args.get(2).map(|s| s.as_str()).unwrap_or("continuum.state");
-            match ContinuumEngine::load_from_file(path) {
-                Ok(eng) => {
-                    println!("Successfully restored engine from '{path}'!");
-                    println!("  Total Slots: {}", eng.total_slots());
-                    println!("  Hot Slots:   {}", eng.hot_memory.len());
-                    println!("  Cold Slots:  {}", eng.cold_memory.len());
-                    println!("  Step Count:  {}", eng.step_count);
-                }
-                Err(e) => eprintln!("Failed to load snapshot from '{path}': {e}"),
-            }
+            let eng = ContinuumEngine::load_from_file(path)?;
+            println!("Successfully restored engine from '{path}'!");
+            println!("  Total Slots: {}", eng.total_slots());
+            println!("  Hot Slots:   {}", eng.hot_memory.len());
+            println!("  Cold Slots:  {}", eng.cold_memory.len());
+            println!("  Step Count:  {}", eng.step_count);
         }
         "benchmark" => run_benchmark(),
         "stats" => {
-            println!("Continuum Native Rust Core v0.1.0");
-            println!("Memory Model: Physical O(K) Bounded Two-Tier Manifold (Hot + Cold)");
-            println!("Complexity: O(1) Gated Linear Recurrence");
-            println!("Query Speed: ~50 μs");
-            println!("External Runtime Dependencies: 0 (Pure Rust Standard Library)");
+            memory_cli::arity(args, 2, 2, "stats")?;
+            let path = find_active_state_file();
+            if machine {
+                println!("{}", memory_api::inspect(&path)?);
+            } else {
+                memory_api::inspect_human(&path)?;
+            }
         }
         "version" | "--version" | "-v" => {
             println!("continuum 0.1.0 (native rust core)");
@@ -942,9 +948,12 @@ fn main() {
             print_help();
         }
         cmd => {
-            eprintln!("Unknown command: '{cmd}'. Run 'continuum help' for usage.");
+            return Err(ApiError::invalid(format!(
+                "Unknown command: '{cmd}'. Run 'continuum help' for usage."
+            )));
         }
     }
+    Ok(())
 }
 
 #[cfg(test)]
@@ -960,18 +969,36 @@ mod tests {
         );
 
         // Strict stdio MCP mandate: must not contain any newlines
-        assert!(!resp.contains('\n'), "MCP response must NOT contain newlines!");
-        assert!(!resp.contains('\r'), "MCP response must NOT contain carriage returns!");
+        assert!(
+            !resp.contains('\n'),
+            "MCP response must NOT contain newlines!"
+        );
+        assert!(
+            !resp.contains('\r'),
+            "MCP response must NOT contain carriage returns!"
+        );
 
         // Must parse as valid JSON
         let parsed = json::parse_json(&resp).expect("Failed to parse MCP response as JSON");
         assert_eq!(parsed.get("jsonrpc").unwrap().as_str().unwrap(), "2.0");
-        assert_eq!(parsed.get("id").unwrap().to_raw_id_string(), "\"test_msg_001\"");
+        assert_eq!(
+            parsed.get("id").unwrap().to_raw_id_string(),
+            "\"test_msg_001\""
+        );
 
-        let tools = parsed.get_path(&["result", "tools"]).unwrap().as_array().unwrap();
+        let tools = parsed
+            .get_path(&["result", "tools"])
+            .unwrap()
+            .as_array()
+            .unwrap();
         assert_eq!(tools.len(), 3);
-        let names: Vec<&str> = tools.iter().map(|t| t.get("name").unwrap().as_str().unwrap()).collect();
-        assert_eq!(names, vec!["continuum_remember", "continuum_recall", "continuum_stats"]);
+        let names: Vec<&str> = tools
+            .iter()
+            .map(|t| t.get("name").unwrap().as_str().unwrap())
+            .collect();
+        assert_eq!(
+            names,
+            vec!["continuum_remember", "continuum_recall", "continuum_stats"]
+        );
     }
 }
-

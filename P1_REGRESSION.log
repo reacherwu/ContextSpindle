@@ -1,0 +1,92 @@
+$ cargo test -p continuum-cli --test errors_api --locked --offline init_preserves_existing_memory_and_configuration -- --exact
+   Compiling continuum-core v0.1.0 (/Users/mymac/continuum-hardening/crates/continuum-core)
+   Compiling continuum-cli v0.1.0 (/Users/mymac/continuum-hardening/crates/continuum-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.42s
+     Running tests/errors_api.rs (target/debug/deps/errors_api-06085ea841f4ed0b)
+
+running 1 test
+test init_preserves_existing_memory_and_configuration ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.54s
+
+
+exit=0
+$ cargo test -p continuum-cli --test errors_api --locked --offline json_options_preserve_literal_text_and_paths -- --exact
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s
+     Running tests/errors_api.rs (target/debug/deps/errors_api-06085ea841f4ed0b)
+
+running 1 test
+test json_options_preserve_literal_text_and_paths ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.58s
+
+
+exit=0
+$ cargo test -p continuum-cli --test errors_api --locked --offline unicode_surrogates_follow_json_semantics -- --exact
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s
+     Running tests/errors_api.rs (target/debug/deps/errors_api-06085ea841f4ed0b)
+
+running 1 test
+test unicode_surrogates_follow_json_semantics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.86s
+
+
+exit=0
+$ cargo test -p continuum-cli --test errors_api --locked --offline storage_errors_are_nonzero_and_never_claim_success -- --exact
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s
+     Running tests/errors_api.rs (target/debug/deps/errors_api-06085ea841f4ed0b)
+
+running 1 test
+test storage_errors_are_nonzero_and_never_claim_success ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.46s
+
+
+exit=0
+$ cargo test -p continuum-cli --test errors_api --locked --offline mcp_storage_failures_are_tool_errors_without_empty_fallback -- --exact
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s
+     Running tests/errors_api.rs (target/debug/deps/errors_api-06085ea841f4ed0b)
+
+running 1 test
+test mcp_storage_failures_are_tool_errors_without_empty_fallback ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.43s
+
+
+exit=0
+$ cargo test -p continuum-cli --test errors_api --locked --offline recovery_check_backup_and_confirmed_restore -- --exact
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s
+     Running tests/errors_api.rs (target/debug/deps/errors_api-06085ea841f4ed0b)
+
+running 1 test
+test recovery_check_backup_and_confirmed_restore ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.55s
+
+
+exit=0
+$ cargo test -p continuum-core --test storage --locked --offline
+   Compiling continuum-core v0.1.0 (/Users/mymac/continuum-hardening/crates/continuum-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running tests/storage.rs (target/debug/deps/storage-58850af08a49fd5f)
+
+running 13 tests
+test child_worker ... ok
+test incomplete_snapshot_is_not_reinitialized ... ok
+test save_creates_parent_and_failed_mutation_preserves_snapshot ... ok
+test save_rejects_inconsistent_state_without_overwrite ... ok
+test failed_atomic_publication_cleans_own_temp ... ok
+test legacy_empty_snapshot_roundtrips_byte_exact ... ok
+test invalid_normal_state_is_rejected_before_save ... ok
+test ordinary_truncation_and_trailing_data_fail_closed ... ok
+test stable_lock_times_out_and_reacquires ... ok
+test backup_check_restore_are_validated_and_no_clobber ... ok
+test process_rmw_has_no_lost_updates ... ok
+test thread_rmw_has_no_lost_updates ... ok
+test long_holder_is_not_stolen_and_killed_holder_releases ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.18s
+
+
+exit=0
