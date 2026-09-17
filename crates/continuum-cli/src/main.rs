@@ -93,8 +93,8 @@ fn run_demo_aiops() {
     println!("-> Retrospective Query Latency: {:?} (< 100 μs native execution!)", query_lat);
     let all_matches = engine.query(&v_bridged, 750);
     if let Some((pos, m)) = all_matches.iter().enumerate().find(|(_, m)| m.event_id == root_id) {
-        println!("  -> Target ID {} is at Rank #{}: Score={:.4} (sim={:.4}, state={:.4}, temp={:.4}, prov={:.4})",
-            root_id, pos + 1, m.revision_score, m.components.sim, m.components.state_compat, m.components.temporal_compat, m.components.provenance_compat);
+        println!("  -> Target ID {} is at Rank #{}: Score={:.4} (sim={:.4}, state={:.4}, temp={:.4}, prov={:.4}) | Provenance: {}",
+            root_id, pos + 1, m.revision_score, m.components.sim, m.components.state_compat, m.components.temporal_compat, m.components.provenance_compat, m.provenance);
     }
     println!("\nTop-10 Retrieved Candidates:");
     let mut found_root = false;
@@ -414,9 +414,43 @@ fn safe_truncate(s: &str, max_chars: usize) -> String {
     }
 }
 
+fn find_key_value_start(line: &str, field: &str) -> Option<usize> {
+    let quote_field_quote = format!("\"{}\"", field);
+    let key_pos = line.find(&quote_field_quote)?;
+    let after_key = &line[key_pos + quote_field_quote.len()..];
+    let colon_rel = after_key.find(':')?;
+    if after_key[..colon_rel].trim().is_empty() {
+        Some(key_pos + quote_field_quote.len() + colon_rel + 1)
+    } else {
+        None
+    }
+}
+
+fn extract_raw_json_value(line: &str, field: &str) -> Option<String> {
+    let start_pos = find_key_value_start(line, field)?;
+    let rest = line[start_pos..].trim_start();
+    if rest.starts_with('"') {
+        let mut end_pos = 1;
+        let bytes = rest.as_bytes();
+        while end_pos < bytes.len() {
+            if bytes[end_pos] == b'\\' {
+                end_pos += 2;
+            } else if bytes[end_pos] == b'"' {
+                end_pos += 1;
+                break;
+            } else {
+                end_pos += 1;
+            }
+        }
+        Some(rest[..end_pos].to_string())
+    } else {
+        let end = rest.find([',', '}', ']', ' ']).unwrap_or(rest.len());
+        Some(rest[..end].trim().to_string())
+    }
+}
+
 fn extract_json_field(line: &str, field: &str) -> Option<String> {
-    let key = format!("\"{}\":", field);
-    let start_pos = line.find(&key)? + key.len();
+    let start_pos = find_key_value_start(line, field)?;
     let rest = line[start_pos..].trim_start();
     if rest.starts_with('"') {
         let mut result = String::new();
@@ -607,7 +641,7 @@ fn run_memory_ingest(text: &str, snapshot_path: &str) {
     engine.step(&emb, step_id, text);
 
     match engine.save_to_file(snapshot_path) {
-        Ok(()) => println!("Ingested event into memory (active slots: {}/{}, snapshot: '{}')",
+        Ok(()) => eprintln!("Ingested event into memory (active slots: {}/{}, snapshot: '{}')",
             engine.total_slots(), engine.config.hot_capacity + engine.config.cold_capacity, snapshot_path),
         Err(e) => eprintln!("Failed to persist snapshot: {e}"),
     }
@@ -728,7 +762,7 @@ fn run_mcp() {
             continue;
         }
 
-        let id_val = extract_json_field(trimmed, "id").unwrap_or_else(|| "null".to_string());
+        let id_val = extract_raw_json_value(trimmed, "id").unwrap_or_else(|| "null".to_string());
         let method = extract_json_field(trimmed, "method").unwrap_or_default();
 
         if method == "initialize" {
@@ -740,6 +774,13 @@ fn run_mcp() {
             let _ = stdout.flush();
         } else if method == "notifications/initialized" {
             // No response required
+        } else if method == "ping" {
+            let resp = format!(
+                r#"{{"jsonrpc":"2.0","id":{},"result":{{}}}}"#,
+                id_val
+            );
+            let _ = writeln!(stdout, "{}", resp);
+            let _ = stdout.flush();
         } else if method == "tools/list" {
             let resp = format!(
                 r#"{{"jsonrpc":"2.0","id":{},"result":{{"tools":[

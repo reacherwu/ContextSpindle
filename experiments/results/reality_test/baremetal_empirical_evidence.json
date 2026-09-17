@@ -1,0 +1,28 @@
+{
+  "total_turns": 1000,
+  "token_metrics": {
+    "full_context_cumulative": 18448880,
+    "sliding_window_cumulative": 347200,
+    "continuum_cumulative": 68340,
+    "token_slash_pct": 99.62957100918864,
+    "token_vs_sliding_pct": 80.3168202764977,
+    "peak_prompt_full": 36498,
+    "peak_prompt_continuum": 167
+  },
+  "financial_metrics_usd": {
+    "sonnet_full_context_cost": 55.3466,
+    "sonnet_sliding_window_cost": 1.0416,
+    "sonnet_continuum_cost": 0.205,
+    "sonnet_net_savings": 55.1416
+  },
+  "task_execution": {
+    "total_checkpoints": 10,
+    "full_context_passed": 10,
+    "sliding_window_passed": 0,
+    "continuum_passed": 10
+  },
+  "performance": {
+    "average_retrieval_latency_us": 161.21,
+    "total_elapsed_seconds": 3.89
+  }
+}

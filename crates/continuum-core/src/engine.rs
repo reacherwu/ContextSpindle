@@ -135,25 +135,36 @@ impl ContinuumEngine {
         // Candidate i is penalized/suppressed so the active truth ranks #1.
         let n = candidates.len();
         let exempt_thresh = self.config.causal_exempt_threshold.unwrap_or(0.25);
-        let supersede_thresh = (self.config.sim_threshold * 0.65).max(exempt_thresh);
+        let base_thresh = (self.config.sim_threshold * 0.75).max(0.40);
 
         for i in 0..n {
-            if candidates[i].causal_match.components.sim >= exempt_thresh {
+            let sim_i = candidates[i].causal_match.components.sim;
+            if sim_i >= exempt_thresh {
                 let mut best_superseding_sim = 0.0f32;
                 let mut superseding_id = None;
 
                 for j in 0..n {
+                    let sim_j = candidates[j].causal_match.components.sim;
                     if i != j
                         && candidates[j].causal_match.timestamp > candidates[i].causal_match.timestamp
-                        && candidates[j].causal_match.components.sim >= exempt_thresh
+                        && sim_j >= exempt_thresh
                     {
-                        let mutual_sim = crate::math::cosine_similarity(
-                            candidates[i].embedding,
-                            candidates[j].embedding,
-                        );
-                        if mutual_sim >= supersede_thresh && mutual_sim > best_superseding_sim {
-                            best_superseding_sim = mutual_sim;
-                            superseding_id = Some(candidates[j].causal_match.event_id);
+                        let prov_j_lower = candidates[j].causal_match.provenance.to_lowercase();
+                        let is_explicit_update = prov_j_lower.contains("supersede")
+                            || prov_j_lower.contains("update")
+                            || prov_j_lower.contains("override")
+                            || prov_j_lower.contains("replace")
+                            || prov_j_lower.contains("revoke");
+
+                        if is_explicit_update {
+                            let mutual_sim = crate::math::cosine_similarity(
+                                candidates[i].embedding,
+                                candidates[j].embedding,
+                            );
+                            if mutual_sim >= base_thresh && mutual_sim > best_superseding_sim {
+                                best_superseding_sim = mutual_sim;
+                                superseding_id = Some(candidates[j].causal_match.event_id);
+                            }
                         }
                     }
                 }
