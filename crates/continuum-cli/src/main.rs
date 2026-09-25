@@ -878,8 +878,9 @@ fn run_mcp() {
 
         if method == "initialize" {
             let resp = format!(
-                r#"{{"jsonrpc":"2.0","id":{},"result":{{"protocolVersion":"2024-11-05","capabilities":{{"tools":{{}}}},"serverInfo":{{"name":"contextspindle","version":"0.2.0"}}}}}}"#,
-                id_val
+                r#"{{"jsonrpc":"2.0","id":{},"result":{{"protocolVersion":"2024-11-05","capabilities":{{"tools":{{}}}},"serverInfo":{{"name":"contextspindle","version":"{}"}}}}}}"#,
+                id_val,
+                env!("CARGO_PKG_VERSION")
             );
             send_mcp_msg(&mut stdout, &resp);
         } else if method == "notifications/initialized" {
@@ -1172,14 +1173,14 @@ fn main() {
         }
         "benchmark" => run_benchmark(),
         "stats" => {
-            println!("ContextSpindle Native Rust Memory v0.1.0");
+            println!("ContextSpindle bounded retrieval engine (legacy memory subsystem)");
             println!("Memory Model: Physical O(K) Bounded Two-Tier Manifold (Hot + Cold)");
             println!("Complexity: O(1) Gated Linear Recurrence");
-            println!("Query Speed: ~50 μs");
+            println!("Query speed depends on the snapshot, query, hardware, and build profile");
             println!("External Runtime Dependencies: 0 (Pure Rust Standard Library)");
         }
         "version" | "--version" | "-v" => {
-            println!("contextspindle 0.2.0 (durable task ledger and bounded context; legacy continuum-cli alias)");
+            println!("contextspindle {} (durable task ledger and bounded context; legacy continuum-cli alias)", env!("CARGO_PKG_VERSION"));
         }
         "help" | "--help" | "-h" => {
             print_help();

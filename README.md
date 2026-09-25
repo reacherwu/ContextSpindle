@@ -1,8 +1,12 @@
+<p align="center"><img src="docs/assets/contextspindle-logo.png" alt="ContextSpindle logo: one continuous thread around a durable core" width="144"></p>
+
 # ContextSpindle
+
+![ContextSpindle CI](https://github.com/reacherwu/ContextSpindle/actions/workflows/ci.yml/badge.svg) [![Latest release](https://img.shields.io/github/v/release/reacherwu/ContextSpindle?label=release)](https://github.com/reacherwu/ContextSpindle/releases) ![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-7fe0bd)
 
 **A durable task line for AI agents.** Keep the goal, decisions, and next action across context compaction, interrupted sessions, and unrelated work—then hand the next agent only the context it needs.
 
-[中文说明](README_CN.md) · [Product definition](docs/PRODUCT-SCOPE.md) · [Agent protocol](docs/AGENT-PROTOCOL.md) · [Operations](docs/OPERATIONS.md) · [Measured results](docs/TASK-LEDGER-BENCHMARK.md)
+[Website](https://reacherwu.github.io/ContextSpindle/) · [Releases](https://github.com/reacherwu/ContextSpindle/releases) · [中文说明](README_CN.md) · [Product definition](docs/PRODUCT-SCOPE.md) · [Agent protocol](docs/AGENT-PROTOCOL.md) · [Operations](docs/OPERATIONS.md) · [Measured results](docs/TASK-LEDGER-BENCHMARK.md)
 
 ## Why we built it
 

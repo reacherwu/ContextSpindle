@@ -1,8 +1,12 @@
+<p align="center"><img src="docs/assets/contextspindle-logo.png" alt="ContextSpindle 标志：围绕持久核心连续延伸的任务线" width="144"></p>
+
 # ContextSpindle
+
+![ContextSpindle CI](https://github.com/reacherwu/ContextSpindle/actions/workflows/ci.yml/badge.svg) [![最新版本](https://img.shields.io/github/v/release/reacherwu/ContextSpindle?label=release)](https://github.com/reacherwu/ContextSpindle/releases) ![AGPL-3.0 许可证](https://img.shields.io/badge/license-AGPL--3.0-7fe0bd)
 
 **给 AI Agent 一条不会被长对话冲掉的任务主线。** 把目标、关键决定和下一步保存在独立任务账本里；换 Agent、切换任务或重启后，只按当前任务组装所需上下文。
 
-[English](README.md) · [产品定义](docs/PRODUCT-SCOPE.md) · [Agent 工作协议](docs/AGENT-PROTOCOL.md) · [运维手册](docs/OPERATIONS.md) · [完整测试条件](docs/TASK-LEDGER-BENCHMARK.md)
+[项目网站](https://reacherwu.github.io/ContextSpindle/) · [版本发布](https://github.com/reacherwu/ContextSpindle/releases) · [English](README.md) · [产品定义](docs/PRODUCT-SCOPE.md) · [Agent 工作协议](docs/AGENT-PROTOCOL.md) · [运维手册](docs/OPERATIONS.md) · [完整测试条件](docs/TASK-LEDGER-BENCHMARK.md)
 
 ## 为什么创建这个项目？
 

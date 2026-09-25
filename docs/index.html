@@ -4,12 +4,29 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="ContextSpindle preserves AI agent task goals and progress in a durable local ledger, then assembles relevant context within a conservative budget.">
+  <meta name="theme-color" content="#0b1020">
+  <meta property="og:title" content="ContextSpindle — Keep the task, not the whole conversation">
+  <meta property="og:description" content="Durable task continuity and budgeted context for AI agents. Local-first, auditable, recoverable.">
+  <meta property="og:image" content="https://reacherwu.github.io/ContextSpindle/assets/contextspindle-logo.png">
+  <link rel="icon" type="image/png" href="assets/contextspindle-logo.png">
   <title>ContextSpindle — Durable task continuity for AI agents</title>
   <style>
     :root { color-scheme: dark; font: 16px/1.6 system-ui, sans-serif; background: #0b1020; color: #e8edf7; }
     * { box-sizing: border-box; }
-    body { margin: 0; }
-    main { max-width: 960px; margin: auto; padding: 72px 24px; }
+    body { margin: 0; background: radial-gradient(circle at 85% 5%, #16334a 0, #0b1020 38%); }
+    main { max-width: 1060px; margin: auto; padding: 38px 24px 72px; }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 72px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; color: #e8edf7; text-decoration: none; font-weight: 760; letter-spacing: -.025em; }
+    .brand img { width: 42px; height: 42px; }
+    .nav-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .nav-links a { color: #c1cbe0; text-decoration: none; font-size: .92rem; }
+    .nav-links a:hover, .brand:hover { color: #7fe0bd; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 36px; align-items: center; }
+    .hero-logo { width: min(100%, 260px); filter: drop-shadow(0 24px 42px #02091880); }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 30px 0 0; }
+    .button { display: inline-block; border-radius: 11px; padding: 10px 18px; color: #0b1020; background: #7fe0bd; text-decoration: none; font-weight: 720; }
+    .button.secondary { color: #e8edf7; background: #1a2a40; border: 1px solid #39506c; }
+    .button:hover { transform: translateY(-1px); }
     h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); line-height: 1.1; letter-spacing: -.04em; margin: 0 0 24px; }
     h2 { font-size: 1.45rem; margin: 0 0 12px; }
     p { color: #c1cbe0; }
@@ -20,7 +37,7 @@
     .card { background: #141d31; border: 1px solid #2c3b59; border-radius: 16px; padding: 24px; }
     .card p { margin-bottom: 0; }
     .panel { background: #121a2c; border: 1px solid #314362; border-radius: 16px; padding: 28px; margin: 36px 0; }
-    .visual { display: block; width: 100%; height: auto; border-radius: 18px; margin: 30px 0; }
+    .visual { display: block; width: 100%; height: auto; border-radius: 18px; margin: 30px 0; border: 1px solid #314362; }
     .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 20px 0; }
     .metric { background: #0b1220; border: 1px solid #314362; border-radius: 12px; padding: 18px; }
     .metric strong { display: block; color: #7fe0bd; font-size: 1.65rem; }
@@ -28,16 +45,27 @@
     pre { overflow-x: auto; background: #070b15; border-radius: 10px; padding: 20px; color: #c2ebfa; }
     code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
     footer { margin-top: 64px; border-top: 1px solid #314362; padding-top: 24px; color: #9eacc5; }
+    @media (max-width: 680px) { .nav { align-items: flex-start; margin-bottom: 46px; } .nav-links { gap: 10px; justify-content: flex-end; } .hero { grid-template-columns: 1fr; } .hero-logo { grid-row: 1; width: 140px; } main { padding-top: 20px; } }
   </style>
 </head>
 <body>
 <main>
-  <p class="eyebrow">Local-first · Rust · CLI + MCP</p>
-  <h1>Keep the task, not the whole conversation.</h1>
-  <p class="lead">ContextSpindle gives AI agents a durable record of what they are trying to accomplish, what has been decided, and what to do next. An agent can return after interruptions or unrelated work and assemble only the context it needs.</p>
+  <nav class="nav" aria-label="Main navigation">
+    <a class="brand" href="./"><img src="assets/contextspindle-logo.png" alt="" width="42" height="42">ContextSpindle</a>
+    <div class="nav-links"><a href="#how-it-works">How it works</a><a href="#evidence">Evidence</a><a href="#start">Get started</a><a href="https://github.com/reacherwu/ContextSpindle">GitHub ↗</a></div>
+  </nav>
+  <div class="hero">
+    <div>
+      <p class="eyebrow">Local-first · Rust · CLI + MCP</p>
+      <h1>Keep the task,<br>not the whole conversation.</h1>
+      <p class="lead">A durable record of what an AI agent is trying to accomplish, what was decided, and what to do next. Resume after interruptions or unrelated work with only the context this task needs.</p>
+      <div class="actions"><a class="button" href="https://github.com/reacherwu/ContextSpindle#try-it-locally">Start locally →</a><a class="button secondary" href="https://github.com/reacherwu/ContextSpindle/releases">View releases</a></div>
+    </div>
+    <img class="hero-logo" src="assets/contextspindle-logo.png" alt="ContextSpindle logo: a continuous thread around a durable core" width="260" height="260">
+  </div>
   <img class="visual" src="assets/task-continuity.svg" alt="Agents share a durable task ledger; a budgeted assembler passes selected context to the next agent, with bounded retrieval hints optional." width="1120" height="360">
 
-  <div class="grid">
+  <div class="grid" id="how-it-works">
     <section class="card">
       <h2>Durable task ledger</h2>
       <p>Goals, completion criteria, status, owner, decisions, dependencies, and next actions live in versioned local records outside the evicting memory cache.</p>
@@ -52,7 +80,7 @@
     </section>
   </div>
 
-  <section class="panel">
+  <section class="panel" id="evidence">
     <h2>A measured 1,000-task workload</h2>
     <p>One selected task remained readable after 999 unrelated tasks. On an Apple M4 with a warm filesystem cache, its 2,048-byte context took 34.23 ms median over 11 release-CLI runs. It contained 420 <code>cl100k_base</code> tokens; naively concatenating every paginated task summary contained 94,701 tokens under the same encoding. This is one synthetic workload and a deliberately naive baseline, not a universal token-savings claim.</p>
     <div class="metrics">
@@ -64,7 +92,7 @@
     <p>See the <a href="https://github.com/reacherwu/ContextSpindle/blob/main/docs/TASK-LEDGER-BENCHMARK.md">methodology and limits</a> and <a href="https://github.com/reacherwu/ContextSpindle/blob/main/benchmarks/results/task-ledger-2026-09-25.json">raw result</a>. Cache-corruption survival and backup/restore also passed in this temporary run.</p>
   </section>
 
-  <section class="panel">
+  <section class="panel" id="start">
     <h2>Start in a local project</h2>
     <pre><code>cargo build --release --bin contextspindle
 ./target/release/contextspindle init .
