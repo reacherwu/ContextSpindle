@@ -7,4 +7,5 @@ Provide a concise explanation of the changes made and the motivation.
 
 ## Verification Plan
 - [ ] Automated tests pass (`cargo test --workspace`)
-- [ ] No regression introduced (`diffhound review --base origin/main`)
+- [ ] Durable task history, budget behavior, and cache independence remain correct where relevant
+- [ ] Relevant Python tests pass (`python3 -m pytest -q`)

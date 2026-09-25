@@ -1,12 +1,12 @@
 name: Bug report
-description: Create a report to help us improve DiffHound
+description: Report a ContextSpindle task-continuity or memory issue
 title: "[BUG]: "
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report a bug in DiffHound!
+        Thanks for taking the time to report a ContextSpindle bug. Remove private task text and secrets before sharing logs or ledger files.
   - type: textarea
     id: what-happened
     attributes:
@@ -19,17 +19,18 @@ body:
     id: reproduction
     attributes:
       label: Reproduction Steps
-      description: How can we reproduce this? Include diff or command run.
+      description: How can we reproduce this in a fresh workspace? Include the CLI or MCP calls and whether the task ledger or retrieval cache was involved.
       placeholder: |
-        1. Run `diffhound review --base ...`
-        2. See output ...
+        1. Run `contextspindle init .` in a temporary workspace.
+        2. Run `contextspindle task create ...` and the affected operation.
+        3. Record the expected and actual task state, without secrets.
     validations:
       required: true
   - type: input
     id: version
     attributes:
-      label: DiffHound Version
-      description: Output of `diffhound version`
-      placeholder: diffhound v0.2.0
+      label: ContextSpindle version
+      description: Output of `contextspindle version` and the operating system
+      placeholder: contextspindle 0.2.0 on macOS
     validations:
       required: true
