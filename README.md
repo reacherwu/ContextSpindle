@@ -9,6 +9,7 @@ The CLI and MCP server now expose a durable, append-only task ledger and task-aw
 Agents should follow [the task-continuity protocol](docs/AGENT-PROTOCOL.md) at the start and end of work. No integration can preserve a task that was never entered into the ledger.
 
 For backup, restore, access control, and capacity planning, use the [operations runbook](docs/OPERATIONS.md).
+The [task-ledger smoke benchmark](docs/TASK-LEDGER-BENCHMARK.md) records one measured 1,000-task workload and its limits.
 
 ## Quick start
 
