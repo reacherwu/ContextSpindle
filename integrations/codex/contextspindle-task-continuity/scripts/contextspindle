@@ -1,0 +1,24 @@
+#!/bin/sh
+set -eu
+umask 077
+
+codex_home=${CODEX_HOME:-"$HOME/.codex"}
+case "$codex_home" in
+  /*) ;;
+  *) printf '%s\n' 'CODEX_HOME must be an absolute path' >&2; exit 1 ;;
+esac
+workspace="$codex_home/contextspindle-workspace"
+binary="$codex_home/contextspindle-runtime/bin/contextspindle"
+
+if [ ! -x "$binary" ]; then
+  printf '%s\n' "ContextSpindle binary missing: $binary" >&2
+  exit 1
+fi
+if [ ! -d "$workspace/.contextspindle/tasks" ]; then
+  printf '%s\n' "ContextSpindle ledger missing: $workspace" >&2
+  exit 1
+fi
+cd "$workspace"
+CONTEXTSPINDLE_ACTOR=${CONTEXTSPINDLE_ACTOR:-codex-local}
+export CONTEXTSPINDLE_ACTOR
+exec "$binary" "$@"

@@ -13,5 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - name: Test task ledger, MCP, and memory engine
         run: cargo test --workspace
+      - name: Test portable Codex integration
+        run: |
+          cargo build -p continuum-cli --bin contextspindle
+          python3 -m unittest discover -s integrations/codex -p 'test_*.py'

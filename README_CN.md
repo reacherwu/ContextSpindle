@@ -77,7 +77,7 @@ cargo build --release --bin contextspindle
 
 不知道旧任务 ID 时用 `task search <查询词>`，查看修改记录用 `task history <id>`，在新工作区用 `task restore <备份目录>` 恢复。**从未写进账本的任务，系统无法凭空保存。** [Agent 协议](docs/AGENT-PROTOCOL.md)说明开始、切换和结束任务的动作；[运维手册](docs/OPERATIONS.md)说明备份与安全边界。
 
-项目内的 [`.mcp.json`](.mcp.json)可启动同一服务。兼容期保留旧的 `continuum-cli` 命令、Python 模块、Rust crate 名称及 `.continuum/` 快照路径；见[更名记录](docs/NAME-CHANGE.md)。
+项目内的 [`.mcp.json`](.mcp.json)可启动同一服务，但仅克隆仓库**不会**自动安装全局技能或 MCP。若要在这台机器上跨仓库、跨新 Codex 对话使用任务账本，请按[个人级 Codex 安装指南](docs/CODEX-INTEGRATION.md)运行安装器。兼容期保留旧的 `continuum-cli` 命令、Python 模块、Rust crate 名称及 `.continuum/` 快照路径；见[更名记录](docs/NAME-CHANGE.md)。
 
 ## 必须知道的边界
 

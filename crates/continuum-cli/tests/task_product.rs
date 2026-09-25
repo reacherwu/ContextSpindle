@@ -231,7 +231,31 @@ fn corrupt_retrieval_cache_does_not_hide_durable_task() {
     std::fs::write(cwd.join(".continuum").join("memory.state"), b"bad cache").unwrap();
     let context = cli(&cwd, &["task", "context", &id, "1024"]);
     assert!(context.contains("Keep mission visible"));
+    assert!(!context.contains("bounded memory unavailable"));
     std::fs::remove_dir_all(cwd).unwrap();
+}
+
+#[test]
+fn task_context_does_not_read_ancestor_retrieval_cache() {
+    let outer = workspace();
+    let project = outer.join("project");
+    std::fs::create_dir(&project).unwrap();
+    cli(&project, &["init", "."]);
+    let id = extract_id(&cli(&project, &["task", "create", "Isolated project goal"]));
+    std::fs::remove_file(project.join(".continuum").join("memory.state")).unwrap();
+    std::fs::create_dir(outer.join(".continuum")).unwrap();
+    std::fs::write(outer.join(".continuum").join("memory.state"), b"bad ancestor cache")
+        .unwrap();
+
+    let output = Command::new(env!("CARGO_BIN_EXE_contextspindle"))
+        .current_dir(&project)
+        .args(["task", "context", &id, "1024"])
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    assert!(String::from_utf8_lossy(&output.stdout).contains("Isolated project goal"));
+    assert!(!String::from_utf8_lossy(&output.stderr).contains("bounded memory unavailable"));
+    std::fs::remove_dir_all(outer).unwrap();
 }
 
 #[test]

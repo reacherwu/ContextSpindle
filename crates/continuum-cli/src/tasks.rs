@@ -1190,9 +1190,12 @@ impl Store {
     }
 }
 
-fn memory_hints(task: &Task) -> Result<Vec<String>, String> {
-    let snapshot = crate::find_active_state_file();
-    if !Path::new(&snapshot).exists() {
+fn memory_hints(store: &Store, task: &Task) -> Result<Vec<String>, String> {
+    // Task context must not fall back to a home-directory or ancestor cache:
+    // those hints may belong to a different ledger and a different project.
+    let workspace = store.root.parent().and_then(Path::parent).ok_or("Invalid ledger path")?;
+    let snapshot = workspace.join(".continuum").join("memory.state");
+    if !snapshot.exists() {
         return Ok(Vec::new());
     }
     let engine = ContinuumEngine::load_from_file(&snapshot)
@@ -1289,11 +1292,11 @@ pub fn run_cli(args: &[String]) -> Result<String, String> {
             let id = args.get(1).ok_or("Missing task ID")?;
             let budget = args.get(2).map(|x| x.parse::<usize>().map_err(|_| "Invalid budget")).transpose()?.unwrap_or(2048);
             let task = store.load(id)?;
-            let hints = match memory_hints(&task) {
+            let hints = match memory_hints(&store, &task) {
                 Ok(hints) => hints,
                 Err(e) => {
                     eprintln!("Warning: bounded memory unavailable; durable task state remains readable: {e}");
-                    vec![format!("bounded memory unavailable: {e}")]
+                    Vec::new()
                 }
             };
             store.context(id, budget, &hints)
@@ -1407,6 +1410,21 @@ mod tests {
                 || store.context(&task.id, 128, &[]).unwrap().len() <= 128
         );
         fs::remove_dir_all(store.root.parent().unwrap()).unwrap();
+    }
+
+    #[test]
+    fn task_hints_do_not_use_a_snapshot_outside_the_ledger_workspace() {
+        let store = temp_store("isolated_hints");
+        store.init().unwrap();
+        let task = store.create("Keep this goal", "Finish safely", None).unwrap();
+        assert!(memory_hints(&store, &task).unwrap().is_empty());
+
+        let workspace = store.root.parent().unwrap().parent().unwrap();
+        let local_snapshot = workspace.join(".continuum").join("memory.state");
+        fs::create_dir_all(local_snapshot.parent().unwrap()).unwrap();
+        fs::write(&local_snapshot, b"invalid snapshot").unwrap();
+        assert!(memory_hints(&store, &task).is_err());
+        fs::remove_dir_all(workspace).unwrap();
     }
 
     #[test]

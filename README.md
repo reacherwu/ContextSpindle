@@ -77,7 +77,7 @@ Copy the returned task ID, then update and resume it:
 
 Use `task search <query>` when an old ID is unknown, `task history <id>` to review changes, and `task restore <backup-directory>` in a new workspace. A task cannot be remembered if no agent ever records it. The [agent protocol](docs/AGENT-PROTOCOL.md) gives the full start/switch/stop workflow, and the [operations runbook](docs/OPERATIONS.md) explains backup and security responsibilities.
 
-The project-scoped [`.mcp.json`](.mcp.json) starts the same server from this checkout. The task tools cover create, update, show, list, inbox, search, context, history, children, verification, backup, and restore. `contextspindle_remember`, `contextspindle_recall`, and `contextspindle_stats` remain available for the bounded cache. The legacy `continuum-cli` command, Python import, Rust crate names, and `.continuum/` snapshot paths remain for compatibility; see the [naming decision](docs/NAME-CHANGE.md).
+The project-scoped [`.mcp.json`](.mcp.json) starts the same server from this checkout. To make task continuity available in **new local Codex conversations across repositories**, use the [personal Codex installer and setup guide](docs/CODEX-INTEGRATION.md); merely cloning the repository does not install a global skill or MCP server. The task tools cover create, update, show, list, inbox, search, context, history, children, verification, backup, and restore. `contextspindle_remember`, `contextspindle_recall`, and `contextspindle_stats` remain available for the bounded cache. The legacy `continuum-cli` command, Python import, Rust crate names, and `.continuum/` snapshot paths remain for compatibility; see the [naming decision](docs/NAME-CHANGE.md).
 
 ## Limits worth knowing
 
