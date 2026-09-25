@@ -42,6 +42,8 @@ That selected context was **99.56% smaller in token count for this specific comp
 
 These timings include a fresh CLI process per call with a warm filesystem cache. They do not measure model response time, Linux, cold storage, very long per-task histories, or multi-year durability. The older bounded-memory research and its distinct benchmarks are in [BENCHMARKS.md](docs/BENCHMARKS.md); they are not task-ledger results.
 
+We also used ContextSpindle to track this repository's own rename and publication task. Its version-3 handoff contained the real goal and next action in 1,892 bytes / 438 `cl100k_base` tokens; this is a [dogfood observation](docs/TASK-LEDGER-BENCHMARK.md#real-project-dogfood-observation), not an independently reproducible benchmark, because the operational ledger is Git-ignored.
+
 ## Try it locally
 
 Build from this checkout—no global install, hook, or IDE setting change is needed:

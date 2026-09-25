@@ -42,6 +42,8 @@
 
 这些耗时包含每次启动一个 CLI 进程，但不包含模型回答时间；也没有验证冷盘、Linux、大量单任务历史或多年后的可恢复性。旧有记忆引擎的研究结果见[历史基准](docs/BENCHMARKS.md)，不能当成新任务账本的成绩。
 
+这次仓库更名和发布工作也实际使用了 ContextSpindle 自己的任务账本。版本 3 的接力上下文保留了真实目标与下一步，输出为 1,892 字节 / 438 个 `cl100k_base` token。这是一条[自用观察](docs/TASK-LEDGER-BENCHMARK.md#real-project-dogfood-observation)，不是可独立复现的基准测试：运营中的账本按设计被 Git 忽略。
+
 ## 本地开始使用
 
 从当前仓库构建，无需改 IDE 设置、装 Git Hook 或全局安装：

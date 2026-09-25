@@ -27,6 +27,10 @@ python3 -m benchmarks.task_ledger_product --tasks 1000 --repeats 11
 The runner requires `tiktoken` to report `cl100k_base` counts. It prints JSON and removes its temporary workspace after the run.
 Task IDs and caller labels include process/time information, so a rerun can produce slightly different summary-token counts even with the same task text. Filesystem and process-startup timing will also vary.
 
+### Real project dogfood observation
+
+ContextSpindle also tracked this repository's rename, cleanup, measurement, and publication work in its own local ledger as task `t-k-publish-contextspindle-20260925`. At version 3, `task context <id> 2048` produced 1,892 UTF-8 bytes / 438 `cl100k_base` tokens and retained both the original goal and the next action. `task verify` passed. This is one actual-use observation, not a latency or savings benchmark. The operational ledger is intentionally Git-ignored, so a fresh clone cannot independently reconstruct this particular task; the synthetic benchmark above supplies the reproducible evidence.
+
 ## Earlier single-run smoke observation
 
 This is a single local smoke measurement, not a latency service-level objective or a multi-year durability claim. It covers the durable task ledger, not the earlier bounded-memory retrieval benchmarks.
