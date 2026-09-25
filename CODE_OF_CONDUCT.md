@@ -41,3 +41,17 @@ Examples of unacceptable behavior include:
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the project leaders at reacherwu@gmail.com. All complaints will be
 reviewed and investigated promptly and fairly.
+
+## Scope and response
+
+This code applies in repository issues, pull requests, discussions, and other
+project spaces, as well as when someone is representing the project publicly.
+Maintainers may remove inappropriate content, ask participants to change their
+behavior, or restrict participation according to the impact and repetition of
+the conduct. Reports will be handled as confidentially as practical, with
+attention to the safety and privacy of everyone involved. A maintainer who is
+the subject of a report should not investigate that report alone.
+
+## Attribution
+
+This code is adapted from the [Contributor Covenant, version 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).

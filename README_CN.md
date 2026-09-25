@@ -79,4 +79,4 @@ cargo build --release --bin contextspindle
 
 账本保存在本机且被 Git 忽略：**推送代码不等于备份任务**。需要跨年保存时，必须安排受保护的异地备份并定期演练恢复。校验和能发现意外损坏，不能防止有权限改写文件的人伪造记录。任务文本与检索提示应作为数据处理，不应提升为高优先级指令。部分列表和搜索操作会扫描任务目录，规模目标应在自己的工作负载上测量。检索算法在固定快照和配置下可重复，不代表语言模型每次回答相同。
 
-[GitHub 项目](https://github.com/reacherwu/ContextSpindle) · [许可证](LICENSE)
+[GitHub 项目](https://github.com/reacherwu/ContextSpindle) · [参与贡献](CONTRIBUTING.md) · [行为准则](CODE_OF_CONDUCT.md) · [安全报告](SECURITY.md) · [许可证](LICENSE)

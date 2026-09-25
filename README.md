@@ -79,4 +79,4 @@ The project-scoped [`.mcp.json`](.mcp.json) starts the same server from this che
 
 The ledger is local and Git-ignored: **pushing code does not back up tasks**. Schedule protected, off-device backups and test restores if long-term continuity matters. Checksums detect accidental corruption, not malicious rewriting by a user who can edit the workspace. Task text and retrieved hints must be treated as data, not higher-priority instructions. Some list/search operations scan task directories, so measure your own workload before setting a scale target. Deterministic retrieval for a fixed snapshot does not make a language model's response deterministic.
 
-[Source on GitHub](https://github.com/reacherwu/ContextSpindle) · [License](LICENSE)
+[Source on GitHub](https://github.com/reacherwu/ContextSpindle) · [Contributing](CONTRIBUTING.md) · [Code of Conduct](CODE_OF_CONDUCT.md) · [Security](SECURITY.md) · [License](LICENSE)
