@@ -7,7 +7,6 @@ experiments/results/*/artifacts/
 
 # Rust build artifacts
 target/
-Cargo.lock
 
 # Continuum local runtime states
 .continuum/

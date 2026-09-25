@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="360" viewBox="0 0 1120 360" role="img" aria-labelledby="title desc">
+  <title id="title">ContextSpindle task continuity architecture</title>
+  <desc id="desc">Agents write an authoritative versioned task ledger. An optional bounded memory cache supplies hints. A budgeted context assembler prioritizes task state and hands a compact context to the next agent.</desc>
+  <rect width="1120" height="360" rx="24" fill="#0b1220"/>
+  <text x="42" y="54" fill="#f8fafc" font-family="system-ui,sans-serif" font-size="25" font-weight="700">Keep the task line. Rebuild only the context you need.</text>
+  <text x="42" y="84" fill="#a8b5c9" font-family="system-ui,sans-serif" font-size="15">A restart or an unrelated task does not overwrite the authoritative goal.</text>
+  <rect x="42" y="128" width="220" height="157" rx="18" fill="#16243b" stroke="#53708e"/>
+  <text x="65" y="168" fill="#e2e8f0" font-family="system-ui,sans-serif" font-size="20" font-weight="700">Agent A</text>
+  <text x="65" y="198" fill="#a8b5c9" font-family="system-ui,sans-serif" font-size="15">Creates or updates a task</text>
+  <text x="65" y="226" fill="#a8b5c9" font-family="system-ui,sans-serif" font-size="15">Goal · status · next action</text>
+  <text x="65" y="254" fill="#a8b5c9" font-family="system-ui,sans-serif" font-size="15">Decision · evidence</text>
+  <path d="M266 206 H315" stroke="#6ee7b7" stroke-width="4" stroke-linecap="round"/>
+  <path d="m307 197 11 9-11 9" fill="none" stroke="#6ee7b7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="320" y="128" width="250" height="157" rx="18" fill="#123831" stroke="#4adeaf"/>
+  <text x="343" y="168" fill="#d1fae5" font-family="system-ui,sans-serif" font-size="19" font-weight="700">Durable task ledger</text>
+  <text x="343" y="198" fill="#b9e7d2" font-family="system-ui,sans-serif" font-size="15">Stable ID · append-only versions</text>
+  <text x="343" y="226" fill="#b9e7d2" font-family="system-ui,sans-serif" font-size="15">Verify · backup · restore</text>
+  <text x="343" y="254" fill="#b9e7d2" font-family="system-ui,sans-serif" font-size="15">Source of truth</text>
+  <path d="M574 206 H623" stroke="#6ee7b7" stroke-width="4" stroke-linecap="round"/>
+  <path d="m615 197 11 9-11 9" fill="none" stroke="#6ee7b7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="628" y="128" width="225" height="157" rx="18" fill="#1d2e48" stroke="#75a6dd"/>
+  <text x="651" y="168" fill="#e0f2fe" font-family="system-ui,sans-serif" font-size="19" font-weight="700">Context assembler</text>
+  <text x="651" y="198" fill="#bed9f2" font-family="system-ui,sans-serif" font-size="15">Required state first</text>
+  <text x="651" y="226" fill="#bed9f2" font-family="system-ui,sans-serif" font-size="15">Optional hints if they fit</text>
+  <text x="651" y="254" fill="#bed9f2" font-family="system-ui,sans-serif" font-size="15">Explicit omissions</text>
+  <path d="M857 206 H906" stroke="#6ee7b7" stroke-width="4" stroke-linecap="round"/>
+  <path d="m898 197 11 9-11 9" fill="none" stroke="#6ee7b7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="911" y="128" width="167" height="157" rx="18" fill="#292343" stroke="#ba9cf6"/>
+  <text x="934" y="168" fill="#f5edff" font-family="system-ui,sans-serif" font-size="19" font-weight="700">Agent B</text>
+  <text x="934" y="198" fill="#ddd0f7" font-family="system-ui,sans-serif" font-size="15">Resumes quickly</text>
+  <text x="934" y="226" fill="#ddd0f7" font-family="system-ui,sans-serif" font-size="15">after a restart</text>
+  <text x="934" y="254" fill="#ddd0f7" font-family="system-ui,sans-serif" font-size="15">or task switch</text>
+  <rect x="321" y="307" width="532" height="34" rx="17" fill="#1e293b"/>
+  <text x="346" y="330" fill="#a8b5c9" font-family="system-ui,sans-serif" font-size="14">Optional bounded retrieval cache → non-authoritative hints only</text>
+</svg>

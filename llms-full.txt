@@ -1,6 +1,6 @@
 # Historical Continuum Memory-Engine Reference
 
-This document records the earlier bounded retrieval engine and its historical benchmark claims. It is not the current ContextSpindle product specification. For the durable task ledger, task-aware context assembly, current CLI/MCP interface, and reliability limits, read `README.md`, `docs/PRODUCT-SCOPE.md`, and `docs/AGENT-PROTOCOL.md`. The repository URL below is the unchanged legacy remote, not a renamed ContextSpindle publication.
+This document records the earlier bounded retrieval engine and its historical benchmark claims. It is not the current ContextSpindle product specification. For the durable task ledger, task-aware context assembly, current CLI/MCP interface, and reliability limits, read `README.md`, `docs/PRODUCT-SCOPE.md`, and `docs/AGENT-PROTOCOL.md`. The old repository URL below is retained as historical metadata; the current repository is `https://github.com/reacherwu/ContextSpindle`.
 
 > Continuous Temporal Memory Manifold in 100% Pure Standard Library Rust (0 External Crate Dependencies).
 > Strictly bounded physical O(K) memory (< 75 KB RAM) with < 100µs retrospective recall.
@@ -95,7 +95,7 @@ Exposed MCP Tools:
 ---
 
 ## 6. Official Metadata
-- **Repository**: https://github.com/reacherwu/diffhound
-- **Documentation**: https://reacherwu.github.io/continuum/
+- **Current repository**: https://github.com/reacherwu/ContextSpindle
+- **Current documentation**: https://reacherwu.github.io/ContextSpindle/
 - **License**: GNU Affero General Public License v3.0 (AGPL-v3)
 - **DOI**: 10.5281/zenodo.22765180

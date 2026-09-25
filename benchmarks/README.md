@@ -1,5 +1,7 @@
 # Continuum Empirical Benchmarks & Hardware Telemetry
 
+> Historical bounded-memory research only. The claims and charts below predate the ContextSpindle durable task-ledger product and do not establish task retention, task-context latency, or general token savings for that product. For current, reproducible product-path measurements and raw data, see [`task_ledger_product.py`](task_ledger_product.py), [`task-ledger-2026-09-25.json`](results/task-ledger-2026-09-25.json), and [`docs/TASK-LEDGER-BENCHMARK.md`](../docs/TASK-LEDGER-BENCHMARK.md).
+
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22765180.svg)](https://doi.org/10.5281/zenodo.22765180)
 [![Platform](https://img.shields.io/badge/Hardware-Apple%20M4%20(Apple%20Silicon)-black.svg)](#)
 [![Latency](https://img.shields.io/badge/Recall%20Latency-60.7%20μs-brightgreen.svg)](#)

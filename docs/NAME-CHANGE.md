@@ -17,4 +17,4 @@ Rejected candidates:
 
 The new public project name, user-facing documentation, CLI alias, and MCP server key are ContextSpindle. The existing `continuum-cli` executable, `continuum` Python module, `continuum-core` Rust crate, `.continuum/` snapshots, older MCP tool names, historical experiments, and published paper title retain their identifiers for compatibility and provenance. A future breaking release may migrate these identifiers with explicit snapshot conversion and tests.
 
-The local desktop directory is now `ContextSpindle`. The Git remote `reacherwu/diffhound`, external website URLs, published DOI, and package registry ownership have not been changed; changing those external identities requires a separate migration.
+The local desktop directory is `ContextSpindle`. On 2026-09-25 the GitHub repository was renamed to [`reacherwu/ContextSpindle`](https://github.com/reacherwu/ContextSpindle), and its Pages URL became `https://reacherwu.github.io/ContextSpindle/`. Published DOI and package registry ownership remain unchanged; their historical identifiers must not be rewritten without a separate migration.

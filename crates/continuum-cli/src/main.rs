@@ -720,7 +720,7 @@ fn run_upgrade() {
     println!("  [x] Built-in Model Context Protocol (MCP) Server for Cursor & Claude");
     println!("  [x] Zero External Runtime Dependencies & 100% Local Privacy");
     println!("\nRoadmap (Multi-Device Cloud Sync & Team Manifolds):");
-    println!("  Follow developments: https://reacherwu.github.io/continuum/");
+    println!("  Follow developments: https://reacherwu.github.io/ContextSpindle/");
     println!("============================================================================");
 }
 

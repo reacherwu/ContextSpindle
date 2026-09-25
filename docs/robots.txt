@@ -38,4 +38,4 @@ Allow: /
 User-agent: cohere-ai
 Allow: /
 
-Sitemap: https://reacherwu.github.io/continuum/sitemap.xml
+Sitemap: https://reacherwu.github.io/ContextSpindle/sitemap.xml

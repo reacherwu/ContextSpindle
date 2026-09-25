@@ -20,6 +20,11 @@
     .card { background: #141d31; border: 1px solid #2c3b59; border-radius: 16px; padding: 24px; }
     .card p { margin-bottom: 0; }
     .panel { background: #121a2c; border: 1px solid #314362; border-radius: 16px; padding: 28px; margin: 36px 0; }
+    .visual { display: block; width: 100%; height: auto; border-radius: 18px; margin: 30px 0; }
+    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 20px 0; }
+    .metric { background: #0b1220; border: 1px solid #314362; border-radius: 12px; padding: 18px; }
+    .metric strong { display: block; color: #7fe0bd; font-size: 1.65rem; }
+    .metric span { display: block; color: #aab9ce; font-size: .88rem; }
     pre { overflow-x: auto; background: #070b15; border-radius: 10px; padding: 20px; color: #c2ebfa; }
     code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
     footer { margin-top: 64px; border-top: 1px solid #314362; padding-top: 24px; color: #9eacc5; }
@@ -30,6 +35,7 @@
   <p class="eyebrow">Local-first · Rust · CLI + MCP</p>
   <h1>Keep the task, not the whole conversation.</h1>
   <p class="lead">ContextSpindle gives AI agents a durable record of what they are trying to accomplish, what has been decided, and what to do next. An agent can return after interruptions or unrelated work and assemble only the context it needs.</p>
+  <img class="visual" src="assets/task-continuity.svg" alt="Agents share a durable task ledger; a budgeted assembler passes selected context to the next agent, with bounded retrieval hints optional." width="1120" height="360">
 
   <div class="grid">
     <section class="card">
@@ -42,18 +48,30 @@
     </section>
     <section class="card">
       <h2>Recoverable history</h2>
-      <p>Updates use immutable versions, checksums, and periodic checkpoints. Verify, backup, and restore commands support long-term operation.</p>
+      <p>Updates use append-only version files, checksums, and periodic checkpoints. Verify, backup, and restore commands support long-term operation.</p>
     </section>
   </div>
 
   <section class="panel">
+    <h2>A measured 1,000-task workload</h2>
+    <p>One selected task remained readable after 999 unrelated tasks. On an Apple M4 with a warm filesystem cache, its 2,048-byte context took 34.23 ms median over 11 release-CLI runs. It contained 420 <code>cl100k_base</code> tokens; naively concatenating every paginated task summary contained 94,701 tokens under the same encoding. This is one synthetic workload and a deliberately naive baseline, not a universal token-savings claim.</p>
+    <div class="metrics">
+      <div class="metric"><strong>34.23 ms</strong><span>median selected-task context</span></div>
+      <div class="metric"><strong>420 tokens</strong><span>selected context, 2,048-byte ceiling</span></div>
+      <div class="metric"><strong>11 runs</strong><span>separate CLI processes, warm cache</span></div>
+    </div>
+    <img class="visual" src="assets/measured-context.svg" alt="Measured context token counts at four byte ceilings with explicit counts of optional items omitted." width="1120" height="500">
+    <p>See the <a href="https://github.com/reacherwu/ContextSpindle/blob/main/docs/TASK-LEDGER-BENCHMARK.md">methodology and limits</a> and <a href="https://github.com/reacherwu/ContextSpindle/blob/main/benchmarks/results/task-ledger-2026-09-25.json">raw result</a>. Cache-corruption survival and backup/restore also passed in this temporary run.</p>
+  </section>
+
+  <section class="panel">
     <h2>Start in a local project</h2>
-    <pre><code>cargo install --path crates/continuum-cli
-contextspindle init .
-contextspindle task create "Ship the release" --criteria "Tests pass and release is published"
-contextspindle task inbox 10
-contextspindle task context &lt;task-id&gt; 2048</code></pre>
-    <p>The same task operations are available to MCP clients. See the <a href="../README.md">README</a> and <a href="AGENT-PROTOCOL.md">agent protocol</a> for the complete workflow.</p>
+    <pre><code>cargo build --release --bin contextspindle
+./target/release/contextspindle init .
+./target/release/contextspindle task create "Ship the release" --criteria "Tests pass and release is published"
+./target/release/contextspindle task inbox 10
+./target/release/contextspindle task context TASK_ID 2048</code></pre>
+    <p>The same task operations are available to MCP clients. See the <a href="https://github.com/reacherwu/ContextSpindle#readme">README</a> and <a href="https://github.com/reacherwu/ContextSpindle/blob/main/docs/AGENT-PROTOCOL.md">agent protocol</a> for the complete workflow.</p>
   </section>
 
   <section class="panel">
@@ -63,10 +81,10 @@ contextspindle task context &lt;task-id&gt; 2048</code></pre>
   </section>
 
   <footer>
-    <a href="PRODUCT-SCOPE.md">Product scope</a> ·
-    <a href="AGENT-PROTOCOL.md">Agent protocol</a> ·
-    <a href="BENCHMARKS.md">Research and benchmarks</a> ·
-    <a href="../LICENSE">License</a>
+    <a href="https://github.com/reacherwu/ContextSpindle">GitHub repository</a> ·
+    <a href="https://github.com/reacherwu/ContextSpindle/blob/main/docs/PRODUCT-SCOPE.md">Product scope</a> ·
+    <a href="https://github.com/reacherwu/ContextSpindle/blob/main/docs/BENCHMARKS.md">Historical research</a> ·
+    <a href="https://github.com/reacherwu/ContextSpindle/blob/main/LICENSE">License</a>
   </footer>
 </main>
 </body>

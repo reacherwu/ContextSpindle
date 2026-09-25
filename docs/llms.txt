@@ -8,4 +8,4 @@ Local CLI: `cargo build --release --bin contextspindle`, then `target/release/co
 
 Context budgets are conservative UTF-8 byte ceilings, not exact model-specific token counts. Required state is never silently truncated. The ledger is Git-ignored and needs off-device backups for long-term survival. Actor labels are caller-declared, not authentication. No integration can preserve a task that was never recorded.
 
-The current Git remote retains its historical `reacherwu/diffhound` identity; it has not been renamed. Historical Continuum research and benchmark evidence remains in `docs/BENCHMARKS.md`, `experiments/results/`, and `llms-full.txt`.
+Repository: https://github.com/reacherwu/ContextSpindle. Historical Continuum research and benchmark evidence remains in `docs/BENCHMARKS.md`, `experiments/results/`, and `llms-full.txt`.

@@ -1,0 +1,29 @@
+{
+  "date_utc": "2026-09-25T13:20:47.997776+00:00",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "task_count": 1000,
+  "unrelated_task_count": 999,
+  "anchor_update_count": 1,
+  "anchor_note_count": 24,
+  "create_unrelated_seconds": 21.14,
+  "timing_method": "separate release CLI process; warm filesystem cache; repeated sequentially",
+  "performance": {
+    "inbox_10": { "median_ms": 32.8, "p95_ms": 33.92, "runs": 11 },
+    "search_anchor_10": { "median_ms": 32.49, "p95_ms": 32.89, "runs": 11 },
+    "context_anchor_2048": { "median_ms": 34.23, "p95_ms": 35.73, "runs": 11 },
+    "verify_all": { "median_ms": 62.73, "p95_ms": 63.44, "runs": 11 }
+  },
+  "naive_all_paginated_task_summaries": {
+    "utf8_bytes": 322607,
+    "cl100k_base_tokens": 94701
+  },
+  "context_by_budget": {
+    "512": { "utf8_bytes": 490, "cl100k_base_tokens": 118, "omitted_optional_items": 25, "contains_goal": true, "contains_next": true },
+    "1024": { "utf8_bytes": 876, "cl100k_base_tokens": 204, "omitted_optional_items": 22, "contains_goal": true, "contains_next": true },
+    "2048": { "utf8_bytes": 1908, "cl100k_base_tokens": 420, "omitted_optional_items": 16, "contains_goal": true, "contains_next": true },
+    "4096": { "utf8_bytes": 3961, "cl100k_base_tokens": 852, "omitted_optional_items": 4, "contains_goal": true, "contains_next": true }
+  },
+  "cache_corruption_survived": true,
+  "backup_restore_survived": true,
+  "tokenizer": { "encoding": "cl100k_base", "tiktoken_version": "0.12.0" }
+}

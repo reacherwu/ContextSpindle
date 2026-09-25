@@ -1,4 +1,6 @@
-# Continuum — Full Technical & Architecture Reference
+# Historical Continuum Memory-Engine Reference
+
+This document preserves earlier bounded-retrieval research, not the current ContextSpindle task-ledger specification. See `README.md`, `PRODUCT-SCOPE.md`, and `TASK-LEDGER-BENCHMARK.md` for the current product. The current repository is `https://github.com/reacherwu/ContextSpindle`.
 
 > Continuous Temporal Memory Manifold in 100% Pure Standard Library Rust (0 External Crate Dependencies).
 > Strictly bounded physical O(K) memory (< 75 KB RAM) with < 100µs retrospective recall.
@@ -93,7 +95,7 @@ Exposed MCP Tools:
 ---
 
 ## 6. Official Metadata
-- **Repository**: https://github.com/reacherwu/continuum
-- **Documentation**: https://reacherwu.github.io/continuum/
+- **Current repository**: https://github.com/reacherwu/ContextSpindle
+- **Current documentation**: https://reacherwu.github.io/ContextSpindle/
 - **License**: GNU Affero General Public License v3.0 (AGPL-v3)
 - **DOI**: 10.5281/zenodo.22765180

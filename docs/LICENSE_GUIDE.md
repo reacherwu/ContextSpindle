@@ -1,7 +1,7 @@
 # Continuum GNU AGPL-v3 Legal Boundary Guide
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-purple.svg)](../LICENSE)
-[![Interactive Guide](https://img.shields.io/badge/Web_Guide-license.html-blue.svg)](https://reacherwu.github.io/continuum/license.html)
+[![Interactive Guide](https://img.shields.io/badge/Web_Guide-license.html-blue.svg)](https://reacherwu.github.io/ContextSpindle/license.html)
 
 > Continuum is licensed under the **GNU Affero General Public License v3.0 (AGPL-v3)**.  
 > This document provides an honest, plain-language engineering and legal summary of what this license allows, what it restricts, and how commercial exemptions work.
@@ -33,4 +33,4 @@ For organizations that need to:
 We provide a **Commercial Non-AGPL License Waiver** that legally waives all copyleft obligations.
 
 - **Contact**: `beijingscwj@outlook.com`
-- **Official Web Guide**: [https://reacherwu.github.io/continuum/license.html](https://reacherwu.github.io/continuum/license.html)
+- **Official Web Guide**: [https://reacherwu.github.io/ContextSpindle/license.html](https://reacherwu.github.io/ContextSpindle/license.html)
