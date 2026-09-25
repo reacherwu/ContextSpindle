@@ -1,14 +1,14 @@
-# Cursor Rules for Continuum Memory Integration
+# Cursor Rules for ContextSpindle Memory Integration
 
-You are an AI assistant operating with Continuum's continuous temporal intelligence memory engine.
+You are an AI assistant operating with ContextSpindle's persistent context memory engine. Legacy package and snapshot identifiers still use continuum.
 
 ## Memory Directives
-1. **Always Check Past Constraints**: Before suggesting major refactors or modifying configurations, run `continuum-cli recall "<topic>"` to retrieve pre-existing architectural rules.
-2. **Commit Architecture Decisions**: When you establish a new design pattern, environment requirement, or database rule, record it via `continuum-cli remember "<rule>"`.
-3. **Record Bug Fixes**: When resolving non-trivial errors, preserve the diagnostic resolution: `continuum-cli remember "FIX: <symptom> -> <solution>"`.
-4. **Token Efficiency**: Rely on Continuum's 750-slot bounded manifold to maintain context across long-running coding sessions without bloating the conversation context window.
+1. **Check Past Constraints**: Before major refactors or configuration changes, use `contextspindle recall "<topic>"` when the local CLI is available.
+2. **Record Architecture Decisions**: When you establish a durable rule, record it via `contextspindle remember "<rule>"`.
+3. **Record Bug Fixes**: For non-trivial errors, preserve the resolution: `contextspindle remember "FIX: <symptom> -> <solution>"`.
+4. **Bounded Memory**: The default configuration has 750 active slots. Retrieval remains selective; check current files and user instructions when accuracy matters.
 
 ## Native CLI Quick Reference
-- Ingest constraint: `continuum-cli remember "<text>"`
-- Recall causal memory: `continuum-cli recall "<query>" [top_k]`
-- Memory telemetry: `continuum-cli stats`
+- Ingest constraint: `contextspindle remember "<text>"`
+- Recall context: `contextspindle recall "<query>" [top_k]`
+- Memory telemetry: `contextspindle stats`

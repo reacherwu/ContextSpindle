@@ -1,4 +1,6 @@
-# Continuum v0.1 Technical Constitution
+# ContextSpindle Technical Constitution (formerly Continuum)
+
+The current project delivers bounded, persistent context memory for AI agents. It aims for repeatable retrieval from a fixed snapshot and query; it does not claim deterministic language-model responses or perfect retention. DiffHound uses this memory for PR regression review. The research questions below are preserved from the earlier Continuum research phase and remain evidence requirements for any broader ACM claims.
 
 Continuum is a continuous temporal intelligence engine built around **Adaptive Causal Memory (ACM)**. It aims to process arbitrary-duration event streams with bounded active memory and support selective retrieval, causal reasoning, and historical memory revision.
 
@@ -10,7 +12,7 @@ Test, rather than assume, whether ACM can provide competitive long-range memory 
 
 1. Any superiority claim must be benchmark verified.
 2. Development agents cannot modify benchmark standards.
-3. Benchmark agents cannot modify the Continuum algorithm.
+3. Benchmark agents cannot modify the ContextSpindle algorithm.
 4. Failed experiments must be retained.
 5. Unfavorable results must never be deleted.
 6. No cherry-picking.

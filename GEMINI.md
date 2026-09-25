@@ -1,7 +1,9 @@
-# Continuum AI Agent Engineering Guidelines & Project Rules
+# ContextSpindle AI Agent Engineering Guidelines & Project Rules
+
+The public project name is ContextSpindle. Existing crate and snapshot identifiers below remain for compatibility; see `docs/NAME-CHANGE.md`.
 
 > **CRITICAL CONTEXT FOR AI AGENTS**:  
-> This file establishes the mandatory architecture principles, coding standards, and operational guidelines discovered through extensive empirical validation of the Continuum project.  
+> This file establishes the architecture principles and engineering standards for ContextSpindle.
 > Whenever working in this repository, you MUST adhere strictly to these rules.
 
 ---
@@ -60,7 +62,7 @@
 Before completing any task or claiming success, you MUST execute and pass:
 1. `cargo test --workspace` (Must be 100% PASS, 0 failures).
 2. `python3 -m unittest discover tests` (Must be 100% PASS, 0 failures).
-3. Check scenarios via `./target/release/continuum-cli demo <aiops|persona|github|persistence>` (All must report `🎉 VERDICT: SUCCESS`).
+3. Check scenarios via `./target/release/contextspindle demo <aiops|persona|github|persistence>` (All must report `🎉 VERDICT: SUCCESS`).
 
 ---
 

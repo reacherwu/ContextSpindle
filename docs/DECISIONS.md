@@ -1,5 +1,11 @@
 # Decisions
 
+## D-0003 — ContextSpindle name and product focus
+
+**Status:** accepted locally (2026-09-25)
+
+The project name is ContextSpindle. Its main function is persistent, deterministic retrieval of selected context for AI agents. DiffHound remains an application of the engine. Public CLI and MCP names gain ContextSpindle aliases; legacy identifiers, snapshots, historical experiment records, and the published paper title remain compatible. The collision check and exact scope are recorded in [NAME-CHANGE.md](NAME-CHANGE.md).
+
 ## D-0001 — Research-first v0.1
 
 **Status:** accepted (2026-09-13)

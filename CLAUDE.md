@@ -1,8 +1,9 @@
-# Continuum AI Agent Guidelines & Integration Protocol for Claude
+# ContextSpindle AI Agent Guidelines & Integration Protocol for Claude
+
+The ContextSpindle brand replaces Continuum. The Rust crate, Python package, and snapshot paths below retain their previous identifiers during migration; see `docs/NAME-CHANGE.md`.
 
 > **CRITICAL CONTEXT FOR CLAUDE (Claude Code, Claude Desktop, Cursor Claude)**:  
-> This repository is equipped with **Continuum** — a continuous temporal memory manifold written in pure Rust standard library with zero external crate dependencies.  
-> It operates under strictly bounded physical slots (750 slots, < 75KB) and performs retrospective causal recall in < 100µs.
+> This repository develops **ContextSpindle**, a bounded, persistent context memory engine. The Rust implementation currently uses the legacy continuum-core crate name.
 
 ---
 
@@ -10,16 +11,16 @@
 
 When working in this repository:
 1. **Retrospectively Recall Past Decisions & Fixes**:
-   - Before executing refactors, diagnosing build/test failures, or checking architectural constraints, use the Continuum MCP tool or CLI:
-     - MCP Tool: `continuum_recall(query: "...", top_k: 3)`
-     - Shell CLI: `continuum-cli recall "<symptom or query>" 3`
+   - Before major refactors or diagnosing repeat failures, check relevant local context with the ContextSpindle MCP tool or CLI when available:
+     - MCP Tool: `contextspindle_recall(query: "...", top_k: 3)`
+     - Shell CLI: `contextspindle recall "<symptom or query>" 3`
 2. **Remember New Critical Rules & Causal Bug Fixes**:
    - When resolving a complex bug or establishing a project constraint:
-     - MCP Tool: `continuum_remember(text: "RULE/FIX: ...")`
-     - Shell CLI: `continuum-cli remember "RULE/FIX: ..."`
+     - MCP Tool: `contextspindle_remember(text: "RULE/FIX: ...")`
+     - Shell CLI: `contextspindle remember "RULE/FIX: ..."`
 3. **Autonomous Command Execution & Git Ingestion**:
-   - Run tests/builds with automatic failure symptom & causal fix pairing: `continuum-cli run <command...>`
-   - Enable zero-friction Git commit ingestion: `continuum-cli hook install .`
+   - Run tests/builds with failure symptom capture when useful: `contextspindle run <command...>`
+   - Install the Git ingestion hook only when requested: `contextspindle hook install .`
 
 ---
 
@@ -53,4 +54,4 @@ When working in this repository:
 Before completing any task, you MUST execute and pass:
 1. `cargo test --workspace` (Must be 100% PASS, 0 failures).
 2. `python3 -m unittest discover tests` (Must be 100% PASS, 0 failures).
-3. Check scenarios via `./target/release/continuum-cli demo <aiops|persona|github|persistence>` (All must report `🎉 VERDICT: SUCCESS`).
+3. Check scenarios via `./target/release/contextspindle demo <aiops|persona|github|persistence>` (All must report `🎉 VERDICT: SUCCESS`).

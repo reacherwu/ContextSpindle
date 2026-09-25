@@ -8,27 +8,26 @@ use continuum_core::{
 };
 
 fn print_help() {
-    println!("Continuum: AI Team Handover & Anti-Regression Guard (100% Native Rust)");
+    println!("ContextSpindle: persistent context memory for AI agents");
     println!("Usage:");
-    println!("  continuum init [path]                               Initialize .continuum memory workspace");
-    println!("  continuum remember <text>                           Save critical constraint or decision to memory");
-    println!("  continuum recall <query_text> [k]                   Retrieve causal memory in < 100 μs");
-    println!("  continuum run <command...>                          Run command with autonomous failure/fix causal learning");
-    println!("  continuum hook install [path]                       Install automatic Git post-commit memory hook");
-    println!("  continuum hook uninstall [path]                     Remove Git post-commit memory hook");
-    println!("  continuum mcp                                       Launch Model Context Protocol (MCP) server for IDEs");
-    println!("  continuum upgrade                                   View Pro tier subscription & token savings ROI");
-    println!("  continuum demo <aiops|persona|github|persistence>   Run full native scenario demo");
-    println!("  continuum memory sync <transcript_path> [snapshot]  Ingest conversation transcript into bounded state");
-    println!("  continuum memory query <query_text> [snapshot] [k]  Query causal memory in < 100 μs native Rust");
-    println!("  continuum memory ingest <text> [snapshot]           Ingest a single event into memory");
-    println!("  continuum memory inspect [snapshot]                 Inspect active memory state and slots");
-    println!("  continuum snapshot [filepath]                       Save state snapshot to disk");
-    println!("  continuum restore [filepath]                        Load and inspect snapshot from disk");
-    println!("  continuum benchmark                                 Run engine throughput & latency benchmark");
-    println!("  continuum stats                                     Display memory and engine invariants");
-    println!("  continuum help                                      Display this help message");
-    println!("  continuum version                                   Display version information");
+    println!("  contextspindle init [path]                           Initialize local memory workspace");
+    println!("  contextspindle remember <text>                       Save a constraint or decision");
+    println!("  contextspindle recall <query_text> [k]               Retrieve relevant context");
+    println!("  contextspindle run <command...>                      Run a command with failure/fix capture");
+    println!("  contextspindle hook install [path]                   Install Git post-commit memory hook");
+    println!("  contextspindle hook uninstall [path]                 Remove Git post-commit memory hook");
+    println!("  contextspindle mcp                                   Launch the MCP server");
+    println!("  contextspindle demo <aiops|persona|github|persistence> Run scenario demo");
+    println!("  contextspindle memory sync <transcript_path> [snapshot] Ingest transcript");
+    println!("  contextspindle memory query <query_text> [snapshot] [k] Query snapshot");
+    println!("  contextspindle memory ingest <text> [snapshot]       Ingest an event");
+    println!("  contextspindle memory inspect [snapshot]             Inspect active state");
+    println!("  contextspindle snapshot [filepath]                   Save snapshot");
+    println!("  contextspindle restore [filepath]                    Restore snapshot");
+    println!("  contextspindle benchmark                             Run engine benchmark");
+    println!("  contextspindle stats                                 Display memory statistics");
+    println!("  contextspindle help                                  Display this help message");
+    println!("  contextspindle version                               Display version information");
 }
 
 fn run_demo_aiops() {
@@ -688,7 +687,7 @@ fn run_init(target_dir: &str) {
 }"#;
     let _ = std::fs::write(&cfg_file, config_content);
 
-    println!("Initialized Continuum bounded memory repository in '{:?}'", continuum_dir);
+    println!("Initialized ContextSpindle bounded memory workspace in '{:?}'", continuum_dir);
     println!("  State File:  '{:?}'", state_file);
     println!("  Config File: '{:?}'", cfg_file);
     println!("  Memory Cap:  750 slots (O(K) constant memory invariant)");
@@ -758,7 +757,7 @@ fn run_mcp() {
 
         if method == "initialize" {
             let resp = format!(
-                r#"{{"jsonrpc":"2.0","id":{},"result":{{"protocolVersion":"2024-11-05","capabilities":{{"tools":{{}}}},"serverInfo":{{"name":"continuum","version":"0.1.0"}}}}}}"#,
+                r#"{{"jsonrpc":"2.0","id":{},"result":{{"protocolVersion":"2024-11-05","capabilities":{{"tools":{{}}}},"serverInfo":{{"name":"contextspindle","version":"0.1.0"}}}}}}"#,
                 id_val
             );
             send_mcp_msg(&mut stdout, &resp);
@@ -772,14 +771,14 @@ fn run_mcp() {
             send_mcp_msg(&mut stdout, &resp);
         } else if method == "tools/list" {
             let resp = format!(
-                r#"{{"jsonrpc":"2.0","id":{},"result":{{"tools":[{{"name":"continuum_remember","description":"Store a critical architecture constraint, engineering decision, or tool failure into bounded O(K) memory","inputSchema":{{"type":"object","properties":{{"text":{{"type":"string","description":"The constraint, decision, or event to remember"}}}},"required":["text"]}}}},{{"name":"continuum_recall","description":"Retrospectively retrieve relevant past constraints, actions, and root causes in < 1ms","inputSchema":{{"type":"object","properties":{{"query":{{"type":"string","description":"The symptom, search query, or question to recall"}},"top_k":{{"type":"integer","description":"Maximum candidates to return (default 3)"}}}},"required":["query"]}}}},{{"name":"continuum_stats","description":"Get current bounded memory usage, physical slot count, and token savings metrics","inputSchema":{{"type":"object","properties":{{}}}}}}]}}}}"#,
+                r#"{{"jsonrpc":"2.0","id":{},"result":{{"tools":[{{"name":"contextspindle_remember","description":"Store a critical architecture constraint, engineering decision, or tool failure into bounded O(K) memory","inputSchema":{{"type":"object","properties":{{"text":{{"type":"string","description":"The constraint, decision, or event to remember"}}}},"required":["text"]}}}},{{"name":"contextspindle_recall","description":"Retrospectively retrieve relevant past constraints, actions, and root causes in < 1ms","inputSchema":{{"type":"object","properties":{{"query":{{"type":"string","description":"The symptom, search query, or question to recall"}},"top_k":{{"type":"integer","description":"Maximum candidates to return (default 3)"}}}},"required":["query"]}}}},{{"name":"contextspindle_stats","description":"Get current bounded memory usage, physical slot count, and token savings metrics","inputSchema":{{"type":"object","properties":{{}}}}}}]}}}}"#,
                 id_val
             );
             send_mcp_msg(&mut stdout, &resp);
         } else if method == "tools/call" {
             let tool_name = json.get_path(&["params", "name"]).and_then(|v| v.as_str()).unwrap_or("");
             let mut is_error = false;
-            let result_text = if tool_name == "continuum_remember" {
+            let result_text = if matches!(tool_name, "contextspindle_remember" | "continuum_remember") {
                 let text_arg = json.get_path(&["params", "arguments", "text"])
                     .and_then(|v| v.as_str())
                     .unwrap_or("");
@@ -788,14 +787,14 @@ fn run_mcp() {
                     "Error: 'text' parameter is required and cannot be empty.".to_string()
                 } else {
                     match run_memory_ingest(text_arg, &state_path) {
-                        Ok(()) => format!("Stored constraint in Continuum memory: '{}' (Active slots saved in {})", text_arg, state_path),
+                        Ok(()) => format!("Stored constraint in ContextSpindle memory: '{}' (Active slots saved in {})", text_arg, state_path),
                         Err(e) => {
                             is_error = true;
                             format!("Failed to store constraint in memory: {e}")
                         }
                     }
                 }
-            } else if tool_name == "continuum_recall" {
+            } else if matches!(tool_name, "contextspindle_recall" | "continuum_recall") {
                 let query_arg = json.get_path(&["params", "arguments", "query"])
                     .and_then(|v| v.as_str())
                     .unwrap_or("");
@@ -804,7 +803,7 @@ fn run_mcp() {
                     .unwrap_or(3) as usize;
 
                 if !std::path::Path::new(&state_path).exists() {
-                    "Continuum memory is currently empty. No past constraints recorded yet.".to_string()
+                    "ContextSpindle memory is currently empty. No past constraints recorded yet.".to_string()
                 } else {
                     match ContinuumEngine::load_from_file(&state_path) {
                         Ok(engine) => {
@@ -827,13 +826,13 @@ fn run_mcp() {
                         }
                     }
                 }
-            } else if tool_name == "continuum_stats" {
+            } else if matches!(tool_name, "contextspindle_stats" | "continuum_stats") {
                 if !std::path::Path::new(&state_path).exists() {
-                    format!("Continuum Memory Engine (100% Native Rust):\n- Active Slots: 0 / 750 bounded invariant\n- Status: Uninitialized\n- Snapshot Path: {}", state_path)
+                    format!("ContextSpindle Memory Engine (100% Native Rust):\n- Active Slots: 0 / 750 bounded invariant\n- Status: Uninitialized\n- Snapshot Path: {}", state_path)
                 } else {
                     match ContinuumEngine::load_from_file(&state_path) {
                         Ok(engine) => {
-                            format!("Continuum Memory Engine (100% Native Rust):\n- Active Slots: {} / 750 bounded invariant\n- Estimated Token Savings: 96.8%\n- Snapshot Path: {}",
+                            format!("ContextSpindle Memory Engine (100% Native Rust):\n- Active Slots: {} / 750 bounded invariant\n- Snapshot Path: {}",
                                 engine.total_slots(), state_path)
                         }
                         Err(e) => {
@@ -1041,20 +1040,20 @@ fn main() {
         }
         "benchmark" => run_benchmark(),
         "stats" => {
-            println!("Continuum Native Rust Core v0.1.0");
+            println!("ContextSpindle Native Rust Memory v0.1.0");
             println!("Memory Model: Physical O(K) Bounded Two-Tier Manifold (Hot + Cold)");
             println!("Complexity: O(1) Gated Linear Recurrence");
             println!("Query Speed: ~50 μs");
             println!("External Runtime Dependencies: 0 (Pure Rust Standard Library)");
         }
         "version" | "--version" | "-v" => {
-            println!("continuum 0.1.0 (native rust core)");
+            println!("contextspindle 0.1.0 (native rust memory; legacy continuum-cli alias)");
         }
         "help" | "--help" | "-h" => {
             print_help();
         }
         cmd => {
-            eprintln!("Unknown command: '{cmd}'. Run 'continuum help' for usage.");
+            eprintln!("Unknown command: '{cmd}'. Run 'contextspindle help' for usage.");
         }
     }
 }
@@ -1067,7 +1066,7 @@ mod tests {
     fn test_mcp_tools_list_single_line_compliance() {
         let id_val = "\"test_msg_001\"";
         let resp = format!(
-            r#"{{"jsonrpc":"2.0","id":{},"result":{{"tools":[{{"name":"continuum_remember","description":"Store a critical architecture constraint, engineering decision, or tool failure into bounded O(K) memory","inputSchema":{{"type":"object","properties":{{"text":{{"type":"string","description":"The constraint, decision, or event to remember"}}}},"required":["text"]}}}},{{"name":"continuum_recall","description":"Retrospectively retrieve relevant past constraints, actions, and root causes in < 1ms","inputSchema":{{"type":"object","properties":{{"query":{{"type":"string","description":"The symptom, search query, or question to recall"}},"top_k":{{"type":"integer","description":"Maximum candidates to return (default 3)"}}}},"required":["query"]}}}},{{"name":"continuum_stats","description":"Get current bounded memory usage, physical slot count, and token savings metrics","inputSchema":{{"type":"object","properties":{{}}}}}}]}}}}"#,
+            r#"{{"jsonrpc":"2.0","id":{},"result":{{"tools":[{{"name":"contextspindle_remember","description":"Store a critical architecture constraint, engineering decision, or tool failure into bounded O(K) memory","inputSchema":{{"type":"object","properties":{{"text":{{"type":"string","description":"The constraint, decision, or event to remember"}}}},"required":["text"]}}}},{{"name":"contextspindle_recall","description":"Retrospectively retrieve relevant past constraints, actions, and root causes in < 1ms","inputSchema":{{"type":"object","properties":{{"query":{{"type":"string","description":"The symptom, search query, or question to recall"}},"top_k":{{"type":"integer","description":"Maximum candidates to return (default 3)"}}}},"required":["query"]}}}},{{"name":"contextspindle_stats","description":"Get current bounded memory usage, physical slot count, and token savings metrics","inputSchema":{{"type":"object","properties":{{}}}}}}]}}}}"#,
             id_val
         );
 
@@ -1083,7 +1082,7 @@ mod tests {
         let tools = parsed.get_path(&["result", "tools"]).unwrap().as_array().unwrap();
         assert_eq!(tools.len(), 3);
         let names: Vec<&str> = tools.iter().map(|t| t.get("name").unwrap().as_str().unwrap()).collect();
-        assert_eq!(names, vec!["continuum_remember", "continuum_recall", "continuum_stats"]);
+        assert_eq!(names, vec!["contextspindle_remember", "contextspindle_recall", "contextspindle_stats"]);
     }
 
     #[test]
@@ -1117,4 +1116,3 @@ mod tests {
         assert!(escaped.contains("\\\\backslash\\\\"));
     }
 }
-

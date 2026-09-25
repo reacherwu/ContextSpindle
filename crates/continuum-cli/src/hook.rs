@@ -1,4 +1,4 @@
-//! Zero-Friction Git Hook for Continuum memory engine.
+//! Git hook for ContextSpindle memory engine.
 //!
 //! Automatically captures git commits, author, messages, and modified files
 //! into the bounded memory manifold on every `git commit`.
@@ -13,8 +13,12 @@ const HOOK_END_MARKER: &str = "# CONTINUUM_GIT_HOOK_END";
 
 const HOOK_SCRIPT_SNIPPET: &str = r#"
 # CONTINUUM_GIT_HOOK_START
-# Continuum Continuous Temporal Memory: Auto-ingest git commits into bounded memory
-if command -v continuum-cli >/dev/null 2>&1; then
+# ContextSpindle: ingest git commits into bounded memory
+if command -v contextspindle >/dev/null 2>&1; then
+  contextspindle hook post-commit >/dev/null 2>&1 || true
+elif [ -x "$HOME/.cargo/bin/contextspindle" ]; then
+  "$HOME/.cargo/bin/contextspindle" hook post-commit >/dev/null 2>&1 || true
+elif command -v continuum-cli >/dev/null 2>&1; then
   continuum-cli hook post-commit >/dev/null 2>&1 || true
 elif [ -x "$HOME/.cargo/bin/continuum-cli" ]; then
   "$HOME/.cargo/bin/continuum-cli" hook post-commit >/dev/null 2>&1 || true
@@ -63,7 +67,7 @@ pub fn run_hook_install(target_dir: &str) {
     }
 
     if existing.contains(HOOK_START_MARKER) {
-        println!("✅ Continuum Git hook is already installed in '{}'", post_commit_path.display());
+        println!("ContextSpindle Git hook is already installed in '{}'", post_commit_path.display());
         return;
     }
 
@@ -88,11 +92,11 @@ pub fn run_hook_install(target_dir: &str) {
     }
 
     println!("============================================================================");
-    println!("  CONTINUUM ZERO-FRICTION GIT HOOK INSTALLED");
+    println!("  CONTEXTSPINDLE GIT HOOK INSTALLED");
     println!("============================================================================");
     println!("Hook Path: '{}'", post_commit_path.display());
     println!("Behavior:  Every 'git commit' will now automatically ingest commit hashes,");
-    println!("           authors, messages, and modified config files into Continuum memory.");
+    println!("           authors, messages, and modified config files into ContextSpindle memory.");
     println!("Status:    Active (0 prompt friction)");
     println!("============================================================================");
 }
@@ -204,7 +208,7 @@ mod tests {
         assert!(hook_file.exists());
         let content = std::fs::read_to_string(&hook_file).unwrap();
         assert!(content.contains(HOOK_START_MARKER));
-        assert!(content.contains("continuum-cli hook post-commit"));
+        assert!(content.contains("contextspindle hook post-commit"));
 
         // Test uninstall
         run_hook_uninstall(temp_dir.to_str().unwrap());

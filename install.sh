@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Continuum One-Line Instant Installer
+# ContextSpindle CLI installer
 # Usage: curl -fsSL https://raw.githubusercontent.com/reacherwu/diffhound/main/install.sh | bash
 set -e
 
@@ -10,7 +10,7 @@ YELLOW="\033[0;33m"
 RESET="\033[0m"
 
 echo -e "${BOLD}${BLUE}========================================================================${RESET}"
-echo -e "${BOLD}${BLUE}  Continuum: AI Team Handover & Anti-Regression Guard for AI Agents      ${RESET}"
+echo -e "${BOLD}${BLUE}  ContextSpindle: Persistent Context Memory for AI Agents                ${RESET}"
 echo -e "${BOLD}${BLUE}========================================================================${RESET}"
 
 OS="$(uname -s)"
@@ -33,11 +33,11 @@ if command -v cargo >/dev/null 2>&1; then
 else
     echo -e "${YELLOW}-> Cargo not found. Checking local pre-compiled binaries...${RESET}"
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    if [ -f "${SCRIPT_DIR}/target/release/continuum-cli" ]; then
-        cp "${SCRIPT_DIR}/target/release/continuum-cli" "${INSTALL_DIR}/continuum-cli"
-        chmod +x "${INSTALL_DIR}/continuum-cli"
+    if [ -f "${SCRIPT_DIR}/target/release/contextspindle" ]; then
+        cp "${SCRIPT_DIR}/target/release/contextspindle" "${INSTALL_DIR}/contextspindle"
+        chmod +x "${INSTALL_DIR}/contextspindle"
     else
-        echo -e "Please install Rust/Cargo (https://rustup.rs) to compile Continuum on ${OS} ${ARCH}."
+        echo -e "Please install Rust/Cargo (https://rustup.rs) to compile ContextSpindle on ${OS} ${ARCH}."
         exit 1
     fi
 fi
@@ -53,19 +53,19 @@ if [[ ":$PATH:" != *":${INSTALL_DIR}:"* ]]; then
     export PATH="${HOME}/.cargo/bin:${PATH}"
 fi
 
-echo -e "\n${BOLD}${GREEN}🎉 Continuum successfully installed!${RESET}"
-"${INSTALL_DIR}/continuum-cli" version
+echo -e "\n${BOLD}${GREEN}ContextSpindle successfully installed!${RESET}"
+"${INSTALL_DIR}/contextspindle" version
 
 echo -e "\n${BOLD}Quick Start in 60 Seconds:${RESET}"
 echo -e "  1. Initialize in your code repository:"
-echo -e "     ${BLUE}cd my-project && continuum init${RESET}"
+echo -e "     ${BLUE}cd my-project && contextspindle init${RESET}"
 echo -e "  2. Remember an architecture rule or constraint:"
-echo -e "     ${BLUE}continuum remember \"Database max_connections=50 idle_timeout=10s\"${RESET}"
-echo -e "  3. Retrieve constraints in < 100 μs:"
-echo -e "     ${BLUE}continuum recall \"database connection timeout\"${RESET}"
+echo -e "     ${BLUE}contextspindle remember \"Database max_connections=50 idle_timeout=10s\"${RESET}"
+echo -e "  3. Retrieve relevant constraints:"
+echo -e "     ${BLUE}contextspindle recall \"database connection timeout\"${RESET}"
 echo -e "  4. Connect Cursor / Claude Code IDE via Model Context Protocol (MCP):"
-echo -e "     Add to your IDE MCP settings: ${GREEN}{\"command\": \"continuum-cli\", \"args\": [\"mcp\"]}${RESET}"
-echo -e "  5. Check token savings & Pro subscription ROI:"
-echo -e "     ${BLUE}continuum upgrade${RESET}"
+echo -e "     Add to your IDE MCP settings: ${GREEN}{\"command\": \"contextspindle\", \"args\": [\"mcp\"]}${RESET}"
+echo -e "  5. Inspect the local memory state:"
+echo -e "     ${BLUE}contextspindle stats${RESET}"
 echo -e "\n${BOLD}Official Documentation:${RESET} docs/DEVELOPER_QUICKSTART.md"
 echo -e "${BOLD}${BLUE}========================================================================${RESET}"

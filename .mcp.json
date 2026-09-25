@@ -1,7 +1,7 @@
 {
   "mcpServers": {
-    "continuum": {
-      "command": "continuum-cli",
+    "contextspindle": {
+      "command": "contextspindle",
       "args": ["mcp"]
     }
   }

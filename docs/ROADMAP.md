@@ -1,5 +1,7 @@
 # Roadmap
 
+Current priority (2026-09-25): agent memory integration, snapshot compatibility, deterministic retrieval, and evidence-backed evaluation. DiffHound is a downstream application. The table below is the earlier ACM research roadmap and is retained for provenance.
+
 | Phase | Deliverable | Gate |
 | --- | --- | --- |
 | 0 | Repository, roles, protocols, research scan | Judge review of plan |

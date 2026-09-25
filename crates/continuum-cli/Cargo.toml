@@ -6,3 +6,10 @@ edition = "2024"
 [dependencies]
 continuum-core = { path = "../continuum-core" }
 
+[[bin]]
+name = "contextspindle"
+path = "src/main.rs"
+
+[[bin]]
+name = "continuum-cli"
+path = "src/main.rs"

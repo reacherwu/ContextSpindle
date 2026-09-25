@@ -1,4 +1,4 @@
-"""Command-line interface for the Continuum Temporal Intelligence Engine."""
+"""Python demonstration CLI for ContextSpindle."""
 
 from __future__ import annotations
 
@@ -12,14 +12,14 @@ from continuum import ContinuumEngine, ContinuumConfig, __version__
 
 
 def cmd_version(args: argparse.Namespace) -> None:
-    print(f"Continuum Engine version {__version__}")
+    print(f"ContextSpindle Engine version {__version__}")
 
 
 def cmd_status(args: argparse.Namespace) -> None:
     engine = ContinuumEngine.create(embedding_dim=32, state_dim=32)
     stats = engine.get_stats()
     print("======================================================")
-    print(f"  Continuum Engine Runtime Status (v{__version__})")
+    print(f"  ContextSpindle Engine Runtime Status (v{__version__})")
     print("======================================================")
     print(f"  Max Capacity:       {stats['max_slots']} slots ({engine.config.hot_capacity} Hot + {engine.config.cold_capacity} Cold)")
     print(f"  Current Usage:      {stats['total_slots']} slots ({stats['slot_utilization_pct']:.1f}%)")
@@ -31,7 +31,7 @@ def cmd_status(args: argparse.Namespace) -> None:
 
 
 def cmd_demo(args: argparse.Namespace) -> None:
-    print(f"Starting Continuum Live Streaming Demonstration (v{__version__})...")
+    print(f"Starting ContextSpindle Live Streaming Demonstration (v{__version__})...")
     engine = ContinuumEngine.create(embedding_dim=16, state_dim=16, hot_capacity=50, cold_capacity=100)
 
     print("\n1. Streaming 200 operational events with cyclic regime shift...")
@@ -61,10 +61,10 @@ def cmd_demo(args: argparse.Namespace) -> None:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="continuum",
-        description="Continuum: Continuous Temporal Intelligence Engine CLI",
+        prog="contextspindle",
+        description="ContextSpindle: persistent context memory for AI agents",
     )
-    parser.add_argument("--version", action="store_true", help="Show Continuum version and exit")
+    parser.add_argument("--version", action="store_true", help="Show ContextSpindle version and exit")
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 

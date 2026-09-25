@@ -1,4 +1,6 @@
-# Continuum v0.1 Architecture Specification
+# ContextSpindle Architecture Specification (formerly Continuum)
+
+The public product is agent context memory. The legacy module, crate, and snapshot names remain in use during migration; see [the naming decision](NAME-CHANGE.md). The architecture below describes the existing research model and Rust engine, not a guarantee that every event survives bounded retention.
 
 ## 1. System Overview
 
