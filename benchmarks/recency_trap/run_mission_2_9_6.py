@@ -137,7 +137,7 @@ def main() -> None:
     for pol in policies:
         all_aggregates[pol] = compute_aggregates(results[pol], dt_configs, canonical_seeds)
 
-    out_dir = Path("/Users/mymac/Desktop/continuum/experiments/results/mission_2_9_6")
+    out_dir = Path("/Users/mymac/Desktop/ContextSpindle/experiments/results/mission_2_9_6")
     out_dir.mkdir(parents=True, exist_ok=True)
 
     json_payload = {

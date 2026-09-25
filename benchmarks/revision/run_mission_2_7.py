@@ -27,7 +27,7 @@ def main() -> None:
             results_nc[scen][seed] = res
             print(f"  {scen} [seed={seed}]: Recall={res['Recall_root']*100:.1f}%, FalseRevs={res['FalseRevisionRate']:.0f}, Precision={res['RevisionPrecision']*100:.1f}%, ColdSlots={res['ColdMemory_slots_used']}")
 
-    output_dir = "/Users/mymac/Desktop/continuum/experiments/results/revision"
+    output_dir = "/Users/mymac/Desktop/ContextSpindle/experiments/results/revision"
     os.makedirs(output_dir, exist_ok=True)
 
     json_path = os.path.join(output_dir, "mission_2_7_results.json")

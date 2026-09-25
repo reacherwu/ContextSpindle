@@ -498,7 +498,7 @@ def main():
     print(f"   Total Query Latency: {c_perf['total_query_us']:.1f} us ({c_perf['total_query_us']/1000:.2f} ms)")
 
     # Consolidate report
-    out_dir = Path("/Users/mymac/Desktop/continuum/experiments/results/mission_3_0_audit")
+    out_dir = Path("/Users/mymac/Desktop/ContextSpindle/experiments/results/mission_3_0_audit")
     out_dir.mkdir(parents=True, exist_ok=True)
 
     json_payload = {

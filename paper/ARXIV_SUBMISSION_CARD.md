@@ -5,7 +5,7 @@ Use this metadata card to fill in the submission fields on [arXiv.org Submit](ht
 ---
 
 ## 1. File Upload (Source Files)
-- **File to Upload**: [`/Users/mymac/Desktop/continuum/paper/arxiv_submission.tar.gz`](file:///Users/mymac/Desktop/continuum/paper/arxiv_submission.tar.gz)  
+- **File to Upload**: [`/Users/mymac/Desktop/ContextSpindle/paper/arxiv_submission.tar.gz`](file:///Users/mymac/Desktop/ContextSpindle/paper/arxiv_submission.tar.gz)
   *(Or drag and drop `main.tex` and `references.bib` from `paper/arxiv_package/`)*
 
 ---

@@ -224,7 +224,7 @@ def main() -> None:
     causal_results, efficiency_results = run_full_validation()
     audit = evaluate_pre_registered_criteria(causal_results, efficiency_results)
 
-    out_dir = Path("/Users/mymac/Desktop/continuum/experiments/results/mission_3_0")
+    out_dir = Path("/Users/mymac/Desktop/ContextSpindle/experiments/results/mission_3_0")
     out_dir.mkdir(parents=True, exist_ok=True)
 
     json_payload = {

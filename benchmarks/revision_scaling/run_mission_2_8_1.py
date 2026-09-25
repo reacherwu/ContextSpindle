@@ -49,7 +49,7 @@ def main() -> None:
     print("CONTINUUM MISSION 2.8.1: SCIENTIFIC INTEGRITY & FAILURE MAP PATCH")
     print("=================================================================")
 
-    output_dir = "/Users/mymac/Desktop/continuum/experiments/results/revision_scaling"
+    output_dir = "/Users/mymac/Desktop/ContextSpindle/experiments/results/revision_scaling"
     os.makedirs(output_dir, exist_ok=True)
 
     # 1. Load existing raw results from Mission 2.8

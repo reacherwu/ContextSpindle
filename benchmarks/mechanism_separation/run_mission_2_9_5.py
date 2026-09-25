@@ -130,7 +130,7 @@ def main() -> None:
     results = run_mission_2_9_5_suite(seeds=canonical_seeds)
     aggregates = {cond: compute_aggregates(runs) for cond, runs in results.items()}
 
-    out_dir = Path("/Users/mymac/Desktop/continuum/experiments/results/mission_2_9_5")
+    out_dir = Path("/Users/mymac/Desktop/ContextSpindle/experiments/results/mission_2_9_5")
     out_dir.mkdir(parents=True, exist_ok=True)
 
     json_payload = {

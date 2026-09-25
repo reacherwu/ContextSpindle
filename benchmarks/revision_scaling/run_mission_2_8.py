@@ -111,7 +111,7 @@ def main() -> None:
     # =====================================================================
     # Save Raw Results
     # =====================================================================
-    output_dir = "/Users/mymac/Desktop/continuum/experiments/results/revision_scaling"
+    output_dir = "/Users/mymac/Desktop/ContextSpindle/experiments/results/revision_scaling"
     os.makedirs(output_dir, exist_ok=True)
     json_path = os.path.join(output_dir, "mission_2_8_results.json")
     all_results = {
