@@ -1,12 +1,17 @@
-<p align="center"><img src="docs/assets/contextspindle-logo.png" alt="ContextSpindle logo: one continuous thread around a durable core" width="144"></p>
+<p align="center"><img src="docs/assets/contextspindle-logo.png" alt="ContextSpindle logo: one continuous thread around a durable core" width="112"></p>
+<h1 align="center">ContextSpindle</h1>
 
-# ContextSpindle
+<p align="center"><strong>Durable task continuity for AI agents.</strong><br>Keep the goal and next action across context compaction, restarts, and unrelated work.</p>
 
-![ContextSpindle CI](https://github.com/reacherwu/ContextSpindle/actions/workflows/ci.yml/badge.svg) [![Latest release](https://img.shields.io/github/v/release/reacherwu/ContextSpindle?label=release)](https://github.com/reacherwu/ContextSpindle/releases) ![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-7fe0bd)
+<p align="center">
+  <a href="https://github.com/reacherwu/ContextSpindle/actions/workflows/ci.yml"><img src="https://github.com/reacherwu/ContextSpindle/actions/workflows/ci.yml/badge.svg" alt="ContextSpindle CI"></a>
+  <a href="https://github.com/reacherwu/ContextSpindle/releases"><img src="https://img.shields.io/github/v/release/reacherwu/ContextSpindle?label=release" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-7fe0bd" alt="License: AGPL-3.0"></a>
+</p>
 
-**A durable task line for AI agents.** Keep the goal, decisions, and next action across context compaction, interrupted sessions, and unrelated work—then hand the next agent only the context it needs.
+<p align="center"><a href="#try-it-locally">Get started</a> · <a href="https://reacherwu.github.io/ContextSpindle/">Website</a> · <a href="docs/TASK-LEDGER-BENCHMARK.md">Measured results</a> · <a href="README_CN.md">中文说明</a></p>
 
-[Website](https://reacherwu.github.io/ContextSpindle/) · [Releases](https://github.com/reacherwu/ContextSpindle/releases) · [中文说明](README_CN.md) · [Product definition](docs/PRODUCT-SCOPE.md) · [Agent protocol](docs/AGENT-PROTOCOL.md) · [Operations](docs/OPERATIONS.md) · [Measured results](docs/TASK-LEDGER-BENCHMARK.md)
+The persistent task ledger keeps authoritative goals, decisions, and progress. A separate bounded memory engine supplies optional hints. ContextSpindle assembles a focused handoff within a conservative byte budget, so the next agent can resume without replaying the whole conversation. [Product definition](docs/PRODUCT-SCOPE.md) · [Agent protocol](docs/AGENT-PROTOCOL.md) · [Operations](docs/OPERATIONS.md)
 
 ## Why we built it
 
