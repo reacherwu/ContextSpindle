@@ -1,5 +1,4 @@
-<p align="center"><img src="docs/assets/contextspindle-logo.png" alt="ContextSpindle 标志：围绕持久核心连续延伸的任务线" width="112"></p>
-<h1 align="center">ContextSpindle</h1>
+<h1 align="center"><img src="docs/assets/contextspindle-logo.png" alt="" width="72"> ContextSpindle</h1>
 
 <p align="center"><strong>让 AI Agent 始终记得任务目标。</strong><br>跨越上下文压缩、重启和无关任务，保留目标与下一步。</p>
 

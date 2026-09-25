@@ -1,5 +1,4 @@
-<p align="center"><img src="docs/assets/contextspindle-logo.png" alt="ContextSpindle logo: one continuous thread around a durable core" width="112"></p>
-<h1 align="center">ContextSpindle</h1>
+<h1 align="center"><img src="docs/assets/contextspindle-logo.png" alt="" width="72"> ContextSpindle</h1>
 
 <p align="center"><strong>Durable task continuity for AI agents.</strong><br>Keep the goal and next action across context compaction, restarts, and unrelated work.</p>
 
