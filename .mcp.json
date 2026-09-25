@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "contextspindle": {
-      "command": "contextspindle",
-      "args": ["mcp"]
+      "command": "cargo",
+      "args": ["run", "--release", "--quiet", "--bin", "contextspindle", "--", "mcp"]
     }
   }
 }

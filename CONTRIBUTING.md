@@ -1,23 +1,19 @@
-# Contributing to DiffHound
+# Contributing to ContextSpindle
 
-Thank you for your interest in contributing to DiffHound! We welcome contributions that maintain our core invariants:
+ContextSpindle focuses on durable task continuity and task-aware context assembly. Contributions should maintain these invariants:
 
 ## Core Engineering Invariants
-1. **100% Native Rust & Zero External Dependencies**: `continuum-core` and `diffhound-cli` must rely strictly on standard library Rust. Do not add external crates without architectural review.
-2. **Zero Noise**: Clean PRs must generate 0 comments and produce exit code 0.
-3. **Bounded Physical Memory**: State representation must strictly respect physical $O(K)$ slots.
-4. **Deterministic Testing**: Every fix must be validated with automated tests passing 100% (`cargo test --workspace`).
+1. **Durable task state**: An evicting memory cache must never be the sole copy of active or historical task records.
+2. **Bounded retrieval memory**: The existing hot/cold memory representation must respect physical $O(K)$ slots.
+3. **Repeatable retrieval**: A fixed snapshot, query, and configuration should produce the same retrieval result.
+4. **Evidence-backed claims**: Test task recovery, context budget, and retrieval behavior before claiming reliability or token savings.
 
 ## Development Workflow
 ```bash
-# 1. Clone & build
-git clone https://github.com/reacherwu/diffhound.git
-cd diffhound
+# 1. Build from this checkout
 cargo build
 
 # 2. Run test suite
 cargo test --workspace
 
-# 3. Verify DiffHound against your own branch
-./target/debug/diffhound review --base origin/main --fail-on-regression
 ```

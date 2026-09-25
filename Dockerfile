@@ -1,24 +1,21 @@
-# Multi-stage ultra-compact build for DiffHound MCP Server
-FROM rust:1.80-alpine AS builder
+# ContextSpindle MCP server image
+FROM rust:1-alpine AS builder
 
 RUN apk add --no-cache musl-dev
 
 WORKDIR /app
 COPY . .
 
-# Build standalone diffhound binary
-RUN cargo build --release --bin diffhound
+RUN cargo build --release --bin contextspindle
 
 # Minimal runtime stage
 FROM alpine:3.20
 
-RUN apk add --no-cache ca-certificates git
+RUN apk add --no-cache ca-certificates
 
-WORKDIR /root
-COPY --from=builder /app/target/release/diffhound /usr/local/bin/diffhound
+WORKDIR /workspace
+COPY --from=builder /app/target/release/contextspindle /usr/local/bin/contextspindle
 
-# Initialize local memory manifold
-RUN diffhound init /root
+VOLUME ["/workspace/.contextspindle", "/workspace/.continuum"]
 
-# Default entrypoint runs the stdio MCP server for Glama introspection
-ENTRYPOINT ["diffhound", "mcp"]
+ENTRYPOINT ["/bin/sh", "-c", "contextspindle init /workspace >/dev/null && exec contextspindle mcp"]

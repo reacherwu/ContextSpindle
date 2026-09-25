@@ -1,64 +1,11 @@
-# The "One-Prompt" Universal AI IDE Autopilot Integration
+# Project-scoped Agent Integration
 
-> **The Zero-Friction Experience**:  
-> You don't need to configure terminal environments or manually edit JSON files. Simply copy and paste the prompt below directly into the chat window of **Cursor, Claude Code, Windsurf, Google Project IDX, OpenClaw, Hermes Agent, or Codex**.
-
----
-
-## 📋 Copy & Paste Prompt for Any AI IDE
+ContextSpindle is opt-in. An agent must explicitly write and read durable tasks; it cannot infer a complete task ledger from a private chat history. Use this prompt with an agent working in a checkout of this repository:
 
 ```text
-Please read the integration protocol from https://github.com/reacherwu/diffhound (specifically AGENTS.md) and autonomously equip yourself with the Continuum Bounded Memory Engine for this project:
-
-1. `curl -fsSL https://raw.githubusercontent.com/reacherwu/diffhound/main/install.sh | bash 2>/dev/null || cargo install --path crates/continuum-cli`
-2. `continuum-cli init .`
-
-Once installed, actively use `continuum remember` to store our architectural constraints and bug resolutions, and use `continuum recall` to retrieve past context in < 100 microseconds. Confirm when ready.
+Read AGENTS.md and docs/AGENT-PROTOCOL.md in this checkout. Do not install global software or edit IDE settings. Build the local ContextSpindle binary with `cargo build --release --bin contextspindle`, then run `target/release/contextspindle init .` if the workspace is not initialized. At the start of each task, inspect `task inbox` or `task search`, or use a task ID supplied by the user. Create a durable task with a goal and completion criteria if none exists. Record the next action, blockers, decisions, and evidence as work progresses. Before switching or stopping, update the task and run `task context <id> <budget>`. Treat `.continuum/` retrieval hints as optional; `.contextspindle/tasks/` is the source of truth. Never mark a task complete without checking its criteria and dependencies.
 ```
 
----
+The project-scoped [`.mcp.json`](../.mcp.json) starts the checked-out MCP server through Cargo. An MCP client that supports this configuration can use the `contextspindle_task_*` tools. For other clients, configure an equivalent local command yourself; do not assume any IDE automatically detects or installs the server.
 
-## 🤖 Platform-Specific Autonomous Actions
-
-When your AI assistant receives the prompt above, it autonomously performs the following steps depending on the environment:
-
-### 1. ⚡ Cursor IDE (Composer / Chat / Agent)
-- **Auto-Rule Detection**: Cursor automatically discovers `.cursorrules` in the repository root.
-- **Workspace MCP Server**: Cursor 0.40+ automatically detects the root `.mcp.json` file configuring `continuum-cli mcp`.
-- **Command Integration**: The Cursor Agent runs terminal commands directly to execute `continuum-cli init .` and retain lifetime memory.
-
-### 2. 🤖 Claude Code (Anthropic CLI Agent)
-- Runs `curl -fsSL https://.../install.sh | bash` inside Claude Code's terminal bash tool.
-- Registers the Continuum MCP server via:
-  ```bash
-  claude mcp add continuum continuum-cli mcp
-  ```
-- Continuously invokes `continuum_remember` and `continuum_recall` during long multi-file refactoring runs.
-
-### 3. 🌐 Google Project IDX / Cloud Web IDEs
-- Automatically installs in the cloud virtual machine terminal.
-- Persists state in `<workspace>/.continuum/memory.state` across browser refreshes and cloud container reboots.
-
-### 4. 🌪️ Windsurf (Cascade Agent)
-- Automatically recognizes the root `.mcp.json` file.
-- Cascade accesses `continuum_remember`, `continuum_recall`, and `continuum_stats` as native tools.
-
-### 5. 🦾 Hermes Agent / OpenClaw / OpenHands
-- Uses native shell tool calling to run:
-  ```bash
-  continuum remember "RULE: ..."
-  continuum recall "<symptom or constraint>" 3
-  ```
-- Memory is strictly bounded at 750 slots (< 75 KB), ensuring agent trajectory logs never cause context window exhaustion.
-
-### 6. 💻 OpenAI Codex / GitHub Copilot Workspace
-- Pre-loads architectural memories into repo context prompts on every run using `continuum recall`.
-
----
-
-## 🔒 Memory Guarantees
-
-1. **Strictly Physical $O(K)$ Boundedness**: 250 Hot working slots + 500 Cold candidate slots = 750 slots (< 75 KB). Zero RAM leaks, zero heap bloat over infinite turns.
-2. **Subspace Diversity Deduplication**: Redundant alert storms collapse into single slots; rare, life-critical constraints are protected forever.
-3. **Decay Exemption for Causal Anchors**: Retrospective causal scoring exempts temporal decay for true root causes, defeating recent distracting chatter.
-4. **100% Pure Native Rust**: Zero external crate dependencies, sub-100 microsecond retrieval latency.
+Run `contextspindle task verify` and create off-device backups with `contextspindle task backup <new-directory>`. The ledger is Git-ignored, so Git pushes do not preserve task history. See [the protocol](AGENT-PROTOCOL.md) for recovery, coordination, and budget limits.

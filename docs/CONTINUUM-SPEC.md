@@ -1,6 +1,6 @@
 # ContextSpindle Technical Constitution (formerly Continuum)
 
-The current project delivers bounded, persistent context memory for AI agents. It aims for repeatable retrieval from a fixed snapshot and query; it does not claim deterministic language-model responses or perfect retention. DiffHound uses this memory for PR regression review. The research questions below are preserved from the earlier Continuum research phase and remain evidence requirements for any broader ACM claims.
+The current implementation delivers bounded, persistent context memory for AI agents. It aims for repeatable retrieval from a fixed snapshot and query; it does not claim deterministic language-model responses or perfect retention. The current ContextSpindle product goal is task continuity as defined in [PRODUCT-SCOPE.md](PRODUCT-SCOPE.md). The research questions below are preserved from the earlier Continuum research phase and remain evidence requirements for any broader ACM claims.
 
 Continuum is a continuous temporal intelligence engine built around **Adaptive Causal Memory (ACM)**. It aims to process arbitrary-duration event streams with bounded active memory and support selective retrieval, causal reasoning, and historical memory revision.
 

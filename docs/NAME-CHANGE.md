@@ -1,6 +1,6 @@
 # Naming decision — ContextSpindle
 
-Date: 2026-09-25. The project formerly called Continuum is now **ContextSpindle**. Its primary purpose is persistent, deterministic retrieval of selected context for AI agents across sessions. DiffHound remains a PR-regression application of the memory engine.
+Date: 2026-09-25. The project formerly called Continuum is now **ContextSpindle**. This document records the original rename boundary. The later task-continuity product definition in [PRODUCT-SCOPE.md](PRODUCT-SCOPE.md) supersedes its initial memory-only framing; DiffHound is no longer in the active product scope.
 
 ## Collision check
 
@@ -17,4 +17,4 @@ Rejected candidates:
 
 The new public project name, user-facing documentation, CLI alias, and MCP server key are ContextSpindle. The existing `continuum-cli` executable, `continuum` Python module, `continuum-core` Rust crate, `.continuum/` snapshots, older MCP tool names, historical experiments, and published paper title retain their identifiers for compatibility and provenance. A future breaking release may migrate these identifiers with explicit snapshot conversion and tests.
 
-The Git remote `reacherwu/diffhound`, repository directory name, external website URLs, published DOI, and package registry ownership have not been changed by this local rename.
+The local desktop directory is now `ContextSpindle`. The Git remote `reacherwu/diffhound`, external website URLs, published DOI, and package registry ownership have not been changed; changing those external identities requires a separate migration.

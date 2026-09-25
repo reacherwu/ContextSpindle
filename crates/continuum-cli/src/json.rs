@@ -56,14 +56,22 @@ impl JsonValue {
 
     pub fn as_i64(&self) -> Option<i64> {
         match self {
-            JsonValue::Number(n) => Some(*n as i64),
+            JsonValue::Number(n)
+                if n.is_finite()
+                    && n.fract() == 0.0
+                    && *n >= -((1_u64 << 53) as f64)
+                    && *n <= ((1_u64 << 53) - 1) as f64 => Some(*n as i64),
             _ => None,
         }
     }
 
     pub fn as_u64(&self) -> Option<u64> {
         match self {
-            JsonValue::Number(n) if *n >= 0.0 => Some(*n as u64),
+            JsonValue::Number(n)
+                if n.is_finite()
+                    && n.fract() == 0.0
+                    && *n >= 0.0
+                    && *n <= ((1_u64 << 53) - 1) as f64 => Some(*n as u64),
             _ => None,
         }
     }
@@ -436,6 +444,15 @@ mod tests {
         assert_eq!(parse_json("42").unwrap(), JsonValue::Number(42.0));
         assert_eq!(parse_json("-17.5").unwrap(), JsonValue::Number(-17.5));
         assert_eq!(parse_json("\"hello world\"").unwrap(), JsonValue::String("hello world".to_string()));
+    }
+
+    #[test]
+    fn integer_accessors_reject_fractional_and_unsafe_numbers() {
+        assert_eq!(parse_json("1.5").unwrap().as_u64(), None);
+        assert_eq!(parse_json("-1").unwrap().as_u64(), None);
+        assert_eq!(parse_json("9007199254740992").unwrap().as_u64(), None);
+        assert_eq!(parse_json("2").unwrap().as_u64(), Some(2));
+        assert_eq!(parse_json("-2.5").unwrap().as_i64(), None);
     }
 
     #[test]

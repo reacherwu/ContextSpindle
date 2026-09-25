@@ -1,6 +1,7 @@
 mod hook;
 mod json;
 mod runner;
+mod tasks;
 
 use std::time::Instant;
 use continuum_core::{
@@ -8,11 +9,15 @@ use continuum_core::{
 };
 
 fn print_help() {
-    println!("ContextSpindle: persistent context memory for AI agents");
+    println!("ContextSpindle: durable task continuity and context memory for AI agents");
     println!("Usage:");
     println!("  contextspindle init [path]                           Initialize local memory workspace");
     println!("  contextspindle remember <text>                       Save a constraint or decision");
     println!("  contextspindle recall <query_text> [k]               Retrieve relevant context");
+    println!("  contextspindle task create <goal> [--criteria TEXT] [--parent ID] [--owner NAME] [--idempotency-key KEY]");
+    println!("  contextspindle task update <id> --status|--blocker|--next|--evidence|--note|--decision VALUE");
+    println!("  contextspindle task inbox|show|history|list|search|context ...");
+    println!("  contextspindle task verify|backup|restore ...       Protect and recover task history");
     println!("  contextspindle run <command...>                      Run a command with failure/fix capture");
     println!("  contextspindle hook install [path]                   Install Git post-commit memory hook");
     println!("  contextspindle hook uninstall [path]                 Remove Git post-commit memory hook");
@@ -651,13 +656,11 @@ fn find_active_state_file() -> String {
     default_snapshot_path()
 }
 
-fn run_init(target_dir: &str) {
+fn run_init(target_dir: &str) -> Result<(), String> {
     let base_path = std::path::Path::new(target_dir);
     let continuum_dir = base_path.join(".continuum");
-    if let Err(e) = std::fs::create_dir_all(&continuum_dir) {
-        eprintln!("Failed to create directory '{:?}': {e}", continuum_dir);
-        return;
-    }
+    tasks::Store::at(base_path).init()?;
+    std::fs::create_dir_all(&continuum_dir).map_err(|e| e.to_string())?;
 
     let state_file = continuum_dir.join("memory.state");
     let cfg_file = continuum_dir.join("config.json");
@@ -673,7 +676,7 @@ fn run_init(target_dir: &str) {
             ..Default::default()
         };
         let engine = ContinuumEngine::new(cfg);
-        let _ = engine.save_to_file(&state_file);
+        engine.save_to_file(&state_file).map_err(|e| e.to_string())?;
     }
 
     let config_content = r#"{
@@ -685,15 +688,17 @@ fn run_init(target_dir: &str) {
   "causal_decay_exemption": true,
   "mcp_enabled": true
 }"#;
-    let _ = std::fs::write(&cfg_file, config_content);
+    if !cfg_file.exists() { std::fs::write(&cfg_file, config_content).map_err(|e| e.to_string())?; }
 
-    println!("Initialized ContextSpindle bounded memory workspace in '{:?}'", continuum_dir);
+    println!("Initialized ContextSpindle workspace in '{:?}'", base_path);
     println!("  State File:  '{:?}'", state_file);
     println!("  Config File: '{:?}'", cfg_file);
     println!("  Memory Cap:  750 slots (O(K) constant memory invariant)");
+    println!("  Task Ledger: '{:?}'", tasks::Store::at(base_path).root);
     println!("\nQuick Start:");
-    println!("  continuum remember \"Important architecture constraint...\"");
-    println!("  continuum recall \"architecture constraint\"");
+    println!("  contextspindle task create \"Describe the goal\" --criteria \"Define done\"");
+    println!("  contextspindle task inbox 10");
+    Ok(())
 }
 
 fn run_upgrade() {
@@ -724,6 +729,122 @@ fn send_mcp_msg(stdout: &mut std::io::Stdout, json_str: &str) {
     let single_line: String = json_str.chars().filter(|&c| c != '\n' && c != '\r').collect();
     let _ = writeln!(stdout, "{}", single_line);
     let _ = stdout.flush();
+}
+
+fn mcp_object(fields: Vec<(&str, json::JsonValue)>) -> json::JsonValue {
+    json::JsonValue::Object(fields.into_iter().map(|(k, v)| (k.to_owned(), v)).collect())
+}
+
+fn mcp_tool(name: &str, description: &str, properties: &[(&str, &str)], required: &[&str]) -> json::JsonValue {
+    use json::JsonValue as J;
+    let props = properties.iter().map(|(name, kind)| (
+        (*name).to_owned(), mcp_object(vec![("type", J::String((*kind).into()))])
+    )).collect();
+    mcp_object(vec![
+        ("name", J::String(name.into())),
+        ("description", J::String(description.into())),
+        ("inputSchema", mcp_object(vec![
+            ("type", J::String("object".into())),
+            ("properties", J::Object(props)),
+            ("required", J::Array(required.iter().map(|s| J::String((*s).into())).collect())),
+        ])),
+    ])
+}
+
+fn mcp_tools_response(id: &str) -> String {
+    use json::JsonValue as J;
+    let tools = vec![
+        mcp_tool("contextspindle_remember", "Store a selected memory in the bounded retrieval cache", &[("text", "string")], &["text"]),
+        mcp_tool("contextspindle_recall", "Retrieve selected memories from the bounded cache", &[("query", "string"), ("top_k", "integer")], &["query"]),
+        mcp_tool("contextspindle_stats", "Inspect bounded memory usage", &[], &[]),
+        mcp_tool("contextspindle_task_create", "Create a durable task with a goal and completion criteria", &[("goal", "string"), ("criteria", "string"), ("parent", "string"), ("owner", "string"), ("idempotency_key", "string")], &["goal"]),
+        mcp_tool("contextspindle_task_update", "Update a task; use expected_version to prevent lost concurrent updates", &[("id", "string"), ("expected_version", "integer"), ("goal", "string"), ("criteria", "string"), ("status", "string"), ("blocker", "string"), ("owner", "string"), ("next", "string"), ("decision", "string"), ("evidence", "string"), ("note", "string"), ("dependency", "string")], &["id"]),
+        mcp_tool("contextspindle_task_show", "Read the latest authoritative task state", &[("id", "string")], &["id"]),
+        mcp_tool("contextspindle_task_list", "List compact task summaries with pagination", &[("offset", "integer"), ("limit", "integer")], &[]),
+        mcp_tool("contextspindle_task_context", "Assemble task context under a conservative token budget", &[("id", "string"), ("budget_tokens", "integer")], &["id"]),
+        mcp_tool("contextspindle_task_verify", "Verify every committed task version", &[], &[]),
+        mcp_tool("contextspindle_task_backup", "Copy and verify the durable task ledger into a new directory", &[("destination", "string")], &["destination"]),
+        mcp_tool("contextspindle_task_restore", "Import a verified task backup without overwriting divergent tasks", &[("source", "string")], &["source"]),
+        mcp_tool("contextspindle_task_search", "Find a durable task by goal, criteria, or next action", &[("query", "string"), ("limit", "integer")], &["query"]),
+        mcp_tool("contextspindle_task_history", "Read a page of committed task versions", &[("id", "string"), ("from_version", "integer"), ("limit", "integer")], &["id"]),
+        mcp_tool("contextspindle_task_inbox", "Show active, blocked, and open tasks", &[("limit", "integer")], &[]),
+        mcp_tool("contextspindle_task_children", "List direct subtasks of a durable task", &[("id", "string")], &["id"]),
+    ];
+    mcp_object(vec![
+        ("jsonrpc", J::String("2.0".into())),
+        ("id", json::parse_json(id).unwrap_or(J::Null)),
+        ("result", mcp_object(vec![("tools", J::Array(tools))])),
+    ]).to_json_string()
+}
+
+fn call_task_tool(name: &str, req: &json::JsonValue) -> Result<String, String> {
+    let arg = |key: &str| -> Result<Option<&str>, String> {
+        req.get_path(&["params", "arguments", key])
+            .map(|value| value.as_str().ok_or_else(|| format!("{key} must be a string")))
+            .transpose()
+    };
+    let int_arg = |key: &str| -> Result<Option<u64>, String> {
+        req.get_path(&["params", "arguments", key])
+            .map(|value| value.as_u64().ok_or_else(|| format!("{key} must be a nonnegative safe integer")))
+            .transpose()
+    };
+    let mut args = Vec::<String>::new();
+    match name {
+        "contextspindle_task_create" => {
+            args.push("create".into()); args.push(arg("goal")?.ok_or("goal is required")?.into());
+            for (field, key) in [("--criteria", "criteria"), ("--parent", "parent"), ("--owner", "owner"), ("--idempotency-key", "idempotency_key")] { if let Some(v) = arg(key)? { args.push(field.into()); args.push(v.into()); } }
+        }
+        "contextspindle_task_update" => {
+            args.push("update".into()); args.push(arg("id")?.ok_or("id is required")?.into());
+            if let Some(v) = int_arg("expected_version")? {
+                args.push("--expect-version".into()); args.push(v.to_string());
+            }
+            for key in ["goal", "criteria", "status", "blocker", "owner", "next", "decision", "evidence", "note", "dependency"] {
+                if let Some(v) = arg(key)? { args.push(format!("--{key}")); args.push(v.into()); }
+            }
+        }
+        "contextspindle_task_show" | "contextspindle_task_context" | "contextspindle_task_history" | "contextspindle_task_children" => {
+            args.push(if name.ends_with("context") { "context" } else if name.ends_with("history") { "history" } else if name.ends_with("children") { "children" } else { "show" }.into());
+            args.push(arg("id")?.ok_or("id is required")?.into());
+            if name.ends_with("context") {
+                if let Some(v) = int_arg("budget_tokens")? { args.push(v.to_string()); }
+            }
+            if name.ends_with("history") {
+                if let Some(v) = int_arg("from_version")? { args.push(v.to_string()); }
+                if let Some(v) = int_arg("limit")? {
+                    if args.len() == 2 { args.push("1".into()); }
+                    args.push(v.to_string());
+                }
+            }
+        }
+        "contextspindle_task_list" => {
+            args.push("list".into());
+            if let Some(v) = int_arg("offset")? { args.push(v.to_string()); }
+            if let Some(v) = int_arg("limit")? {
+                if args.len() == 1 { args.push("0".into()); }
+                args.push(v.to_string());
+            }
+        },
+        "contextspindle_task_inbox" => {
+            args.push("inbox".into());
+            if let Some(v) = int_arg("limit")? { args.push(v.to_string()); }
+        }
+        "contextspindle_task_search" => {
+            args.push("search".into()); args.push(arg("query")?.ok_or("query is required")?.into());
+            if let Some(v) = int_arg("limit")? { args.push(v.to_string()); }
+        }
+        "contextspindle_task_verify" => args.push("verify".into()),
+        "contextspindle_task_backup" => {
+            args.push("backup".into());
+            args.push(arg("destination")?.ok_or("destination is required")?.into());
+        }
+        "contextspindle_task_restore" => {
+            args.push("restore".into());
+            args.push(arg("source")?.ok_or("source is required")?.into());
+        }
+        _ => return Err("Unknown task tool".into()),
+    }
+    tasks::run_cli(&args)
 }
 
 fn run_mcp() {
@@ -757,7 +878,7 @@ fn run_mcp() {
 
         if method == "initialize" {
             let resp = format!(
-                r#"{{"jsonrpc":"2.0","id":{},"result":{{"protocolVersion":"2024-11-05","capabilities":{{"tools":{{}}}},"serverInfo":{{"name":"contextspindle","version":"0.1.0"}}}}}}"#,
+                r#"{{"jsonrpc":"2.0","id":{},"result":{{"protocolVersion":"2024-11-05","capabilities":{{"tools":{{}}}},"serverInfo":{{"name":"contextspindle","version":"0.2.0"}}}}}}"#,
                 id_val
             );
             send_mcp_msg(&mut stdout, &resp);
@@ -770,15 +891,17 @@ fn run_mcp() {
             );
             send_mcp_msg(&mut stdout, &resp);
         } else if method == "tools/list" {
-            let resp = format!(
-                r#"{{"jsonrpc":"2.0","id":{},"result":{{"tools":[{{"name":"contextspindle_remember","description":"Store a critical architecture constraint, engineering decision, or tool failure into bounded O(K) memory","inputSchema":{{"type":"object","properties":{{"text":{{"type":"string","description":"The constraint, decision, or event to remember"}}}},"required":["text"]}}}},{{"name":"contextspindle_recall","description":"Retrospectively retrieve relevant past constraints, actions, and root causes in < 1ms","inputSchema":{{"type":"object","properties":{{"query":{{"type":"string","description":"The symptom, search query, or question to recall"}},"top_k":{{"type":"integer","description":"Maximum candidates to return (default 3)"}}}},"required":["query"]}}}},{{"name":"contextspindle_stats","description":"Get current bounded memory usage, physical slot count, and token savings metrics","inputSchema":{{"type":"object","properties":{{}}}}}}]}}}}"#,
-                id_val
-            );
+            let resp = mcp_tools_response(&id_val);
             send_mcp_msg(&mut stdout, &resp);
         } else if method == "tools/call" {
             let tool_name = json.get_path(&["params", "name"]).and_then(|v| v.as_str()).unwrap_or("");
             let mut is_error = false;
-            let result_text = if matches!(tool_name, "contextspindle_remember" | "continuum_remember") {
+            let result_text = if tool_name.starts_with("contextspindle_task_") {
+                match call_task_tool(tool_name, &json) {
+                    Ok(v) => v,
+                    Err(e) => { is_error = true; format!("Task error: {e}") }
+                }
+            } else if matches!(tool_name, "contextspindle_remember" | "continuum_remember") {
                 let text_arg = json.get_path(&["params", "arguments", "text"])
                     .and_then(|v| v.as_str())
                     .unwrap_or("");
@@ -877,9 +1000,18 @@ fn main() {
     }
 
     match args[1].as_str() {
+        "task" => {
+            match tasks::run_cli(&args[2..]) {
+                Ok(output) => {
+                    if args.get(2).map(String::as_str) == Some("context") { print!("{output}"); }
+                    else { println!("{output}"); }
+                },
+                Err(e) => { eprintln!("Error: {e}"); std::process::exit(1); }
+            }
+        }
         "init" => {
             let path = args.get(2).map(|s| s.as_str()).unwrap_or(".");
-            run_init(path);
+            if let Err(e) = run_init(path) { eprintln!("Initialization failed: {e}"); std::process::exit(1); }
         }
         "remember" | "record" => {
             let text = args.get(2).map(|s| s.as_str()).expect("Usage: continuum remember <text>");
@@ -1047,7 +1179,7 @@ fn main() {
             println!("External Runtime Dependencies: 0 (Pure Rust Standard Library)");
         }
         "version" | "--version" | "-v" => {
-            println!("contextspindle 0.1.0 (native rust memory; legacy continuum-cli alias)");
+            println!("contextspindle 0.2.0 (durable task ledger and bounded context; legacy continuum-cli alias)");
         }
         "help" | "--help" | "-h" => {
             print_help();
@@ -1065,10 +1197,7 @@ mod tests {
     #[test]
     fn test_mcp_tools_list_single_line_compliance() {
         let id_val = "\"test_msg_001\"";
-        let resp = format!(
-            r#"{{"jsonrpc":"2.0","id":{},"result":{{"tools":[{{"name":"contextspindle_remember","description":"Store a critical architecture constraint, engineering decision, or tool failure into bounded O(K) memory","inputSchema":{{"type":"object","properties":{{"text":{{"type":"string","description":"The constraint, decision, or event to remember"}}}},"required":["text"]}}}},{{"name":"contextspindle_recall","description":"Retrospectively retrieve relevant past constraints, actions, and root causes in < 1ms","inputSchema":{{"type":"object","properties":{{"query":{{"type":"string","description":"The symptom, search query, or question to recall"}},"top_k":{{"type":"integer","description":"Maximum candidates to return (default 3)"}}}},"required":["query"]}}}},{{"name":"contextspindle_stats","description":"Get current bounded memory usage, physical slot count, and token savings metrics","inputSchema":{{"type":"object","properties":{{}}}}}}]}}}}"#,
-            id_val
-        );
+        let resp = mcp_tools_response(id_val);
 
         // Strict stdio MCP mandate: must not contain any newlines
         assert!(!resp.contains('\n'), "MCP response must NOT contain newlines!");
@@ -1080,9 +1209,29 @@ mod tests {
         assert_eq!(parsed.get("id").unwrap().to_raw_id_string(), "\"test_msg_001\"");
 
         let tools = parsed.get_path(&["result", "tools"]).unwrap().as_array().unwrap();
-        assert_eq!(tools.len(), 3);
+        assert_eq!(tools.len(), 15);
         let names: Vec<&str> = tools.iter().map(|t| t.get("name").unwrap().as_str().unwrap()).collect();
-        assert_eq!(names, vec!["contextspindle_remember", "contextspindle_recall", "contextspindle_stats"]);
+        assert!(names.contains(&"contextspindle_task_context"));
+        assert!(names.contains(&"contextspindle_task_backup"));
+        assert!(names.contains(&"contextspindle_task_restore"));
+        let list = tools.iter().find(|t| t.get("name").and_then(|v| v.as_str()) == Some("contextspindle_task_list")).unwrap();
+        assert!(list.get_path(&["inputSchema", "properties", "offset"]).is_some());
+        let history = tools.iter().find(|t| t.get("name").and_then(|v| v.as_str()) == Some("contextspindle_task_history")).unwrap();
+        assert!(history.get_path(&["inputSchema", "properties", "from_version"]).is_some());
+    }
+
+    #[test]
+    fn task_mcp_rejects_fractional_expected_version() {
+        let req = json::parse_json(r#"{"params":{"arguments":{"id":"t-test","expected_version":1.5,"next":"step"}}}"#).unwrap();
+        let error = call_task_tool("contextspindle_task_update", &req).unwrap_err();
+        assert!(error.contains("expected_version must be"));
+    }
+
+    #[test]
+    fn task_mcp_rejects_wrong_optional_field_type() {
+        let req = json::parse_json(r#"{"params":{"arguments":{"goal":"Ship","criteria":123}}}"#).unwrap();
+        let error = call_task_tool("contextspindle_task_create", &req).unwrap_err();
+        assert!(error.contains("criteria must be a string"));
     }
 
     #[test]

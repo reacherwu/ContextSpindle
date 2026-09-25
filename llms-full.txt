@@ -1,4 +1,6 @@
-# Continuum — Full Technical & Architecture Reference
+# Historical Continuum Memory-Engine Reference
+
+This document records the earlier bounded retrieval engine and its historical benchmark claims. It is not the current ContextSpindle product specification. For the durable task ledger, task-aware context assembly, current CLI/MCP interface, and reliability limits, read `README.md`, `docs/PRODUCT-SCOPE.md`, and `docs/AGENT-PROTOCOL.md`. The repository URL below is the unchanged legacy remote, not a renamed ContextSpindle publication.
 
 > Continuous Temporal Memory Manifold in 100% Pure Standard Library Rust (0 External Crate Dependencies).
 > Strictly bounded physical O(K) memory (< 75 KB RAM) with < 100µs retrospective recall.

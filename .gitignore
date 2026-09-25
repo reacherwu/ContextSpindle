@@ -11,6 +11,7 @@ Cargo.lock
 
 # Continuum local runtime states
 .continuum/
+.contextspindle/
 *.state
 
 # Shared libraries compiled

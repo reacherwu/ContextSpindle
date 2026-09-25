@@ -2,7 +2,7 @@ use std::io::Write;
 use std::process::{Command, Stdio};
 
 fn get_bin() -> &'static str {
-    env!("CARGO_BIN_EXE_continuum-cli")
+    env!("CARGO_BIN_EXE_contextspindle")
 }
 
 #[test]

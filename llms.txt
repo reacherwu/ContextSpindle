@@ -1,24 +1,11 @@
 # ContextSpindle
 
-ContextSpindle is a local, bounded, persistent context memory engine for AI agents. It stores selected constraints, decisions, and root-cause fixes across sessions and uses a deterministic retrieval algorithm for a fixed snapshot, query, and configuration.
+ContextSpindle is a local, opt-in product for preserving agent task goals and progress across context compaction, unrelated work, process restarts, and long gaps. A durable, versioned ledger in `.contextspindle/tasks/` is authoritative; the legacy bounded retrieval cache in `.continuum/` is optional and may evict data.
 
-DiffHound is a PR review application built on the memory engine.
+Start here: `README.md`, `docs/PRODUCT-SCOPE.md`, `docs/AGENT-PROTOCOL.md`, `docs/DEVELOPER_QUICKSTART.md`.
 
-## Local setup
+Local CLI: `cargo build --release --bin contextspindle`, then `target/release/contextspindle init .`; use `task create`, `task update`, `task inbox`, `task search`, `task context`, `task verify`, `task backup`, and `task restore`. The project-scoped `.mcp.json` exposes corresponding `contextspindle_task_*` tools.
 
-```bash
-cargo install --path crates/continuum-cli
-contextspindle init .
-contextspindle remember "RULE: Never commit API keys"
-contextspindle recall "API key rule" 3
-contextspindle mcp
-```
+Context budgets are conservative UTF-8 byte ceilings, not exact model-specific token counts. Required state is never silently truncated. The ledger is Git-ignored and needs off-device backups for long-term survival. Actor labels are caller-declared, not authentication. No integration can preserve a task that was never recorded.
 
-The MCP server advertises `contextspindle_remember`, `contextspindle_recall`, and `contextspindle_stats`. The old `continuum_*` tool calls and `continuum-cli` executable remain accepted during migration.
-
-The local snapshot path is still `.continuum/memory.state`, preserving older data. Retrieval is selective and bounded; evicted events cannot be promised. A deterministic memory lookup does not make an agent's language-model response deterministic.
-
-Repository: https://github.com/reacherwu/diffhound
-Current naming decision: docs/NAME-CHANGE.md
-Research and benchmark evidence: docs/BENCHMARKS.md and experiments/results/
-Historical paper: https://doi.org/10.5281/zenodo.22765180 (published under the prior Continuum name)
+The current Git remote retains its historical `reacherwu/diffhound` identity; it has not been renamed. Historical Continuum research and benchmark evidence remains in `docs/BENCHMARKS.md`, `experiments/results/`, and `llms-full.txt`.

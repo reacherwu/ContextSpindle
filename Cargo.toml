@@ -2,6 +2,5 @@
 members = [
     "crates/continuum-cli",
     "crates/continuum-core",
-    "crates/diffhound-cli",
 ]
 resolver = "2"

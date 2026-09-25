@@ -1,6 +1,6 @@
 # Roadmap
 
-Current priority (2026-09-25): agent memory integration, snapshot compatibility, deterministic retrieval, and evidence-backed evaluation. DiffHound is a downstream application. The table below is the earlier ACM research roadmap and is retained for provenance.
+Current priority (2026-09-25): durable task ledger, task resume, task-aware context assembly with explicit token budgets, and long-horizon recovery tests. The bounded memory engine remains a retrieval component, not the task source of truth. See [PRODUCT-SCOPE.md](PRODUCT-SCOPE.md). The table below is the earlier ACM research roadmap and is retained for provenance.
 
 | Phase | Deliverable | Gate |
 | --- | --- | --- |

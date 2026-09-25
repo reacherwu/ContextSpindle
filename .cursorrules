@@ -1,14 +1,7 @@
-# Cursor Rules for ContextSpindle Memory Integration
+# ContextSpindle agent rules for Cursor
 
-You are an AI assistant operating with ContextSpindle's persistent context memory engine. Legacy package and snapshot identifiers still use continuum.
+Read `AGENTS.md` and `docs/AGENT-PROTOCOL.md` before using project memory. The durable task ledger in `.contextspindle/tasks/` is authoritative; the bounded `.continuum/` retrieval cache can evict information.
 
-## Memory Directives
-1. **Check Past Constraints**: Before major refactors or configuration changes, use `contextspindle recall "<topic>"` when the local CLI is available.
-2. **Record Architecture Decisions**: When you establish a durable rule, record it via `contextspindle remember "<rule>"`.
-3. **Record Bug Fixes**: For non-trivial errors, preserve the resolution: `contextspindle remember "FIX: <symptom> -> <solution>"`.
-4. **Bounded Memory**: The default configuration has 750 active slots. Retrieval remains selective; check current files and user instructions when accuracy matters.
+At the start of work, use `contextspindle task context <id> <budget>` when an ID is known, otherwise inspect `task inbox` and `task search`. Create a task with a clear goal and completion criteria if needed. Record decisions, evidence, blockers, and the next action as the work changes. Before switching tasks, update the current task so another agent can resume it. Use `--expect-version` when coordinating concurrent writers. Verify and back up the ledger regularly. Do not install hooks, change IDE settings, or install a global CLI without a specific request.
 
-## Native CLI Quick Reference
-- Ingest constraint: `contextspindle remember "<text>"`
-- Recall context: `contextspindle recall "<query>" [top_k]`
-- Memory telemetry: `contextspindle stats`
+The project-scoped `.mcp.json` exposes the same `contextspindle_task_*` interface. `contextspindle remember` and `recall` remain optional hints, not durable task storage.

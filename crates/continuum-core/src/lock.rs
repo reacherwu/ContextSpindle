@@ -51,6 +51,7 @@ impl FileLockGuard {
             .read(true)
             .write(true)
             .create(true)
+            .truncate(false)
             .open(&lock_path)?;
 
         let start = Instant::now();
@@ -88,11 +89,11 @@ impl FileLockGuard {
 
         #[cfg(not(unix))]
         {
-            // Windows / non-unix fallback: atomic file presence with bounded wait
-            Ok(Self {
-                lock_file: file,
-                lock_path,
-            })
+            let _ = (file, lock_path, start);
+            Err(std::io::Error::new(
+                std::io::ErrorKind::Unsupported,
+                "Durable task writes require an OS file lock; this platform is not yet supported",
+            ))
         }
     }
 

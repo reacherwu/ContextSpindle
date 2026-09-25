@@ -1,72 +1,7 @@
-# ContextSpindle AI Agent Engineering Guidelines & Project Rules
+# ContextSpindle instructions for Gemini
 
-The public project name is ContextSpindle. Existing crate and snapshot identifiers below remain for compatibility; see `docs/NAME-CHANGE.md`.
+Follow [`AGENTS.md`](AGENTS.md) and [`docs/AGENT-PROTOCOL.md`](docs/AGENT-PROTOCOL.md). ContextSpindle's purpose is to preserve task goals and next actions across long contexts, interruptions, unrelated tasks, and sessions. `.contextspindle/tasks/` is the durable source of truth. `.continuum/` is a bounded retrieval cache and may lose old hints.
 
-> **CRITICAL CONTEXT FOR AI AGENTS**:  
-> This file establishes the architecture principles and engineering standards for ContextSpindle.
-> Whenever working in this repository, you MUST adhere strictly to these rules.
+On resumption, use `contextspindle task context <id> <budget>` when the task ID is known; otherwise use `task inbox` and `task search`. Create a task with a goal and completion criteria only if none matches. Record changed next actions, decisions, blockers, and evidence with `task update`; use `--expect-version` when other agents may write. Before stopping or switching, leave a resumable next action. A task can be marked done only after criteria and dependencies are satisfied and its blocker is clear.
 
----
-
-## 1. Core Architecture Invariants
-
-1. **Physical O(K) Bounded Memory**:
-   - The engine operates under strictly bounded physical slots (default: $K_{\text{hot}} = 250, K_{\text{cold}} = 500$, total = 750).
-   - NEVER introduce unbounded lists, sliding arrays that grow with stream length $T$, or memory leaks. Memory allocation must remain constant over infinite time.
-2. **Two-Tier Manifold with Subspace Diversity**:
-   - Hot Memory handles short-term multi-factor retention.
-   - Cold Memory handles candidate diversity. Eviction from cold memory MUST use mutual redundancy pruning ($\text{argmax}(\text{max\_sim}) \ge \text{sim\_thresh}$), NEVER naive FIFO or timestamp eviction. This protects against alert storms.
-3. **Causal Revision & Decay Exemption**:
-   - The Retrospective Causal Revision engine breaks the forward recall barrier.
-   - When semantic similarity $\ge \theta_{\text{exempt}}$, temporal decay is exempted ($\text{TempCompat} = 1.0$), ensuring ancient root causes defeat recent background chatter.
-4. **Lightweight Semantic Causal Bridge**:
-   - For domain discrepancies (e.g. error symptom vs. historical configuration action), use dual-channel query projection ($q_{\text{bridged}} = (1-\lambda) q_{\text{symptom}} + \lambda q_{\text{hypothesis}}$). Keep projection deterministic and $< 10\ \mu\text{s}$ without cloud LLM roundtrips.
-5. **Transactional RMW & OS Kernel `flock`**:
-   - Cross-process concurrency MUST use OS kernel-level `flock(fd, LOCK_EX | LOCK_NB)` via standard libc FFI. NEVER use application-level timestamp stealing (e.g. 5s deletion).
-   - RMW operations (Read-Modify-Write) MUST hold the transactional lock across `load -> mutate -> save`.
-6. **Zero-Loss Durability & Checksums**:
-   - Atomic save writes to `.tmp.*` and renames. Write failures must immediately clean up tempfiles.
-   - After rename, parent directory MUST be fsync'd for POSIX metadata durability.
-   - Snapshots MUST include `CTNMFOOT` signature and 64-bit checksum. Corrupted files must fail with `InvalidData`, NEVER faking an empty engine.
-7. **Error Propagation & Machine-First Interface**:
-   - Storage/retrieval failures MUST exit with code `1` in CLI and return `isError: true` in MCP protocol.
-   - `recall` supports `--json` structured machine output with four-factor component breakdowns.
-
----
-
-## 2. Technology Stack & Language Mandates
-
-1. **Rust Core Priority**:
-   - All high-performance streaming, state recurrence, memory indexing, and persistence logic belongs in `crates/continuum-core`.
-   - `continuum-core` must maintain **zero external crate dependencies** (pure standard library).
-   - The CLI in `crates/continuum-cli` compiles to a standalone, zero-dependency binary.
-2. **Python Integration**:
-   - Python access is provided via `continuum/native.py` using standard `ctypes` bindings to the compiled cdylib (`target/release/libcontinuum_core.dylib`).
-   - Do NOT introduce heavyweight Python dependencies into the core engine path.
-
----
-
-## 3. Anti-Patterns to Avoid
-
-- ❌ **The Toy Benchmark Trap**: NEVER use synthetic randomly generated vectors (e.g., $v_{\text{query}} = 0.85 v_{\text{root}} + ...$) as primary proof of capability. Always evaluate using real text corpora (AIOps logs, conversational turns, Git trajectories).
-- ❌ **Alert Storm Truncation**: NEVER apply a pre-filter top-k cutoff before causal revision scoring. The true root cause may have low initial raw similarity during an alert storm.
-- ❌ **Python Heap Bloat**: NEVER store unbounded string representations in Python heap for long streams; Python allocator causes up to 724MB heap fragmentation. Keep memory flat in native Rust.
-- ❌ **Silent Failure / Fake Success**: NEVER catch an I/O error or corrupted state file and construct an empty engine to pretend success. Always bubble up non-zero exits and `isError: true`.
-- ❌ **Timestamp Lock Stealing**: NEVER steal or delete a lockfile based on wall-clock timestamp timeouts. Let the OS kernel clean up locks on process exit.
-- ❌ **Attribution Pollution**: NEVER attribute unrelated commands as fixes for prior incidents; enforce command affinity (`cur_base == prior_base`), sanitize log tokens, and tag as `CANDIDATE_FIX`.
-
----
-
-## 4. Mandatory Verification Redlines
-
-Before completing any task or claiming success, you MUST execute and pass:
-1. `cargo test --workspace` (Must be 100% PASS, 0 failures).
-2. `python3 -m unittest discover tests` (Must be 100% PASS, 0 failures).
-3. Check scenarios via `./target/release/contextspindle demo <aiops|persona|github|persistence>` (All must report `🎉 VERDICT: SUCCESS`).
-
----
-
-## 5. Canonical Reference Documents
-- Canonical Engineering Playbook: `docs/ENGINEERING_PLAYBOOK.md`
-- Architecture Specification: `docs/ARCHITECTURE.md`
-- Reality Test Ablation Reports: `experiments/results/reality_test/`
+Use the checked-out CLI or project-scoped `.mcp.json`; do not install a global binary, Git hook, or IDE configuration unless explicitly requested. Run `cargo test --workspace` and relevant Python tests after implementation changes. Preserve historical benchmark records and the legacy crate/snapshot names until a tested migration is designed.
