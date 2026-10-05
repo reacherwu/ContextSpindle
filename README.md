@@ -79,6 +79,30 @@ Use `task search <query>` when an old ID is unknown, `task history <id>` to revi
 
 The project-scoped [`.mcp.json`](.mcp.json) starts the same server from this checkout. To make task continuity available in **new local Codex conversations across repositories**, use the [personal Codex installer and setup guide](docs/CODEX-INTEGRATION.md); merely cloning the repository does not install a global skill or MCP server. The task tools cover create, update, show, list, inbox, search, context, history, children, verification, backup, and restore. `contextspindle_remember`, `contextspindle_recall`, and `contextspindle_stats` remain available for the bounded cache. The legacy `continuum-cli` command, Python import, Rust crate names, and `.continuum/` snapshot paths remain for compatibility; see the [naming decision](docs/NAME-CHANGE.md).
 
+
+## Stale evidence gate (S7)
+
+**Threat:** Evidence logged under an older completion criteria, or copied from another task, could still mark a revised (or foreign) task `done`. The historical done gate only required non-empty criteria, a clear blocker, and finished dependencies—not a binding between evidence and the current task.
+
+**Fix (minimal):** `--evidence` stores a backwards-compatible `evidence://v1/{...}` record with `task_id` and `criteria_hash` (SHA-256 of criteria UTF-8 at log time). Marking `status=done` requires at least one evidence record whose `task_id` matches this task and whose `criteria_hash` matches the **current** criteria.
+
+**Measured (this checkout):**
+
+| Case | Before | After |
+| --- | --- | --- |
+| S7a (criteria changed after evidence) | done **accepted** | done **rejected** (`Evidence is missing or stale…`) |
+| S7b (foreign-task bound evidence) | done **accepted** | done **rejected** (`Evidence task id mismatch`) |
+
+Reproduce:
+
+```bash
+CARGO_TARGET_DIR=/workspace/tmp/csp-target cargo test -p continuum-cli s7_stale_evidence -- --nocapture
+```
+
+Details: [docs/S7-STALE-EVIDENCE.md](docs/S7-STALE-EVIDENCE.md) · results [baseline](benchmarks/results/s7-stale-evidence-baseline.json) / [after](benchmarks/results/s7-stale-evidence-after.json) / [summary](benchmarks/results/s7-stale-evidence.md).
+
+**Limitations:** Legacy plain-string evidence still loads but does **not** satisfy the new done gate (re-log after upgrade or criteria change). The hash covers criteria text only—not goal, notes, or external artifact bytes. This is binding, not cryptographic authentication of actors or artifacts.
+
 ## Limits worth knowing
 
 The ledger is local and Git-ignored: **pushing code does not back up tasks**. Schedule protected, off-device backups and test restores if long-term continuity matters. Checksums detect accidental corruption, not malicious rewriting by a user who can edit the workspace. Task text and retrieved hints must be treated as data, not higher-priority instructions. Some list/search operations scan task directories, so measure your own workload before setting a scale target. Deterministic retrieval for a fixed snapshot does not make a language model's response deterministic.

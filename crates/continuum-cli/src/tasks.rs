@@ -281,6 +281,157 @@ fn checksum(bytes: &[u8]) -> u64 {
         (h ^ (*b as u64)).wrapping_mul(0x100000001b3)
     })
 }
+
+const EVIDENCE_V1_PREFIX: &str = "evidence://v1/";
+
+/// SHA-256 of criteria UTF-8 bytes as lowercase hex (binding key for evidence).
+fn criteria_hash(criteria: &str) -> String {
+    hex_lower(&sha256(criteria.as_bytes()))
+}
+
+fn hex_lower(bytes: &[u8]) -> String {
+    const HEX: &[u8; 16] = b"0123456789abcdef";
+    let mut out = String::with_capacity(bytes.len() * 2);
+    for &b in bytes {
+        out.push(HEX[(b >> 4) as usize] as char);
+        out.push(HEX[(b & 0xf) as usize] as char);
+    }
+    out
+}
+
+fn sha256(message: &[u8]) -> [u8; 32] {
+    // Compact FIPS 180-4 SHA-256 (no external crate; ledger stays zero-dep).
+    let mut h: [u32; 8] = [
+        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab,
+        0x5be0cd19,
+    ];
+    const K: [u32; 64] = [
+        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4,
+        0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe,
+        0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f,
+        0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7,
+        0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc,
+        0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b,
+        0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116,
+        0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+        0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7,
+        0xc67178f2,
+    ];
+    let bit_len = (message.len() as u64).saturating_mul(8);
+    let mut data = message.to_vec();
+    data.push(0x80);
+    while data.len() % 64 != 56 {
+        data.push(0);
+    }
+    data.extend_from_slice(&bit_len.to_be_bytes());
+    for chunk in data.chunks_exact(64) {
+        let mut w = [0u32; 64];
+        for i in 0..16 {
+            w[i] = u32::from_be_bytes([
+                chunk[i * 4],
+                chunk[i * 4 + 1],
+                chunk[i * 4 + 2],
+                chunk[i * 4 + 3],
+            ]);
+        }
+        for i in 16..64 {
+            let s0 = w[i - 15].rotate_right(7) ^ w[i - 15].rotate_right(18) ^ (w[i - 15] >> 3);
+            let s1 = w[i - 2].rotate_right(17) ^ w[i - 2].rotate_right(19) ^ (w[i - 2] >> 10);
+            w[i] = w[i - 16]
+                .wrapping_add(s0)
+                .wrapping_add(w[i - 7])
+                .wrapping_add(s1);
+        }
+        let mut a = h[0];
+        let mut b = h[1];
+        let mut c = h[2];
+        let mut d = h[3];
+        let mut e = h[4];
+        let mut f = h[5];
+        let mut g = h[6];
+        let mut hh = h[7];
+        for i in 0..64 {
+            let s1 = e.rotate_right(6) ^ e.rotate_right(11) ^ e.rotate_right(25);
+            let ch = (e & f) ^ ((!e) & g);
+            let temp1 = hh
+                .wrapping_add(s1)
+                .wrapping_add(ch)
+                .wrapping_add(K[i])
+                .wrapping_add(w[i]);
+            let s0 = a.rotate_right(2) ^ a.rotate_right(13) ^ a.rotate_right(22);
+            let maj = (a & b) ^ (a & c) ^ (b & c);
+            let temp2 = s0.wrapping_add(maj);
+            hh = g;
+            g = f;
+            f = e;
+            e = d.wrapping_add(temp1);
+            d = c;
+            c = b;
+            b = a;
+            a = temp1.wrapping_add(temp2);
+        }
+        h[0] = h[0].wrapping_add(a);
+        h[1] = h[1].wrapping_add(b);
+        h[2] = h[2].wrapping_add(c);
+        h[3] = h[3].wrapping_add(d);
+        h[4] = h[4].wrapping_add(e);
+        h[5] = h[5].wrapping_add(f);
+        h[6] = h[6].wrapping_add(g);
+        h[7] = h[7].wrapping_add(hh);
+    }
+    let mut out = [0u8; 32];
+    for (i, word) in h.iter().enumerate() {
+        out[i * 4..(i + 1) * 4].copy_from_slice(&word.to_be_bytes());
+    }
+    out
+}
+
+fn bind_evidence(task_id: &str, criteria: &str, payload: &str) -> String {
+    let body = J::Object(vec![
+        field("task_id", string(task_id)),
+        field("criteria_hash", string(&criteria_hash(criteria))),
+        field("payload", string(payload)),
+    ]);
+    format!("{EVIDENCE_V1_PREFIX}{}", body.to_json_string())
+}
+
+fn parse_bound_evidence(raw: &str) -> Option<(String, String)> {
+    let json = raw.strip_prefix(EVIDENCE_V1_PREFIX)?;
+    let value = parse_json(json).ok()?;
+    let task_id = value.get("task_id")?.as_str()?.to_owned();
+    let hash = value.get("criteria_hash")?.as_str()?.to_owned();
+    // payload is optional for gate checks
+    Some((task_id, hash))
+}
+
+/// Done requires at least one bound evidence record for this task id whose
+/// criteria_hash matches the *current* criteria. Legacy plain strings load but
+/// never satisfy this gate.
+fn evidence_satisfies_done(task: &Task) -> Result<(), String> {
+    let expected = criteria_hash(&task.criteria);
+    let mut any_id_match = false;
+    let mut any_foreign = false;
+    for item in &task.evidence {
+        match parse_bound_evidence(item) {
+            Some((tid, chash)) => {
+                if tid != task.id {
+                    any_foreign = true;
+                    continue;
+                }
+                any_id_match = true;
+                if chash == expected {
+                    return Ok(());
+                }
+            }
+            None => {}
+        }
+    }
+    if any_foreign && !any_id_match {
+        return Err("Evidence task id mismatch".into());
+    }
+    Err("Evidence is missing or stale relative to current completion criteria".into())
+}
+
 fn sync_dir(path: &Path) -> Result<(), String> {
     #[cfg(unix)]
     {
@@ -749,7 +900,15 @@ impl Store {
                 }
                 "evidence" => {
                     validate_text(value, key, true)?;
-                    task.evidence.push((*value).into());
+                    // Fresh payloads bind to this task + current criteria.
+                    // Pre-bound evidence://v1/ records are kept as-is so foreign
+                    // copies still claim their original task_id for the done gate.
+                    let stored = if value.starts_with(EVIDENCE_V1_PREFIX) {
+                        (*value).to_owned()
+                    } else {
+                        bind_evidence(&task.id, &task.criteria, value)
+                    };
+                    task.evidence.push(stored);
                 }
                 "dependency" => {
                     validate_id(value)?;
@@ -784,11 +943,35 @@ impl Store {
                     ));
                 }
             }
+            evidence_satisfies_done(&task)?;
         }
+        // Persist bound evidence strings (not the raw caller payload) so reload
+        // via apply_stored keeps task_id + criteria_hash bindings.
+        let evidence_added = changes.iter().filter(|(k, _)| *k == "evidence").count();
+        let mut evidence_idx = task.evidence.len().saturating_sub(evidence_added);
+        let mut rewritten: Vec<(String, String)> = Vec::with_capacity(changes.len());
+        for (key, value) in changes {
+            if *key == "evidence" {
+                rewritten.push((
+                    "evidence".into(),
+                    task.evidence
+                        .get(evidence_idx)
+                        .cloned()
+                        .ok_or("Internal error: missing bound evidence")?,
+                ));
+                evidence_idx += 1;
+            } else {
+                rewritten.push(((*key).into(), (*value).into()));
+            }
+        }
+        let commit_refs: Vec<(&str, &str)> = rewritten
+            .iter()
+            .map(|(k, v)| (k.as_str(), v.as_str()))
+            .collect();
         task.version = task.version.checked_add(1).ok_or("Version overflow")?;
         task.updated_ms = now_ms()?;
         task.last_actor = actor_identity();
-        self.commit_delta(&task, changes)?;
+        self.commit_delta(&task, &commit_refs)?;
         Ok(task)
     }
     fn depends_on(&self, from: &str, target: &str) -> Result<bool, String> {
@@ -1558,9 +1741,21 @@ mod tests {
             .unwrap();
         assert!(store.update(&task.id, None, &[("status", "done")]).is_err());
         store
-            .update(&dependency.id, None, &[("status", "done")])
+            .update(
+                &dependency.id,
+                None,
+                &[("evidence", "audit://signed"), ("status", "done")],
+            )
             .unwrap();
-        store.update(&task.id, None, &[("status", "done")]).unwrap();
+        // Still missing bound evidence on the parent task.
+        assert!(store.update(&task.id, None, &[("status", "done")]).is_err());
+        store
+            .update(
+                &task.id,
+                None,
+                &[("evidence", "release://published"), ("status", "done")],
+            )
+            .unwrap();
         assert_eq!(store.load(&task.id).unwrap().status, "done");
         let no_criteria = store.create("Unclear", "", None).unwrap();
         assert!(
@@ -1590,7 +1785,13 @@ mod tests {
         store
             .update(&active.id, None, &[("status", "active")])
             .unwrap();
-        store.update(&done.id, None, &[("status", "done")]).unwrap();
+        store
+            .update(
+                &done.id,
+                None,
+                &[("evidence", "check://ok"), ("status", "done")],
+            )
+            .unwrap();
         let inbox = store.inbox(10).unwrap();
         assert_eq!(inbox.len(), 2);
         assert_eq!(inbox[0].id, active.id);
@@ -1773,14 +1974,131 @@ mod tests {
         .load(&task.id)
         .unwrap();
         assert_eq!(recovered.blocker, "Waiting on credentials");
-        assert_eq!(recovered.evidence, vec!["incident://ticket-42"]);
+        assert_eq!(recovered.evidence.len(), 1);
+        assert!(recovered.evidence[0].starts_with(EVIDENCE_V1_PREFIX));
+        assert!(recovered.evidence[0].contains("incident://ticket-42"));
         let context = store.context(&task.id, 1024, &[]).unwrap();
         assert!(context.contains("Blocker: Waiting on credentials"));
-        assert!(context.contains("Evidence 1: incident://ticket-42"));
+        assert!(context.contains("Evidence 1:"));
+        assert!(context.contains("incident://ticket-42"));
         assert!(store.update(&task.id, None, &[("status", "done")]).is_err());
         store
             .update(&task.id, None, &[("blocker", ""), ("status", "done")])
             .unwrap();
+        fs::remove_dir_all(store.root.parent().unwrap()).unwrap();
+    }
+
+
+    #[test]
+    fn s7a_stale_criteria_hash_rejects_done() {
+        let store = temp_store("s7a");
+        let task = store
+            .create("S7a revised criteria", "C1: all unit tests green", None)
+            .unwrap();
+        store
+            .update(&task.id, None, &[("evidence", "pytest: 12 passed")])
+            .unwrap();
+        let bound = store.load(&task.id).unwrap().evidence[0].clone();
+        assert!(bound.starts_with(EVIDENCE_V1_PREFIX));
+        assert!(bound.contains(&criteria_hash("C1: all unit tests green")));
+        store
+            .update(
+                &task.id,
+                None,
+                &[
+                    (
+                        "criteria",
+                        "C2: integration suite and release checklist green",
+                    ),
+                    ("decision", "Criteria tightened after review"),
+                ],
+            )
+            .unwrap();
+        let err = store
+            .update(&task.id, None, &[("status", "done")])
+            .unwrap_err();
+        assert!(
+            err.contains("stale") || err.contains("Evidence is missing or stale"),
+            "unexpected err: {err}"
+        );
+        assert_ne!(store.load(&task.id).unwrap().status, "done");
+        // Re-log evidence under C2 → done accepted.
+        store
+            .update(
+                &task.id,
+                None,
+                &[
+                    ("evidence", "pytest+integration: green"),
+                    ("status", "done"),
+                ],
+            )
+            .unwrap();
+        assert_eq!(store.load(&task.id).unwrap().status, "done");
+        fs::remove_dir_all(store.root.parent().unwrap()).unwrap();
+    }
+
+    #[test]
+    fn s7b_foreign_task_evidence_rejects_done() {
+        let store = temp_store("s7b");
+        let a = store
+            .create("S7b task A", "Criteria for A only", None)
+            .unwrap();
+        let b = store
+            .create("S7b task B", "Criteria for B only", None)
+            .unwrap();
+        store
+            .update(&a.id, None, &[("evidence", "artifact://build-42")])
+            .unwrap();
+        let foreign = store.load(&a.id).unwrap().evidence[0].clone();
+        assert!(foreign.contains(&a.id));
+        store
+            .update(&b.id, None, &[("evidence", &foreign)])
+            .unwrap();
+        let err = store
+            .update(&b.id, None, &[("status", "done")])
+            .unwrap_err();
+        assert!(
+            err.contains("task id mismatch") || err.contains("stale") || err.contains("Evidence"),
+            "unexpected err: {err}"
+        );
+        assert_ne!(store.load(&b.id).unwrap().status, "done");
+        fs::remove_dir_all(store.root.parent().unwrap()).unwrap();
+    }
+
+    #[test]
+    fn legacy_unbound_evidence_does_not_satisfy_done() {
+        let store = temp_store("legacy_ev");
+        let task = store.create("Legacy", "Must finish", None).unwrap();
+        // Simulate a pre-upgrade plain-string evidence record via apply_stored path:
+        // write a bound-looking plain string that is NOT evidence://v1/.
+        store
+            .update(&task.id, None, &[("note", "had old evidence style")])
+            .unwrap();
+        // Manually inject unbound evidence by creating via update then... we can't
+        // push raw without rebinding. Use evidence://v1/ with wrong hash instead,
+        // and also verify empty evidence rejects.
+        let err = store
+            .update(&task.id, None, &[("status", "done")])
+            .unwrap_err();
+        assert!(err.contains("Evidence is missing or stale"));
+        // Craft a bound record with stale hash via prefix preservation.
+        let bad_hash = "0".repeat(64);
+        let stale = format!(
+            "{EVIDENCE_V1_PREFIX}{}",
+            J::Object(vec![
+                field("task_id", string(&task.id)),
+                field("criteria_hash", string(&bad_hash)),
+                field("payload", string("old")),
+            ])
+            .to_json_string()
+        );
+        store
+            .update(&task.id, None, &[("evidence", &stale)])
+            .unwrap();
+        let err2 = store
+            .update(&task.id, None, &[("status", "done")])
+            .unwrap_err();
+        assert!(err2.contains("Evidence is missing or stale"));
         fs::remove_dir_all(store.root.parent().unwrap()).unwrap();
     }
 

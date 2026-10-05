@@ -1,0 +1,29 @@
+{
+  "case": "S7-stale-evidence",
+  "phase": "baseline",
+  "commit": "6764737b8fe3aa2ccd4c86010d14426794777a2d",
+  "binary": "/workspace/tmp/csp-target/release/contextspindle",
+  "wall_clock_ms": 151,
+  "timestamp_local": "2026-10-05 23:53:21 CST",
+  "S7a": {
+    "description": "criteria changed after evidence logged",
+    "task_id": "t-001a10cc508b9-000aed98-00000000",
+    "criteria_initial": "C1: all unit tests green",
+    "criteria_updated": "C2: integration suite and release checklist green",
+    "evidence_payload": "pytest: 12 passed",
+    "done_outcome": "accepted",
+    "error": "",
+    "gate_pass_means_rejected": false,
+    "verdict": "FAIL_gate_missing"
+  },
+  "S7b": {
+    "description": "foreign-task evidence",
+    "task_a_id": "t-001a10cc508ea-000aeda7-00000000",
+    "task_b_id": "t-001a10cc50905-000aedac-00000000",
+    "evidence_copied": "artifact://build-42",
+    "done_outcome": "accepted",
+    "error": "",
+    "gate_pass_means_rejected": false,
+    "verdict": "FAIL_gate_missing"
+  }
+}

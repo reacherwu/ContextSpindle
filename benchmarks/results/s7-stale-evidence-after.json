@@ -1,0 +1,26 @@
+{
+  "case": "S7-stale-evidence",
+  "phase": "after",
+  "commit": "6764737b8fe3aa2ccd4c86010d14426794777a2d",
+  "binary": "/workspace/tmp/csp-target/debug/contextspindle",
+  "wall_clock_ms": 31,
+  "S7a": {
+    "description": "criteria changed after evidence logged",
+    "task_id": "t-001a10ccf733a-000b0a60-00000000",
+    "done_outcome": "rejected",
+    "error": "Error: Evidence is missing or stale relative to current completion criteria",
+    "gate_pass_means_rejected": true,
+    "verdict": "PASS_gate_works"
+  },
+  "S7b": {
+    "description": "foreign-task evidence",
+    "task_a_id": "t-001a10ccf7343-000b0a64-00000000",
+    "task_b_id": "t-001a10ccf7345-000b0a65-00000000",
+    "evidence_copied": "evidence://v1/{\"task_id\":\"t-001a10ccf7343-000b0a64-00000000\",\"criteria_hash\":\"fc664c481e701cb8cb1494c9a6ee23a68b8f2012d3b8eabaabcaf5920dc10725\",\"payload\":\"artifact://build-42\"}",
+    "done_outcome": "rejected",
+    "error": "Error: Evidence task id mismatch",
+    "gate_pass_means_rejected": true,
+    "verdict": "PASS_gate_works"
+  },
+  "timestamp_local": "2026-10-06 00:04:44 CST"
+}
