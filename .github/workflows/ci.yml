@@ -22,3 +22,5 @@ jobs:
         run: |
           cargo build -p continuum-cli --bin contextspindle
           python3 -m unittest discover -s integrations/codex -p 'test_*.py'
+      - name: Compact fuse offline demo (hook round-trip)
+        run: ./examples/fuse/demo.sh

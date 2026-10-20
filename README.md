@@ -12,6 +12,40 @@
 
 The persistent task ledger keeps authoritative goals, decisions, and progress. A separate bounded memory engine supplies optional hints. ContextSpindle assembles a focused handoff within a conservative byte budget, so the next agent can resume without replaying the whole conversation. [Product definition](docs/PRODUCT-SCOPE.md) · [Agent protocol](docs/AGENT-PROTOCOL.md) · [Operations](docs/OPERATIONS.md)
 
+## Compact fuse (Claude Code, and any tool with pre/post-compaction hooks)
+
+When Claude Code compacts a long conversation (manually, at the auto-compact window, or via idle compaction), the model's summary can keep the numbers and drop the reasoning, unfinished tasks, or subagent results. Users have reported exactly this: [#102666](https://github.com/anthropics/claude-code/issues/102666) (idle compaction lost the reasoning), [#32099](https://github.com/anthropics/claude-code/issues/32099) (completed subagent results lost), [#31420](https://github.com/anthropics/claude-code/issues/31420) (request to back up task output before compaction).
+
+The fuse is two documented [Claude Code hooks](https://code.claude.com/docs/en/hooks):
+
+- `PreCompact` (matcher `manual|auto`) → `contextspindle fuse save` reads `transcript_path` from the hook payload and appends a checksummed snapshot to `.contextspindle/fuse/ledger.jsonl` in the session's `cwd`.
+- `SessionStart` (matcher `compact`) → `contextspindle fuse restore` prints `hookSpecificOutput.additionalContext`, so the snapshot is in Claude's context right after compaction.
+
+```bash
+cargo install --git https://github.com/reacherwu/ContextSpindle continuum-cli   # installs `contextspindle`
+contextspindle fuse setup            # preview the merged ~/.claude/settings.json (writes nothing)
+contextspindle fuse setup --write    # apply; the old file is kept as settings.json.bak
+# per-project instead: contextspindle fuse setup --project --write
+```
+
+Setup merges into existing settings, keeps your other hooks, and is idempotent.
+
+**What is saved:** the first user request (carried over across repeated compactions of the same session as "the goal"), open items from the latest `TodoWrite` list and `TaskCreate`/`TaskUpdate` calls, user sentences that state constraints (`don't`, `never`, `must`, `keep`…), assistant sentences that state decisions or findings (`root cause`, `because`, `chose`, `ruled out`…), results returned by `Task`/`Agent` subagents, the last three user requests, where the assistant left off, and edited file paths. The re-injected text is capped at 6,000 bytes by default (`--budget`, max 9,500; Claude Code caps hook context at 10,000 characters). Lower-priority sections are dropped first; the goal is kept.
+
+**What is not:** this is a deterministic keyword/structure extract, not a model summary. Reasoning phrased without those markers is missed unless it is in the last assistant message. Tool output other than subagent results (file reads, test logs) is not kept. Only the first user request is treated as the goal; if the goal changed mid-session, the newer one appears only under "latest user requests". Task IDs for `TaskUpdate` are matched by creation order, which is a heuristic. Claude Code notes that the transcript is written asynchronously, so the last few messages before compaction may be missing. The extractor reads Claude Code JSONL and generic `{"role","content"}` JSONL; other tools can call `fuse save --transcript PATH --session ID` and `fuse restore --plain` from their own hooks, but only Claude Code is wired up by `setup`. Hooks were exercised with the documented payloads; this has not yet been run inside a live Claude Code session in CI.
+
+**Reproduce in under 5 minutes, offline:** `./examples/fuse/demo.sh` (or `contextspindle fuse demo`). It uses a synthetic 185,408-byte, 95-message transcript ([generator](examples/fuse/make_session.py)) modeled on #102666 and checks 14 probe facts ([list](examples/fuse/probes.txt)) that each appear once in it. Measured on Linux x86_64 (8 vCPU Xeon), release build:
+
+| Budget (bytes) | Probe facts in re-injected context | Sections dropped |
+| ---: | ---: | --- |
+| 6,000 (default) | 14/14 (context was 1,738 bytes) | none |
+| 2,000 | 14/14 | none |
+| 1,500 | 12/14 | files, last message, recent requests |
+| 1,000 | 6/14 | + decisions, subagent results |
+| 600 | 5/14 | + constraints |
+
+`fuse save` took 2.5 ms and `fuse restore` 2.1 ms as separate CLI processes (median of 11). We wrote both the transcript and the probes, so 14/14 shows the extractor does what it was designed to do on this scenario; it is not evidence about real sessions.
+
 ## Why we built it
 
 A long conversation can be compressed. An agent may switch to another task, restart, or return much later. If the only record of the original goal lives in a chat window or an evicting retrieval cache, the agent can lose the task line even while remembering scattered details. ContextSpindle separates the two jobs: a persistent task ledger keeps authoritative state; a bounded memory engine supplies optional retrieval hints. Resuming starts with the task, not with a dump of every conversation.

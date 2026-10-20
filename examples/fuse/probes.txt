@@ -1,0 +1,16 @@
+# Facts stated once in examples/fuse/session.jsonl. `fuse demo` checks each appears
+# (case-insensitive substring) in the context re-injected after compaction.
+180 ms to 410 ms
+Don't change the public API of OrderClient
+checkout_pool_v2
+9f3c2e1
+TLS handshake
+shared pool of 32 connections
+because the revert would also drop the retry fix
+Patch connection pool sizing behind checkout_pool_v2
+Run load test and compare p99
+p99 = 192 ms at 400 rps
+Ruled out the DNS resolver change
+30-minute soak test
+never enable the flag in production on a Friday
+src/checkout/client.rs

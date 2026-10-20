@@ -1,3 +1,4 @@
+mod fuse;
 mod hook;
 mod json;
 mod runner;
@@ -18,6 +19,7 @@ fn print_help() {
     println!("  contextspindle task update <id> --status|--blocker|--next|--evidence|--note|--decision VALUE");
     println!("  contextspindle task inbox|show|history|list|search|context ...");
     println!("  contextspindle task verify|backup|restore ...       Protect and recover task history");
+    println!("  contextspindle fuse setup|save|restore|demo         Compact fuse: keep goal/tasks/decisions across compaction");
     println!("  contextspindle run <command...>                      Run a command with failure/fix capture");
     println!("  contextspindle hook install [path]                   Install Git post-commit memory hook");
     println!("  contextspindle hook uninstall [path]                 Remove Git post-commit memory hook");
@@ -1008,6 +1010,12 @@ fn main() {
                     else { println!("{output}"); }
                 },
                 Err(e) => { eprintln!("Error: {e}"); std::process::exit(1); }
+            }
+        }
+        "fuse" => {
+            match fuse::run_cli(&args[2..]) {
+                Ok(output) => { if !output.is_empty() { println!("{output}"); } }
+                Err(e) => { eprintln!("contextspindle fuse: {e}"); std::process::exit(1); }
             }
         }
         "init" => {
